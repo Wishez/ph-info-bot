@@ -1,0 +1,45 @@
+{
+  "name": "phuketActBot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Фил Журавлёв <shiningfinger@list.ru>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon",
+    "get-server-url": "ngrok http 4243",
+    "prepare": "husky install",
+    "lint": "eslint --ext ts,js ./app",
+    "lint:fix": "yarn lint --fix"
+  },
+  "type": "module",
+  "dependencies": {
+    "dotenv": "16.0.3",
+    "fastify": "4.10.2",
+    "jest": "29.3.1",
+    "lodash": "4.17.21",
+    "node-telegram-bot-api": "0.60.0",
+    "nodemon": "2.0.20",
+    "ts-node": "10.9.1",
+    "urijs": "1.19.11"
+  },
+  "devDependencies": {
+    "@types/jest": "29.2.4",
+    "@types/lodash": "4.14.191",
+    "@types/node-telegram-bot-api": "0.57.6",
+    "@types/nodemon": "1.19.2",
+    "@types/urijs": "1.19.19",
+    "@typescript-eslint/eslint-plugin": "5.47.1",
+    "@typescript-eslint/parser": "5.47.1",
+    "eslint": "8.30.0",
+    "eslint-config-node": "4.1.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-jsx-a11y": "6.6.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-simple-import-sort": "8.0.0",
+    "husky": "8.0.2",
+    "lint-staged": "13.1.0",
+    "ngrok": "4.3.3",
+    "prettier": "2.8.1"
+  }
+}

@@ -1,0 +1,31 @@
+node_modules
+.env
+.tern-port
+.log
+.editorconfig
+
+### Emacs ###
+# -*- mode: gitignore; -*-
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+.dir-locals.el
+webpack-assets.json
+/.idea/
+/storybook-static/
+.DS_Store
+.stylelintcache
+.eslintcache
+
+.yarn/*
+.pnp.*
+.yarnrc.yml
+yarn-error.log
+
+tsconfig.*.lint.json
+
