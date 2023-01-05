@@ -24,10 +24,31 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
   if (resp) bot.sendMessage(chatId, resp)
 })
 
-bot.on('message', msg => {
+// bot.on('message', msg => {
+//   const chatId = msg.chat.id
+//
+//   bot.sendMessage(chatId, 'Привет. Я разрабатываюсь')
+// })
+
+enum BotAction {
+  GOT = 'got',
+}
+
+bot.onText(/\/start/, msg => {
   const chatId = msg.chat.id
 
-  bot.sendMessage(chatId, 'Привет. Я разрабатываюсь')
+  bot.sendMessage(chatId, `Протекстируй кнопку`, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Тыкай',
+            callback_data: BotAction.GOT,
+          },
+        ],
+      ],
+    },
+  })
 })
 
 fastify.get('/', (_request, reply) => {
@@ -40,5 +61,15 @@ fastify.listen({ port: 4243 }, err => {
     process.exit(1)
   } else {
     bot.setWebHook(serverUrl)
+  }
+})
+
+bot.on('callback_query', callbackQuery => {
+  const action = callbackQuery.data
+  const msg = callbackQuery.message
+  if (!msg) return
+
+  if (action === BotAction.GOT) {
+    bot.sendMessage(msg.chat.id, 'Работает!!!')
   }
 })
