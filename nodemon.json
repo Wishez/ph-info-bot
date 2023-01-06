@@ -2,5 +2,5 @@
   "watch": ["app"],
   "ext": "ts,json",
   "ignore": ["app/**/*.spec.ts"],
-  "exec": "ts-node --esm ./app/index.ts"
+  "exec": "ts-node --esm --experimental-specifier-resolution=node ./app/index.ts"
 }
