@@ -1,22 +1,21 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  phuket_info_bot:
-    container_name: phuket-info-bot
+  bot:
     image: node:18-buster
+    restart: on-failure
     build:
       context: ./
-    networks:
-      - app
     depends_on:
       - db
-    links:
-      - db
     env_file: .env
-    ports:
-     - '4243:4243'
     volumes:
       - ./:/bot
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4243" ]
+      interval: 30s
+      timeout: 15s
+      retries: 5
 
   db:
     image: redis:7.0.7-alpine
@@ -27,13 +26,16 @@ services:
       - '6379:6379'
     volumes:
       - db-data:/etc/data
-    networks:
-      - app
+
+  web:
+    build: ./nginx
+    restart: always
+    depends_on:
+      bot:
+        condition: service_healthy
+    ports:
+      - '4242:80'
 
 volumes:
   db-data:
     driver: local
-
-networks:
-  app:
-    driver: default

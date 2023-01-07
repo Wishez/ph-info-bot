@@ -9,7 +9,7 @@ export const startServer = () => {
     reply.send({ hello: 'world' })
   })
 
-  fastify.listen({ port: 4243 }, err => {
+  fastify.listen({ port: 4243, host: '0.0.0.0' }, err => {
     if (err) {
       fastify.log.error(err)
       process.exit(1)
