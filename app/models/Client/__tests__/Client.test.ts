@@ -31,7 +31,7 @@ describe('Client', () => {
     expect('update' in client).toBeTruthy()
     expect('delete' in client).toBeTruthy()
     expect(client.user).toBeInstanceOf(User)
-    expect(client.modelNamespace).toBe('bot.client')
+    expect(client.modelNamespace).toBe('bot.client.test')
   })
 
   const telegramId = 'shiningfinger_client'

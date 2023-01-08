@@ -18,7 +18,7 @@ describe('User', () => {
     expect('create' in user).toBeTruthy()
     expect('update' in user).toBeTruthy()
     expect('delete' in user).toBeTruthy()
-    expect(user.modelNamespace).toBe('bot.user')
+    expect(user.modelNamespace).toBe('bot.user.test')
   })
 
   const telegramId = 'shiningfinger'

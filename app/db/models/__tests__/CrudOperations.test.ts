@@ -1,19 +1,19 @@
 import { dbClient } from '../../index'
 import { EDbStatus } from '../../types'
 import { CrudOperations } from '../CrudOperations'
+import { IBaseCrudModel } from '../types'
 
 const modelName = 'testEntity'
 const namespace = 'testNamespace'
 
-interface TestModel {
-  id: string
+interface TestModel extends IBaseCrudModel {
   property: number
 }
 
 describe('crud operations class', () => {
   const crud = new CrudOperations<TestModel>({ namespace, modelName })
   test('initialization', () => {
-    expect(crud.modelNamespace).toBe(`${namespace}.${modelName}`)
+    expect(crud.modelNamespace).toBe(`${namespace}.${modelName}.test`)
   })
 
   test('create', async () => {
@@ -31,7 +31,7 @@ describe('crud operations class', () => {
   })
 
   test('read', async () => {
-    expect.assertions(1)
+    expect.assertions(2)
     const models = await crud.readAll()
     if (!models) return
 
@@ -40,11 +40,14 @@ describe('crud operations class', () => {
 
     const model = await crud.read(id)
 
-    expect(model?.property).toBe(42)
+    if (!model) return
+
+    expect(model.property).toBe(42)
+    expect(typeof model.createdAt).toBe('string')
   })
 
   test('update', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
     const models = await crud.readAll()
     if (!models) return
 
@@ -57,7 +60,10 @@ describe('crud operations class', () => {
 
     const model = await crud.read(id)
 
-    expect(model?.property).toBe(322)
+    if (!model) return
+
+    expect(model.property).toBe(322)
+    expect(typeof model.updatedAt).toBe('string')
   })
 
   test('delete', async () => {
