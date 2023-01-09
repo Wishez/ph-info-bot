@@ -1,5 +1,6 @@
 node_modules
 .env
+.env.test
 .tern-port
 .log
 .editorconfig
