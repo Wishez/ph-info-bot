@@ -35,10 +35,16 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
     if (models) {
       models[id] = modelWithId
 
-      return dbClient.set(this.modelNamespace, models)
+      return {
+        id,
+        status: dbClient.set(this.modelNamespace, models),
+      }
     }
 
-    return dbClient.set(this.modelNamespace, { [id]: modelWithId })
+    return {
+      id,
+      status: dbClient.set(this.modelNamespace, { [id]: modelWithId }),
+    }
   }
 
   update = async (

@@ -17,7 +17,7 @@ describe('crud operations class', () => {
   })
 
   test('create', async () => {
-    const status = await crud.create({ property: 42 })
+    const { status } = await crud.create({ property: 42 })
 
     expect(status).toBe(EDbStatus.OK)
   })
@@ -81,5 +81,5 @@ describe('crud operations class', () => {
 })
 
 afterAll(() => {
-  dbClient.deleteNamespace(`${namespace}.${modelName}`)
+  dbClient.deleteNamespace(`${namespace}.${modelName}.test`)
 })

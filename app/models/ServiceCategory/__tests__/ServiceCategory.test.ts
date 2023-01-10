@@ -1,18 +1,10 @@
 import isEmpty from 'lodash/isEmpty'
 import uniqueId from 'lodash/uniqueId'
+import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
 import { ServiceCategory } from '../ServiceCategory'
 import { IServiceCategoryModel } from '../types'
-
-const getServiceCategoryByName = async (
-  serviceCategory: ServiceCategory,
-  name: IServiceCategoryModel['name'],
-) => {
-  const models = await serviceCategory.readAll()
-  if (!models) return
-
-  return Object.values(models).find(model => model.name === name)
-}
+import { getServiceCategoryByName } from '../utils'
 
 describe('ServiceCategory', () => {
   test('init', () => {
@@ -34,7 +26,7 @@ describe('ServiceCategory', () => {
   test('create', async () => {
     expect.assertions(1)
     const serviceCategory = new ServiceCategory()
-    const status = await serviceCategory.create({ name, description })
+    const { status } = await serviceCategory.create({ name, description })
 
     expect(status).toBe(EDbStatus.OK)
   })
@@ -83,7 +75,7 @@ describe('ServiceCategory', () => {
     const model = await getServiceCategoryByName(serviceCategory, name)
     if (!model?.id) return
 
-    const newCategoryCreationStatus = await serviceCategory.create({
+    const { status: newCategoryCreationStatus } = await serviceCategory.create({
       description,
       name: secondName,
     })
@@ -133,5 +125,10 @@ describe('ServiceCategory', () => {
 
     expect(categoryStatus).toBe(EDbStatus.OK)
     expect(subCategoryStatus).toBe(EDbStatus.OK)
+  })
+
+  afterAll(() => {
+    const serviceCategory = new ServiceCategory()
+    dbClient.deleteNamespace(serviceCategory.modelNamespace)
   })
 })

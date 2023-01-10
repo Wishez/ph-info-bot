@@ -1,14 +1,7 @@
 import isEmpty from 'lodash/isEmpty'
+import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
-import { IUserModel } from '../types'
 import { User } from '../User'
-
-const getUserByTelegramId = async (user: User, telegramId: IUserModel['telegramId']) => {
-  const models = await user.readAll()
-  if (!models) return
-
-  return Object.values(models).find(model => model.telegramId === telegramId)
-}
 
 describe('User', () => {
   test('init', () => {
@@ -27,9 +20,19 @@ describe('User', () => {
   test('create', async () => {
     expect.assertions(1)
     const user = new User()
-    const status = await user.create({ name, telegramId })
+    const { status } = await user.create({ name, telegramId })
 
     expect(status).toBe(EDbStatus.OK)
+  })
+
+  test('getUserByTelegramId', async () => {
+    expect.assertions(1)
+    const user = new User()
+    const model = await user.getUserByTelegramId(telegramId)
+
+    if (!model) return
+
+    expect(model.telegramId).toBe(telegramId)
   })
 
   test('read all', async () => {
@@ -45,7 +48,7 @@ describe('User', () => {
     expect.assertions(2)
     const user = new User()
 
-    const modelFromModels = await getUserByTelegramId(user, telegramId)
+    const modelFromModels = await user.getUserByTelegramId(telegramId)
     if (!modelFromModels?.id) return
 
     const model = await user.read(modelFromModels?.id)
@@ -57,7 +60,7 @@ describe('User', () => {
   test('update', async () => {
     expect.assertions(3)
     const user = new User()
-    const model = await getUserByTelegramId(user, telegramId)
+    const model = await user.getUserByTelegramId(telegramId)
     if (!model?.id) return
 
     const status = await user.update(model.id, { name: updatedName })
@@ -73,11 +76,16 @@ describe('User', () => {
   test('delete', async () => {
     expect.assertions(1)
     const user = new User()
-    const model = await getUserByTelegramId(user, telegramId)
+    const model = await user.getUserByTelegramId(telegramId)
     if (!model?.id) return
 
     const status = await user.delete(model.id)
 
     expect(status).toBe(EDbStatus.OK)
+  })
+
+  afterAll(() => {
+    const user = new User()
+    dbClient.deleteNamespace(user.modelNamespace)
   })
 })

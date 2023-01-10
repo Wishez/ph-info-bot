@@ -1,18 +1,10 @@
 import isEmpty from 'lodash/isEmpty'
 import uniqueId from 'lodash/uniqueId'
+import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
 import { ServiceAttribute } from '../ServiceAttribute'
 import { IServiceAttributeModel } from '../types'
-
-const getServiceAttributeByName = async (
-  serviceAttribute: ServiceAttribute,
-  name: IServiceAttributeModel['name'],
-) => {
-  const models = await serviceAttribute.readAll()
-  if (!models) return
-
-  return Object.values(models).find(model => model.name === name)
-}
+import { getServiceAttributeByName } from '../utils'
 
 describe('ServiceAttribute', () => {
   test('init', () => {
@@ -33,7 +25,7 @@ describe('ServiceAttribute', () => {
   test('create', async () => {
     expect.assertions(1)
     const serviceAttribute = new ServiceAttribute()
-    const status = await serviceAttribute.create({ name, notice, order, isRequired })
+    const { status } = await serviceAttribute.create({ name, notice, order, isRequired })
 
     expect(status).toBe(EDbStatus.OK)
   })
@@ -93,5 +85,10 @@ describe('ServiceAttribute', () => {
     const status = await serviceAttribute.delete(model.id)
 
     expect(status).toBe(EDbStatus.OK)
+  })
+
+  afterAll(() => {
+    const serviceAttribute = new ServiceAttribute()
+    dbClient.deleteNamespace(serviceAttribute.modelNamespace)
   })
 })

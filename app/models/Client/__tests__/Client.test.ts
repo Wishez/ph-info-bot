@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
+import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
 import { IUserModel } from '../../User/types'
 import { User } from '../../User/User'
@@ -37,13 +38,16 @@ describe('Client', () => {
   const telegramId = 'shiningfinger_client'
   const name = 'Phil_Client'
   test('create', async () => {
-    expect.assertions(1)
+    expect.assertions(2)
     const client = new Client()
-    await client.user.create({ name, telegramId })
+    const { status: userCreationStatus } = await client.user.create({ name, telegramId })
+
+    expect(userCreationStatus).toBe(EDbStatus.OK)
+
     const user = await getUserByTelegramId(client.user, telegramId)
     if (!user) return
 
-    const status = await client.create({ userId: user.id, rank: EClientRank.NEW })
+    const { status } = await client.create({ userId: user.id, rank: EClientRank.NEW })
 
     expect(status).toBe(EDbStatus.OK)
   })
@@ -108,5 +112,11 @@ describe('Client', () => {
     const status = await client.delete(model.id)
 
     expect(status).toBe(EDbStatus.OK)
+  })
+
+  afterAll(() => {
+    const client = new Client()
+    dbClient.deleteNamespace(client.modelNamespace)
+    dbClient.deleteNamespace(client.user.modelNamespace)
   })
 })
