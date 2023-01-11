@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty'
+import uniqueId from 'lodash/uniqueId'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
 import { IUserModel } from '../../User/types'
@@ -35,8 +36,8 @@ describe('Client', () => {
     expect(client.modelNamespace).toBe('bot.client.test')
   })
 
-  const telegramId = 'shiningfinger_client'
-  const name = 'Phil_Client'
+  const telegramId = uniqueId('userTelegramId')
+  const name = uniqueId('userName')
   test('create', async () => {
     expect.assertions(2)
     const client = new Client()
@@ -100,7 +101,7 @@ describe('Client', () => {
     if (!userModel || userModel === EDbStatus.NOT_FOUND) return
 
     expect(userModel.telegramId).toBe(telegramId)
-    expect(userModel.name).toBe(userModel.name)
+    expect(userModel.name).toBe(name)
   })
 
   test('delete', async () => {
