@@ -27,9 +27,9 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
     return models && models[id]
   }
 
-  create = async (model: Omit<GModel, 'id' | 'createdAt'>) => {
+  async create(model: Omit<GModel, 'id' | 'createdAt' | 'updatedAt'>, customId?: string) {
     const models = await this.readAll()
-    const id = uuid()
+    const id = customId || uuid()
     const modelWithId = { ...model, id, createdAt: new Date().toISOString() } as GModel
 
     if (models) {
@@ -49,7 +49,7 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
 
   update = async (
     id: GModel['id'],
-    updatedModelProperties: Partial<Omit<GModel, 'id' | 'createdAt'>>,
+    updatedModelProperties: Partial<Omit<GModel, 'id' | 'createdAt' | 'updatedAt'>>,
   ) => {
     const models = await this.readAll()
 
@@ -58,7 +58,6 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
     models[id] = {
       ...models[id],
       ...updatedModelProperties,
-      createdAt: models[id]?.createdAt,
       id,
       updatedAt: new Date().toISOString(),
     } as GModel
@@ -68,8 +67,7 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
 
   delete = async (id: GModel['id']) => {
     const models = await this.readAll()
-
-    if (!models) return EDbStatus.OK
+    if (!models || !models[id]) return EDbStatus.NOT_FOUND
 
     delete models[id]
 
