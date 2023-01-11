@@ -215,6 +215,18 @@ describe('Service', () => {
     expect(Object.values(attributes).length).toBe(1)
   })
 
+  test('getServicesByIds', async () => {
+    expect.assertions(1)
+    const service = new Service()
+    const model = await getServiceByName(service, name)
+    if (!model?.id) return
+
+    const services = await service.getServicesByIds([model.id])
+    if (services === EDbStatus.NOT_FOUND) return
+
+    expect(services[model.id]?.id).toBe(model.id)
+  })
+
   test('delete', async () => {
     expect.assertions(1)
     const service = new Service()

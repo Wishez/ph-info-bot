@@ -16,6 +16,18 @@ export class Service extends CrudOperations<IServiceModel> {
     super({ namespace: 'bot', modelName: 'service' })
   }
 
+  getServicesByIds = async (
+    servicesIds: Array<IServiceModel['id']>,
+  ): Promise<Record<string, IServiceModel> | EDbStatus.NOT_FOUND> => {
+    const services = await this.readAll()
+    if (!services) return EDbStatus.NOT_FOUND
+
+    const isSomeServiceNotInList = servicesIds.some(serviceId => !services[serviceId])
+    if (isSomeServiceNotInList) return EDbStatus.NOT_FOUND
+
+    return pick(services, servicesIds)
+  }
+
   getServiceAttributes = async (
     id: IServiceModel['id'],
   ): Promise<Record<string, IServiceAttributeModel> | EDbStatus.NOT_FOUND> => {
