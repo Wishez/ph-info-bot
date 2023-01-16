@@ -2,8 +2,10 @@ import isEmpty from 'lodash/isEmpty'
 import uniqueId from 'lodash/uniqueId'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
-import { EClientRank } from '../../Client/types/EClientRank'
+import { createTestOrder } from '../../Order/testUtils'
+import { IServiceModel } from '../../Service/types'
 import { getServiceAttributeByName } from '../../ServiceAttribute/utils'
+import { IServiceCategoryModel } from '../../ServiceCategory/types'
 import { IUserModel } from '../../User/types'
 import { FilledServiceAttribute } from '../FilledServiceAttribute'
 import { IFilledServiceAttributeModel } from '../types'
@@ -23,37 +25,29 @@ describe('filledServiceAttribute', () => {
   const value: IFilledServiceAttributeModel['value'] = uniqueId('filledAttributeValue')
   const updatedValue: IFilledServiceAttributeModel['value'] = uniqueId('filledAttributeValue')
   const userName: IUserModel['name'] = uniqueId('userName')
+  const description: string = uniqueId('description')
   const serviceAttributeName: IUserModel['name'] = uniqueId('serviceAttributeName')
+  const categoryName: IServiceCategoryModel['name'] = uniqueId('categoryName')
+  const serviceName: IServiceModel['name'] = uniqueId('serviceName')
   const telegramId: IUserModel['telegramId'] = uniqueId('telegramId')
   test('create', async () => {
-    expect.assertions(4)
+    expect.assertions(9)
     const filledServiceAttribute = new FilledServiceAttribute()
-    const { status: userCreationStatus, id: userId } =
-      await filledServiceAttribute.client.user.create({ name: userName, telegramId })
-    expect(userCreationStatus).toBe(EDbStatus.OK)
 
-    const { status: clientCreationStatus, id: clientId } =
-      await filledServiceAttribute.client.create({
-        userId,
-        rank: EClientRank.NEW,
-      })
-    expect(clientCreationStatus).toBe(EDbStatus.OK)
+    const { orderId, attributeId } = await createTestOrder({
+      userName,
+      telegramId,
+      description,
+      serviceName,
+      attributeName: serviceAttributeName,
+      categoryName,
+    })
+    expect(typeof orderId).toBe('string')
 
-    const { status: serviceAttributeCreationStatus, id: serviceAttributeId } =
-      await filledServiceAttribute.serviceAttribute.create({
-        name: serviceAttributeName,
-        isRequired: true,
-        order: 0,
-        notice: '',
-      })
-    expect(serviceAttributeCreationStatus).toBe(EDbStatus.OK)
-
-    // TODO заменить clientId на orderId
     const { status } = await filledServiceAttribute.create({
-      clientId,
-      orderId: '',
+      orderId,
       value,
-      serviceAttributeId,
+      serviceAttributeId: attributeId,
     })
 
     expect(status).toBe(EDbStatus.OK)
@@ -157,7 +151,7 @@ describe('filledServiceAttribute', () => {
     const client = await filledServiceAttribute.getClient(model.id)
     if (client === EDbStatus.NOT_FOUND) return
 
-    const user = await filledServiceAttribute.client.getUser(client.id)
+    const user = await FilledServiceAttribute.order.client.getUser(client.id)
     if (user === EDbStatus.NOT_FOUND) return
 
     expect(user.telegramId).toBe(telegramId)
@@ -177,8 +171,11 @@ describe('filledServiceAttribute', () => {
   afterAll(() => {
     const filledServiceAttribute = new FilledServiceAttribute()
     dbClient.deleteNamespace(filledServiceAttribute.modelNamespace)
-    dbClient.deleteNamespace(filledServiceAttribute.client.modelNamespace)
-    dbClient.deleteNamespace(filledServiceAttribute.client.user.modelNamespace)
+    dbClient.deleteNamespace(FilledServiceAttribute.order.modelNamespace)
+    dbClient.deleteNamespace(FilledServiceAttribute.order.service.modelNamespace)
+    dbClient.deleteNamespace(FilledServiceAttribute.order.client.modelNamespace)
+    dbClient.deleteNamespace(FilledServiceAttribute.order.client.user.modelNamespace)
+    dbClient.deleteNamespace(FilledServiceAttribute.order.provider.modelNamespace)
     dbClient.deleteNamespace(filledServiceAttribute.serviceAttribute.modelNamespace)
   })
 })

@@ -140,7 +140,6 @@ export class Order extends CrudOperations<IOrderModel> {
           value: '',
           orderId: orderCreationState.id,
           serviceAttributeId,
-          clientId,
         })
       }),
     )

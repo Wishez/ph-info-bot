@@ -1,17 +1,20 @@
 import pick from 'lodash/pick'
 import { CrudOperations } from '../../db/models'
 import { EDbStatus } from '../../db/types'
-import { Client } from '../Client/Client'
+import { Order } from '../Order/Order'
 import { ServiceAttribute } from '../ServiceAttribute/ServiceAttribute'
 import { IServiceAttributeModel } from '../ServiceAttribute/types'
 import { IFilledServiceAttributeModel } from './types'
 
 export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttributeModel> {
-  client = new Client()
   serviceAttribute = new ServiceAttribute()
 
   constructor() {
     super({ namespace: 'bot', modelName: 'filledServiceAttribute' })
+  }
+
+  static get order() {
+    return new Order()
   }
 
   getAttribute = async (id: IFilledServiceAttributeModel['id']) => {
@@ -60,21 +63,24 @@ export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttribu
   }
 
   getClient = async (id: IFilledServiceAttributeModel['id']) => {
-    const filledService = await this.read(id)
-    if (!filledService) return EDbStatus.NOT_FOUND
+    const filledAttributeOrder = await this.getOrder(id)
 
-    const client = await this.client.read(filledService.clientId)
+    if (!filledAttributeOrder || filledAttributeOrder === EDbStatus.NOT_FOUND) {
+      return EDbStatus.NOT_FOUND
+    }
+
+    const client = await FilledServiceAttribute.order.getClient(filledAttributeOrder.id)
     if (!client) return EDbStatus.NOT_FOUND
 
     return client
   }
 
   create = async (model: Omit<IFilledServiceAttributeModel, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const client = await this.client.read(model.clientId)
+    const order = await FilledServiceAttribute.order.read(model.orderId)
     const serviceAttribute = await this.serviceAttribute.read(model.serviceAttributeId)
     const id = this.getFilledAttributeId(model)
 
-    if (!client || !serviceAttribute) {
+    if (!order || !serviceAttribute) {
       return {
         id,
         status: EDbStatus.ERROR,
@@ -85,14 +91,15 @@ export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttribu
   }
 
   private getFilledAttributeId = ({
-    clientId,
+    orderId,
     serviceAttributeId,
-  }: Pick<IFilledServiceAttributeModel, 'orderId' | 'clientId' | 'serviceAttributeId'>) =>
-    `${clientId}_${serviceAttributeId}`
+  }: Pick<IFilledServiceAttributeModel, 'orderId' | 'serviceAttributeId'>) =>
+    `${orderId}_${serviceAttributeId}`
 
-  // TODO добавить метод getOrder и заменить получение клиента (getClient) через orderId заполненного атрибута
-  // добавить в айди orderId взамен clientId
-  getOrder = async () => {
-    return
+  getOrder = async (id: IFilledServiceAttributeModel['id']) => {
+    const filledAttribute = await this.read(id)
+    if (!filledAttribute) return EDbStatus.NOT_FOUND
+
+    return await FilledServiceAttribute.order.read(filledAttribute.orderId)
   }
 }
