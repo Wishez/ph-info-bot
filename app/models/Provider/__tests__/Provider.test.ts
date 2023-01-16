@@ -42,8 +42,8 @@ describe('provider', () => {
 
   test('read all', async () => {
     expect.assertions(2)
-    const user = new Provider()
-    const models = await user.readAll()
+    const provider = new Provider()
+    const models = await provider.readAll()
 
     expect(models).toBeInstanceOf(Object)
     expect(!isEmpty(models)).toBeTruthy()
