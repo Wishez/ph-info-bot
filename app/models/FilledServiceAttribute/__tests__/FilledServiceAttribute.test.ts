@@ -113,6 +113,20 @@ describe('filledServiceAttribute', () => {
     expect(attribute.name).toBe(serviceAttributeName)
   })
 
+  test('getFilledAttributesByIds', async () => {
+    expect.assertions(2)
+    const filledServiceAttribute = new FilledServiceAttribute()
+    const model = await getFilledServiceAttributeByValue(filledServiceAttribute, updatedValue)
+    if (!model) return
+
+    expect(model.value).toBe(updatedValue)
+
+    const filledAttributes = await filledServiceAttribute.getFilledAttributesByIds([model.id])
+    if (filledAttributes === EDbStatus.NOT_FOUND) return
+
+    expect(filledAttributes[model.id]?.value).toBe(updatedValue)
+  })
+
   test('getAttributesByFilledAttributesIds', async () => {
     expect.assertions(2)
     const filledServiceAttribute = new FilledServiceAttribute()

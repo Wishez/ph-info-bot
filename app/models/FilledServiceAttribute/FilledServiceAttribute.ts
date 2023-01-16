@@ -24,15 +24,27 @@ export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttribu
     return attribute
   }
 
+  getFilledAttributesByIds = async (
+    filledAttributesIds: IFilledServiceAttributeModel['id'][],
+  ): Promise<Record<string, IFilledServiceAttributeModel> | EDbStatus.NOT_FOUND> => {
+    const filledAttributes = await this.readAll()
+    if (!filledAttributes) return EDbStatus.NOT_FOUND
+
+    const isSomeFilledAttributeNotExists = filledAttributesIds.some(id => !filledAttributes[id])
+    if (isSomeFilledAttributeNotExists) return EDbStatus.NOT_FOUND
+
+    return pick(filledAttributes, filledAttributesIds)
+  }
+
   getAttributesByFilledAttributesIds = async (
     filledAttributesIds: IFilledServiceAttributeModel['id'][],
   ): Promise<Record<string, IServiceAttributeModel> | EDbStatus.NOT_FOUND> => {
-    const filledServices = await this.readAll()
-    if (!filledServices) return EDbStatus.NOT_FOUND
+    const filledAttributes = await this.readAll()
+    if (!filledAttributes) return EDbStatus.NOT_FOUND
 
     const serviceAttributesIds: IServiceAttributeModel['id'][] = []
     const isSomeFilledAttributeNotExists = filledAttributesIds.some(id => {
-      const serviceAttributeId = filledServices[id]?.serviceAttributeId
+      const serviceAttributeId = filledAttributes[id]?.serviceAttributeId
 
       if (!serviceAttributeId) return true
       serviceAttributesIds.push(serviceAttributeId)
