@@ -2,27 +2,9 @@ import isEmpty from 'lodash/isEmpty'
 import uniqueId from 'lodash/uniqueId'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
-import { IUserModel } from '../../User/types'
 import { User } from '../../User/User'
 import { Client } from '../Client'
 import { EClientRank } from '../types/EClientRank'
-
-const getUserByTelegramId = async (user: User, telegramId: IUserModel['telegramId']) => {
-  const models = await user.readAll()
-  if (!models) return
-
-  return Object.values(models).find(model => model.telegramId === telegramId)
-}
-
-const getClientByUser = async (client: Client, telegramId: IUserModel['telegramId']) => {
-  const userModel = await getUserByTelegramId(client.user, telegramId)
-  if (!userModel) return
-
-  const models = await client.readAll()
-  if (!models) return
-
-  return Object.values(models).find(model => model.userId === userModel.id)
-}
 
 describe('Client', () => {
   test('init', () => {
@@ -45,7 +27,7 @@ describe('Client', () => {
 
     expect(userCreationStatus).toBe(EDbStatus.OK)
 
-    const user = await getUserByTelegramId(client.user, telegramId)
+    const user = await client.user.getUserByTelegramId(telegramId)
     if (!user) return
 
     const { status } = await client.create({ userId: user.id, rank: EClientRank.NEW })
@@ -66,10 +48,10 @@ describe('Client', () => {
     expect.assertions(2)
     const client = new Client()
 
-    const modelFromModels = await getClientByUser(client, telegramId)
-    if (!modelFromModels?.id) return
+    const modelFromModels = await client.getClientByUserTelegramId(telegramId)
+    if (modelFromModels === EDbStatus.NOT_FOUND) return
 
-    const model = await client.read(modelFromModels?.id)
+    const model = await client.read(modelFromModels.id)
 
     expect(typeof model?.id).toBe('string')
     expect(model?.rank).toBe(EClientRank.NEW)
@@ -78,8 +60,8 @@ describe('Client', () => {
   test('update', async () => {
     expect.assertions(2)
     const client = new Client()
-    const model = await getClientByUser(client, telegramId)
-    if (!model?.id) return
+    const model = await client.getClientByUserTelegramId(telegramId)
+    if (model === EDbStatus.NOT_FOUND) return
 
     const status = await client.update(model.id, { rank: EClientRank.ACTIVE })
 
@@ -93,8 +75,8 @@ describe('Client', () => {
   test('getUser', async () => {
     expect.assertions(2)
     const client = new Client()
-    const model = await getClientByUser(client, telegramId)
-    if (!model?.id) return
+    const model = await client.getClientByUserTelegramId(telegramId)
+    if (model === EDbStatus.NOT_FOUND) return
 
     const userModel = await client.getUser(model.id)
 
@@ -107,8 +89,8 @@ describe('Client', () => {
   test('delete', async () => {
     expect.assertions(1)
     const client = new Client()
-    const model = await getClientByUser(client, telegramId)
-    if (!model?.id) return
+    const model = await client.getClientByUserTelegramId(telegramId)
+    if (model === EDbStatus.NOT_FOUND) return
 
     const status = await client.delete(model.id)
 
