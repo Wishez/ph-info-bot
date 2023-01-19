@@ -18,7 +18,8 @@ describe('order', () => {
     expect(order.modelNamespace).toBe('bot.order.test')
   })
 
-  const telegramId = uniqueId('userTelegramId')
+  const clientTelegramId = uniqueId('userTelegramId')
+  const providerTelegramId = uniqueId('userTelegramId')
   const name = uniqueId('userName')
   const description = uniqueId('description')
   const serviceName = uniqueId('serviceName')
@@ -28,7 +29,7 @@ describe('order', () => {
 
   const getOrderForTest = async () => {
     const order = new Order()
-    const model = await order.getOrdersByUserTelegramId(telegramId)
+    const model = await order.getOrdersByUserTelegramId(clientTelegramId)
     if (model === EDbStatus.NOT_FOUND) return
     const id = model[0]?.id
     if (!id) return
@@ -37,10 +38,11 @@ describe('order', () => {
   }
 
   test('create', async () => {
-    expect.assertions(7)
+    expect.assertions(9)
     await createTestOrder({
       userName: name,
-      telegramId,
+      clientTelegramId,
+      providerTelegramId,
       description,
       categoryName,
       attributeName,
@@ -217,6 +219,7 @@ describe('order', () => {
   afterAll(() => {
     const order = new Order()
     dbClient.deleteNamespace(order.modelNamespace)
+    dbClient.deleteNamespace(order.chat.modelNamespace)
     dbClient.deleteNamespace(order.client.user.modelNamespace)
     dbClient.deleteNamespace(order.client.modelNamespace)
     dbClient.deleteNamespace(order.provider.modelNamespace)

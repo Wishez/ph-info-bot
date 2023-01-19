@@ -29,14 +29,16 @@ describe('filledServiceAttribute', () => {
   const serviceAttributeName: IUserModel['name'] = uniqueId('serviceAttributeName')
   const categoryName: IServiceCategoryModel['name'] = uniqueId('categoryName')
   const serviceName: IServiceModel['name'] = uniqueId('serviceName')
-  const telegramId: IUserModel['telegramId'] = uniqueId('telegramId')
+  const clientTelegramId: IUserModel['telegramId'] = uniqueId('telegramId')
+  const providerTelegramId: IUserModel['telegramId'] = uniqueId('telegramId')
   test('create', async () => {
-    expect.assertions(9)
+    expect.assertions(11)
     const filledServiceAttribute = new FilledServiceAttribute()
 
     const { orderId, attributeId } = await createTestOrder({
       userName,
-      telegramId,
+      clientTelegramId,
+      providerTelegramId,
       description,
       serviceName,
       attributeName: serviceAttributeName,
@@ -154,7 +156,7 @@ describe('filledServiceAttribute', () => {
     const user = await FilledServiceAttribute.order.client.getUser(client.id)
     if (user === EDbStatus.NOT_FOUND) return
 
-    expect(user.telegramId).toBe(telegramId)
+    expect(user.telegramId).toBe(clientTelegramId)
   })
 
   test('delete', async () => {
@@ -176,6 +178,7 @@ describe('filledServiceAttribute', () => {
     dbClient.deleteNamespace(FilledServiceAttribute.order.client.modelNamespace)
     dbClient.deleteNamespace(FilledServiceAttribute.order.client.user.modelNamespace)
     dbClient.deleteNamespace(FilledServiceAttribute.order.provider.modelNamespace)
+    dbClient.deleteNamespace(FilledServiceAttribute.order.chat.modelNamespace)
     dbClient.deleteNamespace(filledServiceAttribute.serviceAttribute.modelNamespace)
   })
 })

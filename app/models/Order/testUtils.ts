@@ -4,7 +4,8 @@ import { Order } from './Order'
 
 interface ICreatingTestOrderOptions {
   userName: string
-  telegramId: string
+  clientTelegramId: string
+  providerTelegramId: string
   description: string
   attributeName: string
   serviceName: string
@@ -12,13 +13,28 @@ interface ICreatingTestOrderOptions {
 }
 
 export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
-  const { userName, telegramId, description, attributeName, serviceName, categoryName } = options
+  const {
+    userName,
+    clientTelegramId,
+    providerTelegramId,
+    description,
+    attributeName,
+    serviceName,
+    categoryName,
+  } = options
   const order = new Order()
-  const { status: userCreationStatus, id: userId } = await order.provider.user.create({
+  const { status: providerUserCreationStatus, id: providerUserId } =
+    await order.provider.user.create({
+      name: userName,
+      telegramId: providerTelegramId,
+    })
+  expect(providerUserCreationStatus).toBe(EDbStatus.OK)
+
+  const { status: clientUserCreationStatus, id: clientUserId } = await order.client.user.create({
     name: userName,
-    telegramId,
+    telegramId: clientTelegramId,
   })
-  expect(userCreationStatus).toBe(EDbStatus.OK)
+  expect(clientUserCreationStatus).toBe(EDbStatus.OK)
 
   const { status: categoryCreationStatus, id: categoryId } =
     await order.service.serviceCategory.create({
@@ -45,24 +61,29 @@ export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
   expect(serviceCreationStatus).toBe(EDbStatus.OK)
 
   const { status: providerCreationStatus, id: providerId } = await order.provider.create({
-    userId,
+    userId: providerUserId,
     description,
     servicesIds: [serviceId],
   })
   expect(providerCreationStatus).toBe(EDbStatus.OK)
 
   const { status: clientCreationStatus, id: clientId } = await order.client.create({
-    userId,
+    userId: clientUserId,
     rank: EClientRank.NEW,
   })
   expect(clientCreationStatus).toBe(EDbStatus.OK)
+
+  const { status: chatCreationStatus, id: chatId } = await order.chat.create({
+    clientTelegramId,
+    providerTelegramId,
+  })
+  expect(chatCreationStatus).toBe(EDbStatus.OK)
 
   const { status, id } = await order.create({
     serviceId,
     clientId,
     providerId,
-    // TODO добавить chatId
-    chatId: '',
+    chatId,
   })
 
   expect(status).toBe(EDbStatus.OK)
@@ -74,6 +95,8 @@ export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
     serviceId,
     attributeId,
     categoryId,
-    userId,
+    clientUserId,
+    providerUserId,
+    chatId,
   }
 }

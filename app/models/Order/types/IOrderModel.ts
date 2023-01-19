@@ -1,4 +1,5 @@
 import { IBaseCrudModel } from '../../../db/models/types'
+import { IChatModel } from '../../Chat/types'
 import { IClientModel } from '../../Client/types'
 import { IFilledServiceAttributeModel } from '../../FilledServiceAttribute/types'
 import { IProviderModel } from '../../Provider/types'
@@ -11,7 +12,5 @@ export interface IOrderModel extends IBaseCrudModel {
   clientId: IClientModel['id']
   serviceId: IServiceModel['id']
   filledServicesAttributesIds: IFilledServiceAttributeModel['id'][]
-
-  // TODO добавить id чата
-  chatId: string
+  chatId: IChatModel['id']
 }

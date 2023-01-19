@@ -2,6 +2,7 @@ import map from 'lodash/map'
 import uniq from 'lodash/uniq'
 import { CrudOperations } from '../../db/models'
 import { EDbStatus } from '../../db/types'
+import { Chat } from '../Chat/Chat'
 import { Client } from '../Client/Client'
 import { FilledServiceAttribute } from '../FilledServiceAttribute/FilledServiceAttribute'
 import { IFilledServiceAttributeModel } from '../FilledServiceAttribute/types'
@@ -15,7 +16,7 @@ export class Order extends CrudOperations<IOrderModel> {
   provider = new Provider()
   service = new Service()
   filledServicesAttribute = new FilledServiceAttribute()
-  // TODO chat = new Chat()
+  chat = new Chat()
 
   constructor() {
     super({ namespace: 'bot', modelName: 'order' })
@@ -106,18 +107,17 @@ export class Order extends CrudOperations<IOrderModel> {
       'id' | 'createdAt' | 'updatedAt' | 'status' | 'filledServicesAttributesIds'
     >,
   ) => {
-    const { clientId, providerId, serviceId } = model
+    const { clientId, providerId, serviceId, chatId } = model
     const client = await this.client.read(clientId)
     const provider = await this.provider.read(providerId)
     const service = await this.service.read(serviceId)
-    // TODO добавить проверку на chatId
-    // const chat = await this.chat.read(chatId)
+    const chat = await this.chat.read(chatId)
 
-    if (!(client && provider && service)) {
+    if (!(client && provider && service && chat)) {
       return {
         id: '',
         status: EDbStatus.ERROR,
-        message: 'Bad clientId, providerId, or serviceId',
+        message: 'Bad clientId, providerId, chatId, or serviceId',
       }
     }
 
