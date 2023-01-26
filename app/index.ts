@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { bot } from './bot'
 import { startServer } from './server'
 
