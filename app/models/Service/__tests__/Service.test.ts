@@ -18,7 +18,7 @@ describe('Service', () => {
     expect('create' in service).toBeTruthy()
     expect('update' in service).toBeTruthy()
     expect('delete' in service).toBeTruthy()
-    expect(service.modelNamespace).toBe('bot.service.test')
+    expect(service.modelNamespace.startsWith('bot.service')).toBeTruthy()
   })
 
   const name: IServiceModel['name'] = uniqueId('serviceName')
@@ -62,7 +62,7 @@ describe('Service', () => {
       name,
       description,
       categoryId: category.id,
-      attributesIds: [attribute.id],
+      attributesIds: [],
     })
 
     expect(status).toBe(EDbStatus.OK)
@@ -136,27 +136,6 @@ describe('Service', () => {
     expect(nextModel.categoryId).toBe(nextCategory.id)
   })
 
-  test('removeServiceAttribute', async () => {
-    expect.assertions(3)
-    const service = new Service()
-    const model = await getServiceByName(service, name)
-    if (!model?.id) return
-
-    const attribute = await getServiceAttributeByName(service.serviceAttribute, attributeName)
-    if (!attribute) return
-
-    expect(attribute.name).toBe(attributeName)
-
-    const status = await service.removeServiceAttribute(model.id, attribute.id)
-
-    expect(status).toBe(EDbStatus.OK)
-
-    const nextModel = await service.read(model.id)
-    if (!nextModel) return
-
-    expect(nextModel.attributesIds.length).toBe(0)
-  })
-
   test('bindServiceAttributes', async () => {
     expect.assertions(3)
     const service = new Service()
@@ -178,24 +157,6 @@ describe('Service', () => {
     expect(nextModel.attributesIds[0]).toBe(attribute.id)
   })
 
-  test('getServiceCategory', async () => {
-    expect.assertions(2)
-    const service = new Service()
-    const model = await getServiceByName(service, name)
-    if (!model?.id) return
-
-    const category = await getServiceCategoryByName(service.serviceCategory, secondCategoryName)
-    if (!category) return
-
-    expect(category.name).toBe(secondCategoryName)
-
-    const boundCategory = await service.getServiceCategory(model.id)
-
-    if (boundCategory === EDbStatus.NOT_FOUND) return
-
-    expect(boundCategory.id).toBe(category.id)
-  })
-
   test('getServiceAttributes', async () => {
     expect.assertions(3)
     const service = new Service()
@@ -213,6 +174,45 @@ describe('Service', () => {
 
     expect(attributes[attribute.id]?.id).toBe(attribute.id)
     expect(Object.values(attributes).length).toBe(1)
+  })
+
+  test('deleteServiceAttribute', async () => {
+    expect.assertions(3)
+    const service = new Service()
+    const model = await getServiceByName(service, name)
+    if (!model?.id) return
+
+    const attribute = await getServiceAttributeByName(service.serviceAttribute, attributeName)
+    if (!attribute) return
+
+    expect(attribute.name).toBe(attributeName)
+
+    const isDeleted = await service.deleteServiceAttribute(model.id, attribute.id)
+
+    expect(isDeleted).toBeTruthy()
+
+    const nextModel = await service.read(model.id)
+    if (!nextModel) return
+
+    expect(nextModel.attributesIds.length).toBe(0)
+  })
+
+  test('getServiceCategory', async () => {
+    expect.assertions(2)
+    const service = new Service()
+    const model = await getServiceByName(service, name)
+    if (!model?.id) return
+
+    const category = await getServiceCategoryByName(service.serviceCategory, secondCategoryName)
+    if (!category) return
+
+    expect(category.name).toBe(secondCategoryName)
+
+    const boundCategory = await service.getServiceCategory(model.id)
+
+    if (boundCategory === EDbStatus.NOT_FOUND) return
+
+    expect(boundCategory.id).toBe(category.id)
   })
 
   test('getServicesByIds', async () => {

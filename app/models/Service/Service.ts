@@ -77,24 +77,40 @@ export class Service extends CrudOperations<IServiceModel> {
     )
     if (isSomeAttributeIdWrong) return EDbStatus.ERROR
 
-    return await this.update(id, {
+    const updatingStatus = await this.update(id, {
       attributesIds: uniq([...serviceAttributesIds, ...(service.attributesIds || [])]),
     })
+
+    const attributesUpdatingStatues = await Promise.all(
+      serviceAttributesIds.map(attributeId =>
+        this.serviceAttribute.update(attributeId, { serviceId: id }),
+      ),
+    )
+
+    return updatingStatus !== EDbStatus.OK ||
+      attributesUpdatingStatues.some(status => status !== EDbStatus.OK)
+      ? EDbStatus.ERROR
+      : EDbStatus.OK
   }
 
-  removeServiceAttribute = async (
+  deleteServiceAttribute = async (
     serviceId: IServiceModel['id'],
     serviceAttributeId: IServiceAttributeModel['id'],
   ) => {
     const service = await this.read(serviceId)
 
-    if (!service) return EDbStatus.NOT_FOUND
+    if (!service) return false
 
     const serviceAttribute = await this.serviceAttribute.read(serviceAttributeId)
-    if (!serviceAttribute) return EDbStatus.NOT_FOUND
+    if (!serviceAttribute) return false
 
-    return await this.update(serviceId, {
+    const updatingStatus = await this.update(serviceId, {
       attributesIds: without(service.attributesIds, serviceAttributeId),
     })
+    const updatingAttributeStatus = await this.serviceAttribute.update(serviceAttribute.id, {
+      serviceId: undefined,
+    })
+
+    return updatingAttributeStatus === EDbStatus.OK && updatingStatus === EDbStatus.OK
   }
 }
