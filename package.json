@@ -10,7 +10,7 @@
     "prepare": "husky install",
     "lint": "eslint --ext ts,js ./app",
     "lint:fix": "yarn lint --fix",
-    "test": "jest --env=node"
+    "test": "jest --env=node -i --forceExit"
   },
   "type": "module",
   "dependencies": {

@@ -7,5 +7,6 @@ export default async (): Promise<Config> => {
     preset: 'ts-jest',
     testEnvironment: 'node',
     extensionsToTreatAsEsm: ['.ts'],
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   }
 }
