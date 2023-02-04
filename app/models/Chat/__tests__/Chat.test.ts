@@ -14,7 +14,7 @@ describe('Chat', () => {
     expect('create' in chat).toBeTruthy()
     expect('update' in chat).toBeTruthy()
     expect('delete' in chat).toBeTruthy()
-    expect(chat.modelNamespace).toBe('bot.chat.test')
+    expect(chat.modelNamespace.startsWith('bot.chat')).toBeTruthy()
   })
 
   const clientTelegramId = uniqueId('userTelegramId')

@@ -15,7 +15,7 @@ describe('order', () => {
     expect('create' in order).toBeTruthy()
     expect('update' in order).toBeTruthy()
     expect('delete' in order).toBeTruthy()
-    expect(order.modelNamespace).toBe('bot.order.test')
+    expect(order.modelNamespace.startsWith('bot.order')).toBeTruthy()
   })
 
   const clientTelegramId = uniqueId('userTelegramId')

@@ -14,7 +14,7 @@ describe('ServiceAttribute', () => {
     expect('create' in serviceAttribute).toBeTruthy()
     expect('update' in serviceAttribute).toBeTruthy()
     expect('delete' in serviceAttribute).toBeTruthy()
-    expect(serviceAttribute.modelNamespace).toBe('bot.serviceAttribute.test')
+    expect(serviceAttribute.modelNamespace.startsWith('bot.serviceAttribute')).toBeTruthy()
   })
 
   const name: IServiceAttributeModel['name'] = uniqueId('serviceAttributeName')

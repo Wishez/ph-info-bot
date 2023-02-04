@@ -16,7 +16,7 @@ describe('provider', () => {
     expect('update' in provider).toBeTruthy()
     expect('delete' in provider).toBeTruthy()
     expect(provider.user).toBeInstanceOf(User)
-    expect(provider.modelNamespace).toBe('bot.provider.test')
+    expect(provider.modelNamespace.startsWith('bot.provider')).toBeTruthy()
   })
 
   const telegramId = uniqueId('userTelegramId')

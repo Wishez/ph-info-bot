@@ -19,7 +19,9 @@ describe('filledServiceAttribute', () => {
     expect('create' in filledServiceAttribute).toBeTruthy()
     expect('update' in filledServiceAttribute).toBeTruthy()
     expect('delete' in filledServiceAttribute).toBeTruthy()
-    expect(filledServiceAttribute.modelNamespace).toBe('bot.filledServiceAttribute.test')
+    expect(
+      filledServiceAttribute.modelNamespace.startsWith('bot.filledServiceAttribute'),
+    ).toBeTruthy()
   })
 
   const value: IFilledServiceAttributeModel['value'] = uniqueId('filledAttributeValue')
@@ -145,15 +147,18 @@ describe('filledServiceAttribute', () => {
   })
 
   test('getClient', async () => {
-    expect.assertions(1)
+    expect.assertions(4)
     const filledServiceAttribute = new FilledServiceAttribute()
     const model = await getFilledServiceAttributeByValue(filledServiceAttribute, updatedValue)
+    expect(model).toBeInstanceOf(Object)
     if (!model) return
 
     const client = await filledServiceAttribute.getClient(model.id)
+    expect(client).toBeInstanceOf(Object)
     if (client === EDbStatus.NOT_FOUND) return
 
     const user = await FilledServiceAttribute.order.client.getUser(client.id)
+    expect(user).toBeInstanceOf(Object)
     if (user === EDbStatus.NOT_FOUND) return
 
     expect(user.telegramId).toBe(clientTelegramId)

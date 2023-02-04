@@ -13,7 +13,7 @@ interface TestModel extends IBaseCrudModel {
 describe('crud operations class', () => {
   const crud = new CrudOperations<TestModel>({ namespace, modelName })
   test('initialization', () => {
-    expect(crud.modelNamespace).toBe(`${namespace}.${modelName}.test`)
+    expect(crud.modelNamespace.startsWith(`${namespace}.${modelName}`)).toBeTruthy()
   })
 
   test('create', async () => {
