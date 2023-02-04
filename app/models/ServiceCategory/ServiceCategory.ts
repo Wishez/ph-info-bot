@@ -20,16 +20,23 @@ export class ServiceCategory extends CrudOperations<IServiceCategoryModel> {
     return pick(categories, category.subcategoriesIds)
   }
 
-  bindSubCategory = async (
+  bindSubCategories = async (
     categoryId: IServiceCategoryModel['id'],
-    subcategoryId: IServiceCategoryModel['id'],
+    subcategoriesIds: IServiceCategoryModel['id'][],
   ) => {
     const category = await this.read(categoryId)
+    const categories = await this.readAll()
+
+    if (!categories) return EDbStatus.ERROR
+
+    const isEveryCategoryExists = subcategoriesIds.every(id => Boolean(categories[id]))
+
+    if (!isEveryCategoryExists) return EDbStatus.ERROR
 
     const existedSubCategoriesIds = category?.subcategoriesIds ? category?.subcategoriesIds : []
 
     return await this.update(categoryId, {
-      subcategoriesIds: uniq([...existedSubCategoriesIds, subcategoryId]),
+      subcategoriesIds: uniq([...existedSubCategoriesIds, ...subcategoriesIds]),
     })
   }
 }

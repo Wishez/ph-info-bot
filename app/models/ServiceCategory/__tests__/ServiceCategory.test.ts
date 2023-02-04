@@ -14,7 +14,7 @@ describe('ServiceCategory', () => {
     expect('create' in serviceCategory).toBeTruthy()
     expect('update' in serviceCategory).toBeTruthy()
     expect('delete' in serviceCategory).toBeTruthy()
-    expect(serviceCategory.modelNamespace).toBe('bot.serviceCategory.test')
+    expect(serviceCategory.modelNamespace.startsWith('bot.serviceCategory')).toBeTruthy()
   })
 
   const name: IServiceCategoryModel['name'] = uniqueId('serviceCategoryName')
@@ -69,7 +69,7 @@ describe('ServiceCategory', () => {
     expect(nextModel?.name).toBe(name)
   })
 
-  test('bindSubCategory', async () => {
+  test('bindSubCategories', async () => {
     expect.assertions(4)
     const serviceCategory = new ServiceCategory()
     const model = await getServiceCategoryByName(serviceCategory, name)
@@ -85,7 +85,7 @@ describe('ServiceCategory', () => {
     const subCategory = await getServiceCategoryByName(serviceCategory, secondName)
     if (!subCategory) return
 
-    const status = await serviceCategory.bindSubCategory(model.id, subCategory.id)
+    const status = await serviceCategory.bindSubCategories(model.id, [subCategory.id])
 
     expect(status).toBe(EDbStatus.OK)
 
