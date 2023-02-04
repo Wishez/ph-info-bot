@@ -1,0 +1,1 @@
+export { AreAttributesExisted } from './AreAttributesExisted'
