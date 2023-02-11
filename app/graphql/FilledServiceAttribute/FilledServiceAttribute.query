@@ -1,0 +1,54 @@
+query FilledServiceAttribute {
+  filledServiceAttribute(id: "c79567f1-8075-4309-aea1-5f4667960929") {
+    id
+    value
+    serviceAttribute {
+      name
+      order
+      isRequired
+    }
+  }
+}
+
+query FilledServiceAttributes {
+  filledServiceAttributes {
+    id
+    value
+    serviceAttribute {
+      name
+      order
+      isRequired
+    }
+  }
+}
+
+mutation CreateFilledServiceAttribute {
+  createFilledServiceAttribute(
+    filledServiceAttributeInfo: {
+      orderId: "",
+      serviceAttributeId: "c79567f1-8075-4309-aea1-5f4667960929",
+      value: "test"
+    }
+  )
+}
+
+mutation UpdateFilledServiceAttribute {
+  updateFilledServiceAttribute(
+    filledServiceAttributeId: "c79567f1-8075-4309-aea1-5f4667960929"
+    filledServiceAttributeInfo: {
+      value: "updated:test"
+    }
+  ) {
+    id
+    value
+    serviceAttribute {
+      name
+      order
+      isRequired
+    }
+  }
+}
+
+mutation DeleteFilledServiceAttribute {
+  deleteFilledServiceAttribute(filledServiceAttributeId: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e")
+}

@@ -1,5 +1,6 @@
 import typeGQ from 'type-graphql'
 import { ClientResolver } from './Client/Client.resolvers'
+import { FilledServiceAttributeResolver } from './FilledServiceAttribute/FilledServiceAttribute.resolvers'
 import { ProviderResolver } from './Provider/Provider.resolvers'
 import { ServiceResolver } from './Service/Service.resolvers'
 import { ServiceAttributeResolver } from './ServiceAttribute/ServiceAttribute.resolvers'
@@ -17,5 +18,6 @@ export const getSchema = async () =>
       ServiceAttributeResolver,
       ServiceResolver,
       ProviderResolver,
+      FilledServiceAttributeResolver,
     ],
   })
