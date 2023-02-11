@@ -14,6 +14,15 @@ query Client {
   }
 }
 
+query ClientById {
+  clientById(id: "317cd6f7-58e2-4359-9af7-6ec5343aa587") {
+    rank
+    user {
+      id
+    }
+  }
+}
+
 mutation DeleteClient {
   deleteClient(clientId: "c03dc6b3-c4ed-4f69-bc21-a3f3feaf5e7a")
 }

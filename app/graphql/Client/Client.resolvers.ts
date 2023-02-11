@@ -30,7 +30,27 @@ export class ClientResolver {
     const user = await ClientResolver.client.getUser(client.id)
 
     if (user === EDbStatus.NOT_FOUND) {
-      return new GraphQLError(`User with ${telegramId} is not found`)
+      return new GraphQLError(`User with telegramId ${telegramId} is not found`)
+    }
+
+    return {
+      ...client,
+      user,
+    }
+  }
+
+  @Query(() => ClientSchema || GraphQLError)
+  async clientById(@Arg('id') id: string): Promise<ClientSchema | GraphQLError> {
+    const client = await ClientResolver.client.read(id)
+
+    if (!client) {
+      return new GraphQLError(`Client with id ${id} is not found`)
+    }
+
+    const user = await ClientResolver.client.getUser(client.id)
+
+    if (user === EDbStatus.NOT_FOUND) {
+      return new GraphQLError(`User with ${id} is not found`)
     }
 
     return {
