@@ -59,25 +59,54 @@ export class Provider extends CrudOperations<IProviderModel> {
     servicesIds: IProviderModel['servicesIds'],
   ) => {
     const provider = await this.read(providerId)
-
     if (!provider) return EDbStatus.NOT_FOUND
 
     const services = await this.service.getServicesByIds(servicesIds)
-
     if (services === EDbStatus.NOT_FOUND) return EDbStatus.NOT_FOUND
 
-    return await this.update(providerId, {
+    const updatingStatus = await this.update(providerId, {
       servicesIds: uniq([...Object.keys(services), ...provider.servicesIds]),
     })
+    const bindingProviderToServicesStatuses = await Promise.all(
+      Object.values(services).map(service =>
+        this.service.update(service.id, {
+          providersIds: uniq([...(service.providersIds || []), providerId]),
+        }),
+      ),
+    )
+
+    return updatingStatus !== EDbStatus.OK ||
+      bindingProviderToServicesStatuses.some(status => status !== EDbStatus.OK)
+      ? EDbStatus.ERROR
+      : EDbStatus.OK
   }
 
-  unmountService = async (providerId: IProviderModel['id'], serviceId: IServiceModel['id']) => {
+  unmountServices = async (
+    providerId: IProviderModel['id'],
+    servicesIds: IServiceModel['id'][],
+  ) => {
     const provider = await this.read(providerId)
 
     if (!provider) return EDbStatus.NOT_FOUND
 
-    return await this.update(providerId, {
-      servicesIds: without(provider.servicesIds, serviceId),
+    const services = await this.service.readAll()
+    if (!services) return EDbStatus.ERROR
+
+    const unmountingProviderFromServicesStatuses = await Promise.all(
+      servicesIds.map(serviceId =>
+        this.service.update(serviceId, {
+          providersIds: without(services[serviceId]?.providersIds || [], providerId),
+        }),
+      ),
+    )
+
+    const updatingStatus = await this.update(providerId, {
+      servicesIds: without(provider.servicesIds, ...servicesIds),
     })
+
+    return updatingStatus !== EDbStatus.OK ||
+      unmountingProviderFromServicesStatuses.some(status => status !== EDbStatus.OK)
+      ? EDbStatus.ERROR
+      : EDbStatus.OK
   }
 }

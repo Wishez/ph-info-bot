@@ -110,6 +110,7 @@ describe('provider', () => {
       description,
       categoryId,
       attributesIds: [],
+      providersIds: [],
     })
     expect(serviceCreationStatus).toBe(EDbStatus.OK)
 
@@ -133,11 +134,11 @@ describe('provider', () => {
     const services = await provider.getProvidedServices(model.id)
     if (services === EDbStatus.NOT_FOUND) return
 
-    expect(services[service.id]?.id).toBe(service.id)
+    expect(services[service.id]?.providersIds.includes(model.id)).toBeTruthy()
     expect(Object.values(services).length).toBe(1)
   })
 
-  test('unmountService', async () => {
+  test('unmountServices', async () => {
     expect.assertions(3)
     const provider = new Provider()
     const model = await provider.getProviderByUserTelegramId(telegramId)
@@ -146,8 +147,8 @@ describe('provider', () => {
     const service = await getServiceByName(provider.service, serviceName)
     if (!service) return
 
-    const unmountingServiceStatus = await provider.unmountService(model.id, service.id)
-    expect(unmountingServiceStatus).toBe(EDbStatus.OK)
+    const unmountingServicesStatus = await provider.unmountServices(model.id, [service.id])
+    expect(unmountingServicesStatus).toBe(EDbStatus.OK)
 
     const services = await provider.getProvidedServices(model.id)
     if (services === EDbStatus.NOT_FOUND) return
