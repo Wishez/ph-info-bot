@@ -33,6 +33,9 @@ export class ServiceListSchema implements IServiceModel {
 
   @Field(() => [String])
   attributesIds!: string[]
+
+  @Field(() => [String])
+  providersIds!: string[]
 }
 
 @ObjectType()
@@ -60,10 +63,14 @@ export class ServiceSchema implements Omit<IServiceModel, 'attributesIds' | 'cat
 
   @Field(() => [ServiceAttributeListSchema])
   attributes!: ServiceAttributeListSchema[]
+
+  // TODO replace on ProviderListSchema if needed
+  @Field(() => [String])
+  providersIds!: string[]
 }
 
 @InputType()
-export class ServiceCreation implements Omit<IServiceModel, 'id' | 'createdAt'> {
+export class ServiceCreation {
   @Field()
   @IsString()
   name!: string
@@ -79,10 +86,6 @@ export class ServiceCreation implements Omit<IServiceModel, 'id' | 'createdAt'> 
   @Field({ nullable: true })
   @IsString()
   image?: string
-
-  @Field(() => [String])
-  @AreAttributesExisted()
-  attributesIds!: string[]
 }
 
 @InputType()
@@ -102,10 +105,6 @@ export class ServiceUpdating {
   @Field({ nullable: true })
   @IsString()
   image?: string
-
-  @Field(() => [String], { nullable: true })
-  @AreAttributesExisted()
-  attributesIds?: string[]
 }
 
 @InputType()
@@ -117,9 +116,9 @@ export class ServiceBindingAttributes {
 
 @InputType()
 export class ServiceDeletingAttribute {
-  @Field()
-  @IsString()
-  attributeId!: string
+  @Field(() => [String])
+  @AreAttributesExisted()
+  attributesIds!: string[]
 }
 
 @InputType()

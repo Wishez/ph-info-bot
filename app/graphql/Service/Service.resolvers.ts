@@ -55,7 +55,11 @@ export class ServiceResolver {
   async createService(
     @Arg('serviceInfo') serviceInfo: ServiceCreation,
   ): Promise<GraphQLError | IServiceModel['id']> {
-    const { status, id } = await ServiceResolver.service.create(serviceInfo)
+    const { status, id } = await ServiceResolver.service.create({
+      ...serviceInfo,
+      providersIds: [],
+      attributesIds: [],
+    })
 
     if (status === EDbStatus.OK) return id
 
@@ -125,16 +129,16 @@ export class ServiceResolver {
   }
 
   @Mutation(() => ServiceSchema || false)
-  async deleteAttributeFromService(
+  async deleteAttributesFromService(
     @Arg('id') id: string,
     @Arg('serviceInfo') serviceInfo: ServiceDeletingAttribute,
   ): Promise<ServiceSchema | false> {
     const service = await ServiceResolver.service.read(id)
     if (!service) return false
 
-    const isDeleted = await ServiceResolver.service.deleteServiceAttribute(
+    const isDeleted = await ServiceResolver.service.deleteServiceAttributes(
       id,
-      serviceInfo.attributeId,
+      serviceInfo.attributesIds,
     )
     const nextService = await this.service(id)
 

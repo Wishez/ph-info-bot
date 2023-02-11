@@ -57,6 +57,7 @@ export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
     categoryId,
     description,
     attributesIds: [attributeId],
+    providersIds: [],
   })
   expect(serviceCreationStatus).toBe(EDbStatus.OK)
 

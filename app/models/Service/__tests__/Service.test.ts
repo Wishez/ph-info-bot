@@ -63,6 +63,7 @@ describe('Service', () => {
       description,
       categoryId: category.id,
       attributesIds: [],
+      providersIds: [],
     })
 
     expect(status).toBe(EDbStatus.OK)
@@ -176,7 +177,7 @@ describe('Service', () => {
     expect(Object.values(attributes).length).toBe(1)
   })
 
-  test('deleteServiceAttribute', async () => {
+  test('deleteServiceAttributes', async () => {
     expect.assertions(3)
     const service = new Service()
     const model = await getServiceByName(service, name)
@@ -187,7 +188,7 @@ describe('Service', () => {
 
     expect(attribute.name).toBe(attributeName)
 
-    const isDeleted = await service.deleteServiceAttribute(model.id, attribute.id)
+    const isDeleted = await service.deleteServiceAttributes(model.id, [attribute.id])
 
     expect(isDeleted).toBeTruthy()
 
