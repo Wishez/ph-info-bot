@@ -1,0 +1,34 @@
+query Clients {
+  clients {
+    id
+    userId
+  }
+}
+
+query Client {
+  client(telegramId: "it_shiningfinger") {
+    rank
+    user {
+      id
+    }
+  }
+}
+
+mutation DeleteClient {
+  deleteClient(clientId: "c03dc6b3-c4ed-4f69-bc21-a3f3feaf5e7a")
+}
+
+mutation CreateClient {
+  createClient(
+    clientInfo: {rank: "NEW", userId: "22e5ecda-17c6-4678-bf9b-cf2a037db07f"}
+  )
+}
+
+mutation UpdateClient {
+  updateClient(telegramId: "it_shiningfinger", clientInfo: {rank: "VIP"}) {
+    rank
+    user {
+      name
+    }
+  }
+}

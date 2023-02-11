@@ -1,0 +1,84 @@
+query Service {
+  service(id: "77455af4-9076-4ed1-a823-743d61bbeeb4") {
+    id
+    name
+    category {
+      id
+      name
+    }
+    attributes {
+      id
+      name
+      serviceId
+    }
+  }
+}
+
+query Services {
+  services {
+    id
+    name
+  }
+}
+
+mutation CreateService {
+  createService(
+    serviceInfo: {name: "Service 2", description: "Service description", categoryId: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20" }
+  )
+}
+
+mutation UpdateService {
+  updateService(
+    id: "77455af4-9076-4ed1-a823-743d61bbeeb4"
+    serviceInfo: {name: "updated:Service"}
+  ) {
+    name
+    id
+  }
+}
+
+mutation DeleteService {
+  deleteService(id: "77455af4-9076-4ed1-a823-743d61bbeeb4")
+}
+
+mutation BindAttributesToService {
+  bindAttributesToService(
+    id: "77455af4-9076-4ed1-a823-743d61bbeeb4"
+    serviceInfo: {attributesIds: ["c79567f1-8075-4309-aea1-5f4667960929"]}
+  ) {
+    name
+    attributes {
+      name
+      notice
+      id
+      serviceId
+    }
+  }
+}
+
+mutation DeleteAttributeFromService {
+  deleteAttributeFromService(
+    id: "77455af4-9076-4ed1-a823-743d61bbeeb4"
+    serviceInfo: {attributeId: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e"}
+  ) {
+    name
+    attributes {
+      name
+      id
+      notice
+    }
+  }
+}
+
+mutation BindCategoryToService {
+  bindCategoryToService(
+    id: "77455af4-9076-4ed1-a823-743d61bbeeb4"
+    serviceInfo: {categoryId: "5c079e04-2f7e-4872-a4a2-469bb606d07e"}
+  ) {
+    name
+    category {
+      name
+      id
+    }
+  }
+}

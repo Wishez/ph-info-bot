@@ -1,0 +1,46 @@
+query ServiceCategory {
+  serviceCategory(id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20") {
+    id
+    name
+    description
+  }
+}
+
+query ServiceCategories {
+  serviceCategories {
+    id
+    name
+    description
+  }
+}
+
+mutation CreateServiceCategory {
+  createServiceCategory(
+    serviceCategoryInfo: {description: "Что-то в этой категории можно делать", name: "Second category"}
+  )
+}
+
+mutation UpdateServiceCategory {
+  updateServiceCategory(
+    id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20"
+    serviceCategoryInfo: {description: "updated: Что-то в этой категории можно делать"}
+  ) {
+    description
+  }
+}
+
+mutation DeleteServiceCategory {
+  deleteServiceCategory(id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20")
+}
+
+mutation BindSubcategoriesToCategory {
+  bindSubcategoriesToCategory(
+    id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20"
+    serviceCategoryInfo: {subcategoriesIds: []}
+  ) {
+    name
+    subcategories {
+      name
+    }
+  }
+}

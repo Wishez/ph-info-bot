@@ -1,0 +1,42 @@
+query ServiceAttribute {
+  serviceAttribute(id: "c79567f1-8075-4309-aea1-5f4667960929") {
+    id
+    name
+    service {
+      attributes {
+        id
+        name
+      }
+      name
+    }
+  }
+}
+
+query ServiceAttributes {
+  serviceAttributes {
+    id
+    name
+    order
+    isRequired
+  }
+}
+
+mutation CreateServiceAttribute {
+  createServiceAttribute(
+    serviceAttributeInfo: {name: "Настрой аттрибут", notice: "Описание аттрибута", isRequired: false, order: 0}
+  )
+}
+
+mutation UpdateServiceAttribute {
+  updateServiceAttribute(
+    id: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e"
+    serviceAttributeInfo: {name: "updated: Настрой аттрибут", isRequired: true}
+  ) {
+    name
+    id
+  }
+}
+
+mutation DeleteServiceAttribute {
+  deleteServiceAttribute(id: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e")
+}

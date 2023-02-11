@@ -1,0 +1,85 @@
+query Providers {
+  providers {
+    id
+    description
+    user {
+      id
+      name
+    }
+  }
+}
+
+query Provider {
+  provider(telegramId: "it_shiningfinger") {
+    description
+    id
+    services {
+      id
+      categoryId
+    }
+    user {
+      id
+      name
+    }
+  }
+}
+
+mutation DeleteProvider {
+  deleteProvider(providerId: "c03dc6b3-c4ed-4f69-bc21-a3f3feaf5e7a")
+}
+
+mutation CreateProvider {
+  createProvider(
+    providerInfo: {
+      description: "Я предоставляю анальные услуги"
+      userId: "22e5ecda-17c6-4678-bf9b-cf2a037db07f"
+    }
+  )
+}
+
+mutation UpdateProvider {
+  updateProvider(telegramId: "it_shiningfinger", providerInfo: { description: "updated:Я предоставляю анальные услуги" }) {
+    description
+    user {
+      name
+    }
+  }
+}
+
+mutation BindProviderService {
+  bindProviderServices(
+    providerId: "d22b16ca-f948-4b4f-b775-72da1fb85e6f",
+    providerInfo: {
+      servicesIds: ["77455af4-9076-4ed1-a823-743d61bbeeb4"]
+    }
+  ) {
+    description
+    services {
+      id
+      name
+      categoryId
+    }
+    user {
+      name
+    }
+  }
+}
+
+mutation UnmountProviderService {
+  unmountProviderServices(
+    providerId: "d22b16ca-f948-4b4f-b775-72da1fb85e6f",
+    providerInfo: {
+      servicesIds: ["77455af4-9076-4ed1-a823-743d61bbeeb4"]
+    }
+  ) {
+    description
+    services {
+      id
+      name
+      categoryId
+    }
+    user {
+      name
+    }
+  }
+}
