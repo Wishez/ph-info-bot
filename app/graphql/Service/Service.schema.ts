@@ -1,7 +1,7 @@
 import { IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { IServiceModel } from '../../models/Service/types'
-import { ServiceAttributeListSchema } from '../ServiceAttribute/ServiceAttributeListSchema'
+import { ServiceAttributeSchema } from '../ServiceAttribute/ServiceAttribute.schema'
 import { AreAttributesExisted } from '../ServiceAttribute/validators'
 import { ServiceCategorySchema } from '../ServiceCategory/ServiceCategory.schema'
 import { IsCategoryExisted } from '../ServiceCategory/validators'
@@ -61,8 +61,8 @@ export class ServiceSchema implements Omit<IServiceModel, 'attributesIds' | 'cat
   @Field({ nullable: true })
   image?: string
 
-  @Field(() => [ServiceAttributeListSchema])
-  attributes!: ServiceAttributeListSchema[]
+  @Field(() => [ServiceAttributeSchema])
+  attributes!: ServiceAttributeSchema[]
 
   // TODO replace on ProviderListSchema if needed
   @Field(() => [String])

@@ -9,7 +9,7 @@ import {
   ServiceAttributeListSchema,
   ServiceAttributeSchema,
   ServiceAttributeUpdating,
-} from './ServiceAttributeListSchema'
+} from './ServiceAttribute.schema'
 
 const { Query, Resolver, Arg, Mutation } = typeQl
 
@@ -74,11 +74,11 @@ export class ServiceAttributeResolver {
     return status === EDbStatus.OK
   }
 
-  @Mutation(() => ServiceAttributeListSchema || false)
+  @Mutation(() => ServiceAttributeSchema || false)
   async updateServiceAttribute(
     @Arg('id') id: string,
     @Arg('serviceAttributeInfo') serviceAttributeInfo: ServiceAttributeUpdating,
-  ): Promise<ServiceAttributeListSchema | false> {
+  ): Promise<ServiceAttributeSchema | false> {
     const status = await ServiceAttributeResolver.serviceAttribute.update(id, serviceAttributeInfo)
     const nextServiceAttribute = await this.serviceAttribute(id)
 
