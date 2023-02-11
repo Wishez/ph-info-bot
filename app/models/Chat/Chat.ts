@@ -63,8 +63,9 @@ export class Chat extends CrudOperations<IChatModel> {
     if (!(provider && client)) return EDbStatus.NOT_FOUND
 
     let sender: EChatMessageActor = EChatMessageActor.CLIENT
-    if (client) sender = EChatMessageActor.CLIENT
-    else if (provider) sender = EChatMessageActor.PROVIDER
+    // TODO сделать тест на sender
+    if (client !== EDbStatus.NOT_FOUND) sender = EChatMessageActor.CLIENT
+    else if (provider !== EDbStatus.NOT_FOUND) sender = EChatMessageActor.PROVIDER
     const chatMessage: IChatMessage = {
       id: uuid(),
       sender,

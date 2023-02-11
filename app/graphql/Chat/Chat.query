@@ -1,0 +1,78 @@
+query Chats {
+  chats {
+    id
+    provider {
+      user {
+        name
+        telegramId
+      }
+    }
+    client {
+      user {
+        name
+        telegramId
+      }
+    }
+    messagesHistory {
+      message
+      sender
+    }
+  }
+}
+
+query Chat {
+  chat(id: "de1f2de0-2bdf-478d-99e8-5f14fe118fcb") {
+    id
+    provider {
+      user {
+        name
+        telegramId
+      }
+    }
+    client {
+      user {
+        name
+        telegramId
+      }
+    }
+    messagesHistory {
+      message
+      sender
+    }
+  }
+}
+
+mutation DeleteChat {
+  deleteChat(chatId: "c03dc6b3-c4ed-4f69-bc21-a3f3feaf5e7a")
+}
+
+mutation CreateChat {
+  createChat(
+    chatInfo: {
+      providerTelegramId: "provider",
+      clientTelegramId: "client"
+    }
+  )
+}
+
+mutation AddChatMessage {
+  addChatMessage(chatId: "5e3a449f-0c92-4c2b-8ca7-b32d964d27d3", chatInfo: { message: "new message", telegramId: "client" }) {
+    id
+    provider {
+      user {
+        name
+        telegramId
+      }
+    }
+    client {
+      user {
+        name
+        telegramId
+      }
+    }
+    messagesHistory {
+      message
+      sender
+    }
+  }
+}
