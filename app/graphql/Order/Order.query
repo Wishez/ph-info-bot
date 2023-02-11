@@ -1,0 +1,54 @@
+query Order {
+  order(id: "c79567f1-8075-4309-aea1-5f4667960929") {
+    id
+    value
+    serviceAttribute {
+      name
+      order
+      isRequired
+    }
+  }
+}
+
+query Orders {
+  orders {
+    id
+    value
+    serviceAttribute {
+      name
+      order
+      isRequired
+    }
+  }
+}
+
+mutation CreateOrder {
+  createOrder(
+    orderInfo: { 
+      orderId: "",
+      serviceAttributeId: "c79567f1-8075-4309-aea1-5f4667960929",
+      value: "test" 
+    }
+  )
+}
+
+mutation UpdateOrder {
+  updateOrder(
+    orderId: "c79567f1-8075-4309-aea1-5f4667960929"
+    orderInfo: {
+      value: "updated:test"
+    }
+  ) {
+    id
+    value
+    serviceAttribute {
+      name
+      order
+      isRequired
+    }
+  }
+}
+
+mutation DeleteOrder {
+  deleteOrder(orderId: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e")
+}
