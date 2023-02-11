@@ -104,16 +104,21 @@ export class Order extends CrudOperations<IOrderModel> {
   create = async (
     model: Omit<
       IOrderModel,
-      'id' | 'createdAt' | 'updatedAt' | 'status' | 'filledServicesAttributesIds'
+      'id' | 'createdAt' | 'updatedAt' | 'status' | 'filledServicesAttributesIds' | 'chatId'
     >,
   ) => {
-    const { clientId, providerId, serviceId, chatId } = model
+    const { clientId, providerId, serviceId } = model
     const client = await this.client.read(clientId)
+    const clientUser = await this.client.getUser(clientId)
     const provider = await this.provider.read(providerId)
+    const providerUser = await this.provider.getUser(providerId)
     const service = await this.service.read(serviceId)
-    const chat = await this.chat.read(chatId)
 
-    if (!(client && provider && service && chat)) {
+    if (
+      !(client && provider && service) ||
+      clientUser === EDbStatus.NOT_FOUND ||
+      providerUser === EDbStatus.NOT_FOUND
+    ) {
       return {
         id: '',
         status: EDbStatus.ERROR,
@@ -121,8 +126,14 @@ export class Order extends CrudOperations<IOrderModel> {
       }
     }
 
+    const chat = await this.chat.create({
+      clientTelegramId: clientUser.telegramId,
+      providerTelegramId: providerUser.telegramId,
+    })
+
     const orderCreationState = await super.create({
       ...model,
+      chatId: chat.id,
       filledServicesAttributesIds: [],
       status: EOrderStatus.IN_PROCESS,
     })

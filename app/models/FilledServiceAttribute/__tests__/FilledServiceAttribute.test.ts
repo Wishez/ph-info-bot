@@ -34,7 +34,7 @@ describe('filledServiceAttribute', () => {
   const clientTelegramId: IUserModel['telegramId'] = uniqueId('telegramId')
   const providerTelegramId: IUserModel['telegramId'] = uniqueId('telegramId')
   test('create', async () => {
-    expect.assertions(11)
+    expect.assertions(10)
     const filledServiceAttribute = new FilledServiceAttribute()
 
     const { orderId, attributeId } = await createTestOrder({
@@ -112,7 +112,7 @@ describe('filledServiceAttribute', () => {
   })
 
   test('getFilledAttributesByIds', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
     const filledServiceAttribute = new FilledServiceAttribute()
     const model = await getFilledServiceAttributeByValue(filledServiceAttribute, updatedValue)
     if (!model) return
@@ -123,6 +123,7 @@ describe('filledServiceAttribute', () => {
     if (filledAttributes === EDbStatus.NOT_FOUND) return
 
     expect(filledAttributes[model.id]?.value).toBe(updatedValue)
+    expect(typeof filledAttributes[model.id]?.serviceAttribute.id).toBe('string')
   })
 
   test('getAttributesByFilledAttributesIds', async () => {

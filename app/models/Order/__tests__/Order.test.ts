@@ -38,7 +38,7 @@ describe('order', () => {
   }
 
   test('create', async () => {
-    expect.assertions(9)
+    expect.assertions(8)
     await createTestOrder({
       userName: name,
       clientTelegramId,
@@ -152,7 +152,7 @@ describe('order', () => {
     expect(typeof attribute).toBe('object')
     if (!attribute) return
 
-    expect(filledAttribute.serviceAttributeId).toBe(attribute.id)
+    expect(filledAttribute.serviceAttribute.id).toBe(attribute.id)
     expect(filledAttribute.id).toBe(model.filledServicesAttributesIds[0])
   })
 

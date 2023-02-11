@@ -2,9 +2,35 @@ import { IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { IFilledServiceAttributeModel } from '../../models/FilledServiceAttribute/types'
 import { IsServiceExisted } from '../Service/validators'
-import { ServiceAttributeSchema } from '../ServiceAttribute/ServiceAttribute.schema'
+import {
+  ServiceAttributeListSchema,
+  ServiceAttributeSchema,
+} from '../ServiceAttribute/ServiceAttribute.schema'
 
 const { Field, InputType, ObjectType, ID } = typeQl
+
+type TFilledServiceAttributeListSchema = Omit<IFilledServiceAttributeModel, 'serviceAttributeId'>
+@ObjectType()
+export class FilledServiceAttributeListSchema implements TFilledServiceAttributeListSchema {
+  @Field(() => ID)
+  id!: string
+
+  @Field({ nullable: true })
+  updatedAt?: string
+
+  @Field()
+  createdAt!: string
+
+  @Field()
+  value!: string
+
+  // TODO подставить заказ
+  @Field()
+  orderId!: string
+
+  @Field()
+  serviceAttribute!: ServiceAttributeListSchema
+}
 
 type TFilledServiceAttributeSchema = Omit<IFilledServiceAttributeModel, 'serviceAttributeId'>
 @ObjectType()

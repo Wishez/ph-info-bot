@@ -74,17 +74,10 @@ export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
   })
   expect(clientCreationStatus).toBe(EDbStatus.OK)
 
-  const { status: chatCreationStatus, id: chatId } = await order.chat.create({
-    clientTelegramId,
-    providerTelegramId,
-  })
-  expect(chatCreationStatus).toBe(EDbStatus.OK)
-
   const { status, id } = await order.create({
     serviceId,
     clientId,
     providerId,
-    chatId,
   })
 
   expect(status).toBe(EDbStatus.OK)
@@ -98,6 +91,5 @@ export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
     categoryId,
     clientUserId,
     providerUserId,
-    chatId,
   }
 }

@@ -4,7 +4,7 @@ import { EDbStatus } from '../../db/types'
 import { Order } from '../Order/Order'
 import { ServiceAttribute } from '../ServiceAttribute/ServiceAttribute'
 import { IServiceAttributeModel } from '../ServiceAttribute/types'
-import { IFilledServiceAttributeModel } from './types'
+import { IDetailedFilledServiceAttribute, IFilledServiceAttributeModel } from './types'
 
 export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttributeModel> {
   serviceAttribute = new ServiceAttribute()
@@ -29,14 +29,25 @@ export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttribu
 
   getFilledAttributesByIds = async (
     filledAttributesIds: IFilledServiceAttributeModel['id'][],
-  ): Promise<Record<string, IFilledServiceAttributeModel> | EDbStatus.NOT_FOUND> => {
+  ): Promise<Record<string, IDetailedFilledServiceAttribute> | EDbStatus.NOT_FOUND> => {
     const filledAttributes = await this.readAll()
-    if (!filledAttributes) return EDbStatus.NOT_FOUND
+    const attributes = await this.serviceAttribute.readAll()
+    if (!filledAttributes || !attributes) return EDbStatus.NOT_FOUND
 
     const isSomeFilledAttributeNotExists = filledAttributesIds.some(id => !filledAttributes[id])
     if (isSomeFilledAttributeNotExists) return EDbStatus.NOT_FOUND
 
-    return pick(filledAttributes, filledAttributesIds)
+    return Object.values(pick(filledAttributes, filledAttributesIds)).reduce(
+      (result: Record<string, IDetailedFilledServiceAttribute>, filledAttribute) => {
+        result[filledAttribute.id] = {
+          ...filledAttribute,
+          serviceAttribute: attributes[filledAttribute.serviceAttributeId]!,
+        }
+
+        return result
+      },
+      {},
+    )
   }
 
   getAttributesByFilledAttributesIds = async (
