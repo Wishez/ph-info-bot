@@ -24,6 +24,21 @@ query Provider {
   }
 }
 
+query ProviderById {
+  providerById(id: "d22b16ca-f948-4b4f-b775-72da1fb85e6f") {
+    description
+    id
+    services {
+      id
+      categoryId
+    }
+    user {
+      id
+      name
+    }
+  }
+}
+
 mutation DeleteProvider {
   deleteProvider(providerId: "c03dc6b3-c4ed-4f69-bc21-a3f3feaf5e7a")
 }

@@ -63,6 +63,33 @@ export class ProviderResolver {
     }
   }
 
+  @Query(() => ProviderSchema || GraphQLError)
+  async providerById(@Arg('id') id: string): Promise<ProviderSchema | GraphQLError> {
+    const provider = await ProviderResolver.provider.read(id)
+
+    if (!provider) {
+      return new GraphQLError(`Provider with id ${id} is not found`)
+    }
+
+    const user = await ProviderResolver.provider.getUser(provider.id)
+
+    if (user === EDbStatus.NOT_FOUND) {
+      return new GraphQLError(`User with ${id} is not found`)
+    }
+
+    const services = await ProviderResolver.provider.getProvidedServices(provider.id)
+
+    if (services === EDbStatus.NOT_FOUND) {
+      return new GraphQLError(`Not found services for provider`)
+    }
+
+    return {
+      ...provider,
+      user,
+      services: Object.values(services),
+    }
+  }
+
   @Mutation(() => String || GraphQLError)
   async createProvider(
     @Arg('providerInfo') providerInfo: ProviderCreation,
