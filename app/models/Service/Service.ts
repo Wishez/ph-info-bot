@@ -54,11 +54,48 @@ export class Service extends CrudOperations<IServiceModel> {
     return serviceCategory
   }
 
+  create = async (model: Omit<IServiceModel, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const creationState = await super.create(model)
+
+    if (creationState.status === EDbStatus.OK) {
+      const bindingCategoryStatus = await this.bindServiceCategory(
+        creationState.id,
+        model.categoryId,
+      )
+
+      return bindingCategoryStatus === EDbStatus.OK
+        ? creationState
+        : {
+            id: creationState.id,
+            status: EDbStatus.ERROR,
+            message: "Can't bind category to service, but service was created",
+          }
+    }
+
+    return creationState
+  }
+
   bindServiceCategory = async (serviceId: IServiceModel['id'], categoryId: IServiceModel['id']) => {
     const category = await this.serviceCategory.read(categoryId)
-    if (!category) return EDbStatus.NOT_FOUND
+    const service = await this.read(serviceId)
+    if (!(category && service)) return EDbStatus.NOT_FOUND
 
-    return await this.update(serviceId, { categoryId })
+    const previousCategory = await this.serviceCategory.read(service.categoryId)
+    if (!previousCategory) return EDbStatus.NOT_FOUND
+
+    const updatingPreviousCategoryStatus = await this.serviceCategory.update(service.categoryId, {
+      servicesIds: without(previousCategory.servicesIds, serviceId),
+    })
+    const updatingServiceStatus = await this.update(serviceId, { categoryId })
+    const updatingCategoryStatus = await this.serviceCategory.update(categoryId, {
+      servicesIds: uniq([...(category.servicesIds || []), serviceId]),
+    })
+
+    return [updatingPreviousCategoryStatus, updatingCategoryStatus, updatingServiceStatus].every(
+      status => status === EDbStatus.OK,
+    )
+      ? EDbStatus.OK
+      : EDbStatus.ERROR
   }
 
   bindServiceAttributes = async (

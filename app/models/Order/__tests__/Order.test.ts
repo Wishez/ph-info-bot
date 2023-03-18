@@ -18,8 +18,10 @@ describe('order', () => {
     expect(order.modelNamespace.startsWith('bot.order')).toBeTruthy()
   })
 
-  const clientTelegramId = uniqueId('userTelegramId')
-  const providerTelegramId = uniqueId('userTelegramId')
+  const clientTelegramId = Math.round(Math.random() * 100000)
+
+  const providerTelegramId = Math.round(Math.random() * 100000)
+
   const name = uniqueId('userName')
   const description = uniqueId('description')
   const serviceName = uniqueId('serviceName')

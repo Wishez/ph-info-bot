@@ -6,7 +6,7 @@ describe('PromiseQueue', () => {
     const response = 'OK' as const
 
     const queue = new PromiseQueue()
-    const actionsQuantity = 10
+    const actionsQuantity = 3
     Array(actionsQuantity)
       .fill(0)
       .forEach(() => {

@@ -1,0 +1,1 @@
+export { getUserPhoto } from './getUserPhoto'

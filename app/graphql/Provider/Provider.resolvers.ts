@@ -3,14 +3,13 @@ import typeQl from 'type-graphql'
 import { EDbStatus } from '../../db/types'
 import { Provider } from '../../models/Provider/Provider'
 import { IProviderModel } from '../../models/Provider/types'
+import { ServiceResolver } from '../Service/Service.resolvers'
 import { UserSchema } from '../User/User.schema'
 import {
-  BindingProviderServices,
   ProviderCreation,
   ProviderListSchema,
   ProviderSchema,
   ProviderUpdating,
-  UnmountingProviderServices,
 } from './Provider.schema'
 
 const { Query, Resolver, Arg, Mutation } = typeQl
@@ -37,56 +36,30 @@ export class ProviderResolver {
   }
 
   @Query(() => ProviderSchema || GraphQLError)
-  async provider(@Arg('telegramId') telegramId: string): Promise<ProviderSchema | GraphQLError> {
-    const provider = await ProviderResolver.provider.getProviderByUserTelegramId(telegramId)
-
-    if (provider === EDbStatus.NOT_FOUND) {
-      return new GraphQLError(`Provider with ${telegramId} is not found`)
-    }
-
-    const user = await ProviderResolver.provider.getUser(provider.id)
-
-    if (user === EDbStatus.NOT_FOUND) {
-      return new GraphQLError(`User with ${telegramId} is not found`)
-    }
-
-    const services = await ProviderResolver.provider.getProvidedServices(provider.id)
-
-    if (services === EDbStatus.NOT_FOUND) {
-      return new GraphQLError(`Not found services for provider`)
-    }
-
-    return {
-      ...provider,
-      user,
-      services: Object.values(services),
-    }
-  }
-
-  @Query(() => ProviderSchema || GraphQLError)
-  async providerById(@Arg('id') id: string): Promise<ProviderSchema | GraphQLError> {
+  async provider(@Arg('id') id: string): Promise<ProviderSchema | GraphQLError> {
     const provider = await ProviderResolver.provider.read(id)
 
     if (!provider) {
       return new GraphQLError(`Provider with id ${id} is not found`)
     }
 
-    const user = await ProviderResolver.provider.getUser(provider.id)
+    const user = await ProviderResolver.provider.getUser(id)
 
     if (user === EDbStatus.NOT_FOUND) {
-      return new GraphQLError(`User with ${id} is not found`)
+      return new GraphQLError(`A user of a provider with id ${id} was not found`)
     }
 
-    const services = await ProviderResolver.provider.getProvidedServices(provider.id)
+    const serviceResolver = new ServiceResolver()
+    const service = await serviceResolver.service(provider.serviceId)
 
-    if (services === EDbStatus.NOT_FOUND) {
-      return new GraphQLError(`Not found services for provider`)
+    if (service instanceof GraphQLError) {
+      return new GraphQLError(`Not found service of provider with id ${id}`)
     }
 
     return {
       ...provider,
       user,
-      services: Object.values(services),
+      service,
     }
   }
 
@@ -94,10 +67,7 @@ export class ProviderResolver {
   async createProvider(
     @Arg('providerInfo') providerInfo: ProviderCreation,
   ): Promise<GraphQLError | IProviderModel['id']> {
-    const { status, id } = await ProviderResolver.provider.create({
-      ...providerInfo,
-      servicesIds: [],
-    })
+    const { status, id } = await ProviderResolver.provider.create(providerInfo)
 
     if (status === EDbStatus.OK) return id
 
@@ -113,58 +83,19 @@ export class ProviderResolver {
 
   @Mutation(() => ProviderSchema || false)
   async updateProvider(
-    @Arg('telegramId') telegramId: string,
+    @Arg('id') id: string,
     @Arg('providerInfo') providerInfo: ProviderUpdating,
   ): Promise<ProviderSchema | false> {
-    const provider = await ProviderResolver.provider.getProviderByUserTelegramId(telegramId)
-    if (provider === EDbStatus.NOT_FOUND) return false
+    const provider = await ProviderResolver.provider.read(id)
+    if (!provider) return false
 
-    const status = await ProviderResolver.provider.update(provider.id, providerInfo)
+    const status = await ProviderResolver.provider.update(id, providerInfo)
     const providerResolver = new ProviderResolver()
-    const nextProvider = await providerResolver.provider(telegramId)
+    const nextProvider = await providerResolver.provider(id)
 
     if (status !== EDbStatus.OK || nextProvider instanceof GraphQLError) {
       return false
     }
-
-    return nextProvider
-  }
-
-  @Mutation(() => ProviderSchema || false)
-  async bindProviderServices(
-    @Arg('providerId') providerId: string,
-    @Arg('providerInfo') providerInfo: BindingProviderServices,
-  ): Promise<ProviderSchema | false> {
-    const status = await ProviderResolver.provider.bindServices(
-      providerId,
-      providerInfo.servicesIds,
-    )
-    const user = await ProviderResolver.provider.getUser(providerId)
-    if (user === EDbStatus.NOT_FOUND || status !== EDbStatus.OK) return false
-
-    const providerResolver = new ProviderResolver()
-    const nextProvider = await providerResolver.provider(user.telegramId)
-    if (nextProvider instanceof GraphQLError) return false
-
-    return nextProvider
-  }
-
-  @Mutation(() => ProviderSchema || false)
-  async unmountProviderServices(
-    @Arg('providerId') providerId: string,
-    @Arg('providerInfo') providerInfo: UnmountingProviderServices,
-  ): Promise<ProviderSchema | false> {
-    const status = await ProviderResolver.provider.unmountServices(
-      providerId,
-      providerInfo.servicesIds,
-    )
-    const user = await ProviderResolver.provider.getUser(providerId)
-    if (user === EDbStatus.NOT_FOUND || status !== EDbStatus.OK) return false
-
-    const providerResolver = new ProviderResolver()
-    const nextProvider = await providerResolver.provider(user.telegramId)
-
-    if (nextProvider instanceof GraphQLError) return false
 
     return nextProvider
   }

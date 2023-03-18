@@ -71,7 +71,7 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
     })) as EDbStatus
   }
 
-  delete = async (id: GModel['id']) => {
+  async delete(id: GModel['id']) {
     return (await this.queue.add(async () => {
       const models = await this.readAll()
       if (!models || !models[id]) return EDbStatus.NOT_FOUND

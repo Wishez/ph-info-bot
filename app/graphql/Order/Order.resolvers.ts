@@ -38,7 +38,7 @@ export class OrderResolver {
         const client = (await OrderResolver.clientResolver.clientById(
           order.clientId,
         )) as ClientSchema
-        const provider = (await OrderResolver.providerResolver.providerById(
+        const provider = (await OrderResolver.providerResolver.provider(
           order.providerId,
         )) as ProviderSchema
         const service = (await OrderResolver.serviceResolver.service(
@@ -64,17 +64,16 @@ export class OrderResolver {
     }
 
     const client = await OrderResolver.clientResolver.clientById(order.clientId)
-    const provider = await OrderResolver.providerResolver.providerById(order.providerId)
+    const provider = await OrderResolver.providerResolver.provider(order.providerId)
     const service = await OrderResolver.serviceResolver.service(order.serviceId)
     const filledServicesAttributes = await OrderResolver.order.getFilledAttributes(order.id)
 
     if (
       client instanceof GraphQLError ||
       provider instanceof GraphQLError ||
-      service instanceof GraphQLError ||
-      filledServicesAttributes === EDbStatus.NOT_FOUND
+      service instanceof GraphQLError
     ) {
-      return new GraphQLError("Can't get client, provider, service, or filled attributes")
+      return new GraphQLError("Can't get client, provider, or service")
     }
 
     return {
@@ -82,7 +81,10 @@ export class OrderResolver {
       service,
       client,
       provider,
-      filledServicesAttributes: Object.values(filledServicesAttributes),
+      filledServicesAttributes:
+        filledServicesAttributes === EDbStatus.NOT_FOUND
+          ? []
+          : Object.values(filledServicesAttributes),
     }
   }
 
@@ -90,11 +92,11 @@ export class OrderResolver {
   async createOrder(
     @Arg('orderInfo') orderInfo: OrderCreation,
   ): Promise<GraphQLError | IOrderModel['id']> {
-    const { status, id } = await OrderResolver.order.create(orderInfo)
+    const { status, id, message } = await OrderResolver.order.create(orderInfo)
 
     if (status === EDbStatus.OK) return id
 
-    return new GraphQLError("Can't create order")
+    return new GraphQLError(`Can't create order: ${message}`)
   }
 
   @Mutation(() => Boolean)
@@ -145,5 +147,33 @@ export class OrderResolver {
     }
 
     return nextOrder
+  }
+
+  @Query(() => String, { nullable: true })
+  async checkOrderExistence(
+    @Arg('providerId') providerId: string,
+    @Arg('clientId') clientId: string,
+  ): Promise<string | undefined> {
+    const orders = await this.orders()
+
+    return orders.find(order => order.provider.id === providerId && order.client.id === clientId)
+      ?.id
+  }
+
+  @Query(() => Boolean)
+  async isAllRequiredAttributesFilled(@Arg('id') id: string): Promise<boolean> {
+    const order = await this.order(id)
+
+    if (order instanceof GraphQLError) return false
+    console.log(
+      order.filledServicesAttributes,
+      order.filledServicesAttributes.every(({ serviceAttribute, value }) =>
+        serviceAttribute.isRequired ? Boolean(value) : true,
+      ),
+    )
+
+    return order.filledServicesAttributes.every(({ serviceAttribute, value }) =>
+      serviceAttribute.isRequired ? Boolean(value) : true,
+    )
   }
 }

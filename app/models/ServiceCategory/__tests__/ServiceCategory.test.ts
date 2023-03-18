@@ -41,7 +41,7 @@ describe('ServiceCategory', () => {
   })
 
   test('read', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
     const serviceCategory = new ServiceCategory()
 
     const modelFromModels = await getServiceCategoryByName(serviceCategory, name)
@@ -51,6 +51,7 @@ describe('ServiceCategory', () => {
 
     expect(model?.description).toBe(description)
     expect(model?.name).toBe(name)
+    expect(Array.isArray(model?.servicesIds)).toBeTruthy()
   })
 
   test('update', async () => {
@@ -70,7 +71,7 @@ describe('ServiceCategory', () => {
   })
 
   test('bindSubCategories', async () => {
-    expect.assertions(4)
+    expect.assertions(5)
     const serviceCategory = new ServiceCategory()
     const model = await getServiceCategoryByName(serviceCategory, name)
     if (!model?.id) return
@@ -90,11 +91,12 @@ describe('ServiceCategory', () => {
     expect(status).toBe(EDbStatus.OK)
 
     const nextModel = await serviceCategory.read(model.id)
-
-    if (!nextModel) return
+    const nextSubCategory = await serviceCategory.read(subCategory.id)
+    if (!nextModel || !nextSubCategory) return
 
     expect(nextModel.name).toBe(name)
     expect(nextModel.subcategoriesIds?.includes(subCategory.id)).toBeTruthy()
+    expect(nextSubCategory.parentId).toBe(nextModel.id)
   })
 
   test('getSubCategories', async () => {
@@ -111,6 +113,28 @@ describe('ServiceCategory', () => {
     if (!(subCategories instanceof Object)) return
 
     expect(subCategories[subCategory.id]?.id).toBe(subCategory.id)
+  })
+
+  test('unmountSubCategories', async () => {
+    expect.assertions(4)
+    const serviceCategory = new ServiceCategory()
+    const model = await getServiceCategoryByName(serviceCategory, name)
+    if (!model?.id) return
+
+    const subCategory = await getServiceCategoryByName(serviceCategory, secondName)
+    if (!subCategory) return
+
+    const status = await serviceCategory.unmountSubCategories(model.id, [subCategory.id])
+
+    expect(status).toBe(EDbStatus.OK)
+
+    const nextModel = await serviceCategory.read(model.id)
+    const nextSubCategory = await serviceCategory.read(subCategory.id)
+    if (!nextModel || !nextSubCategory) return
+
+    expect(nextModel.name).toBe(name)
+    expect(nextModel.subcategoriesIds?.length).toBe(0)
+    expect(nextSubCategory.parentId).toBeUndefined()
   })
 
   test('delete', async () => {

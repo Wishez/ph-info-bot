@@ -1,11 +1,12 @@
 import { EDbStatus } from '../../db/types'
 import { EClientRank } from '../Client/types/EClientRank'
+import { IUserModel } from '../User/types'
 import { Order } from './Order'
 
 interface ICreatingTestOrderOptions {
   userName: string
-  clientTelegramId: string
-  providerTelegramId: string
+  clientTelegramId: IUserModel['telegramId']
+  providerTelegramId: IUserModel['telegramId']
   description: string
   attributeName: string
   serviceName: string
@@ -64,7 +65,7 @@ export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
   const { status: providerCreationStatus, id: providerId } = await order.provider.create({
     userId: providerUserId,
     description,
-    servicesIds: [serviceId],
+    serviceId,
   })
   expect(providerCreationStatus).toBe(EDbStatus.OK)
 

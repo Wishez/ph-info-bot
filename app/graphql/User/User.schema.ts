@@ -20,7 +20,7 @@ export class UserSchema implements IUserModel {
   email?: string
 
   @Field()
-  telegramId!: string
+  telegramId!: number
 
   @Field()
   name!: string
@@ -30,6 +30,9 @@ export class UserSchema implements IUserModel {
 
   @Field({ nullable: true })
   updatedAt?: string
+
+  @Field({ nullable: true })
+  username?: string
 }
 
 @InputType()
@@ -49,11 +52,15 @@ export class UserCreation implements Omit<IUserModel, 'id' | 'createdAt'> {
   @IsUserNotExistedWithTelegramId({
     message: 'User with telegramId: $value is already existed',
   })
-  telegramId!: string
+  telegramId!: number
 
   @Field()
   @IsString()
   name!: string
+
+  @Field({ nullable: true })
+  @IsString()
+  username?: string
 }
 
 @InputType()
@@ -72,4 +79,8 @@ export class UserUpdating {
   @Field({ nullable: true })
   @IsString()
   name?: string
+
+  @Field({ nullable: true })
+  @IsString()
+  username?: string
 }

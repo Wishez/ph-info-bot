@@ -1,0 +1,1 @@
+export { isGarphqlErrorResponse } from './isGarphqlErrorResponse'

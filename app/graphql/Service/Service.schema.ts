@@ -1,6 +1,7 @@
 import { IsString } from 'class-validator'
 import typeQl from 'type-graphql'
-import { IServiceModel } from '../../models/Service/types'
+import type { IServiceModel } from '../../models/Service/types'
+import { ProviderListSchema } from '../Provider/Provider.schema'
 import { ServiceAttributeSchema } from '../ServiceAttribute/ServiceAttribute.schema'
 import { AreAttributesExisted } from '../ServiceAttribute/validators'
 import { ServiceCategorySchema } from '../ServiceCategory/ServiceCategory.schema'
@@ -38,8 +39,9 @@ export class ServiceListSchema implements IServiceModel {
   providersIds!: string[]
 }
 
+export type TServiceSchema = Omit<IServiceModel, 'attributesIds' | 'categoryId' | 'providersIds'>
 @ObjectType()
-export class ServiceSchema implements Omit<IServiceModel, 'attributesIds' | 'categoryId'> {
+export class ServiceSchema implements TServiceSchema {
   @Field(() => ID)
   id!: string
 
@@ -64,9 +66,8 @@ export class ServiceSchema implements Omit<IServiceModel, 'attributesIds' | 'cat
   @Field(() => [ServiceAttributeSchema])
   attributes!: ServiceAttributeSchema[]
 
-  // TODO replace on ProviderListSchema if needed
-  @Field(() => [String])
-  providersIds!: string[]
+  @Field(() => [ProviderListSchema])
+  providers!: ProviderListSchema[]
 }
 
 @InputType()

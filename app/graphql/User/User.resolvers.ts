@@ -21,7 +21,7 @@ export class UserResolver {
   }
 
   @Query(() => UserSchema || GraphQLError)
-  async user(@Arg('telegramId') telegramId: string): Promise<UserSchema | GraphQLError> {
+  async user(@Arg('telegramId') telegramId: number): Promise<UserSchema | GraphQLError> {
     const client = await UserResolver.user.getUserByTelegramId(telegramId)
 
     if (!client) {
@@ -51,7 +51,7 @@ export class UserResolver {
 
   @Mutation(() => UserSchema || false)
   async updateUser(
-    @Arg('telegramId') telegramId: string,
+    @Arg('telegramId') telegramId: number,
     @Arg('userInfo') userInfo: UserUpdating,
   ): Promise<UserSchema | false> {
     const userModel = await UserResolver.user.getUserByTelegramId(telegramId)

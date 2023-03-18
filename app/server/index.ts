@@ -1,7 +1,5 @@
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
 import { createYoga } from 'graphql-yoga'
-import { bot } from '../bot'
-import { Env } from '../config/Env'
 import { getSchema } from '../graphql'
 
 export const fastify = Fastify({ logger: true })
@@ -52,7 +50,7 @@ export const startServer = async () => {
       fastify.log.error(err)
       process.exit(1)
     } else {
-      bot.setWebHook(Env.serverUrl)
+      // bot.setWebHook(Env.serverUrl)
     }
   })
 }

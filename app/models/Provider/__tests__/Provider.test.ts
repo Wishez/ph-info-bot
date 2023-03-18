@@ -2,10 +2,10 @@ import isEmpty from 'lodash/isEmpty'
 import uniqueId from 'lodash/uniqueId'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
-import { getServiceByName } from '../../Service/utils'
 import { ServiceCategory } from '../../ServiceCategory/ServiceCategory'
 import { User } from '../../User/User'
 import { Provider } from '../Provider'
+import { createTestProvider } from '../testUtils'
 
 describe('provider', () => {
   test('init', () => {
@@ -19,25 +19,22 @@ describe('provider', () => {
     expect(provider.modelNamespace.startsWith('bot.provider')).toBeTruthy()
   })
 
-  const telegramId = uniqueId('userTelegramId')
+  const telegramId = Math.round(Math.random() * 100000)
+
   const name = uniqueId('userName')
   const description = uniqueId('providerDescription')
   const updatedDescription = uniqueId('providerDescription')
   const serviceName = uniqueId('serviceName')
   const categoryName = uniqueId('serviceCategoryName')
   test('create', async () => {
-    expect.assertions(2)
-    const provider = new Provider()
-    const { status: userCreationStatus } = await provider.user.create({ name, telegramId })
-
-    expect(userCreationStatus).toBe(EDbStatus.OK)
-
-    const user = await provider.user.getUserByTelegramId(telegramId)
-    if (!user) return
-
-    const { status } = await provider.create({ userId: user.id, description, servicesIds: [] })
-
-    expect(status).toBe(EDbStatus.OK)
+    expect.assertions(6)
+    await createTestProvider({
+      name,
+      description,
+      telegramId,
+      serviceName,
+      categoryName,
+    })
   })
 
   test('read all', async () => {
@@ -53,11 +50,14 @@ describe('provider', () => {
     expect.assertions(5)
     const provider = new Provider()
 
-    const model = await provider.getProviderByUserTelegramId(telegramId)
-    if (model === EDbStatus.NOT_FOUND) return
+    const models = await provider.getProvidersByUserTelegramId(telegramId)
+    if (models === EDbStatus.NOT_FOUND) return
+
+    const model = models[0]
+    if (!model) return
 
     expect(typeof model.id).toBe('string')
-    expect(model.servicesIds.length).toBe(0)
+    expect(typeof model.serviceId).toBe('string')
     expect(typeof model.createdAt).toBe('string')
     expect(typeof model.userId).toBe('string')
     expect(model.description).toBe(description)
@@ -66,8 +66,11 @@ describe('provider', () => {
   test('update', async () => {
     expect.assertions(2)
     const provider = new Provider()
-    const model = await provider.getProviderByUserTelegramId(telegramId)
-    if (model === EDbStatus.NOT_FOUND) return
+    const models = await provider.getProvidersByUserTelegramId(telegramId)
+    if (models === EDbStatus.NOT_FOUND) return
+
+    const model = models[0]
+    if (!model) return
 
     const status = await provider.update(model.id, { description: updatedDescription })
 
@@ -81,8 +84,11 @@ describe('provider', () => {
   test('getUser', async () => {
     expect.assertions(2)
     const provider = new Provider()
-    const model = await provider.getProviderByUserTelegramId(telegramId)
-    if (model === EDbStatus.NOT_FOUND) return
+    const models = await provider.getProvidersByUserTelegramId(telegramId)
+    if (models === EDbStatus.NOT_FOUND) return
+
+    const model = models[0]
+    if (!model) return
 
     const userModel = await provider.getUser(model.id)
 
@@ -92,80 +98,40 @@ describe('provider', () => {
     expect(userModel.name).toBe(name)
   })
 
-  test('bindServices', async () => {
-    expect.assertions(4)
+  test('getProvidedService', async () => {
+    expect.assertions(1)
     const provider = new Provider()
-    const serviceCategory = new ServiceCategory()
-    const model = await provider.getProviderByUserTelegramId(telegramId)
-    if (model === EDbStatus.NOT_FOUND) return
+    const models = await provider.getProvidersByUserTelegramId(telegramId)
+    if (models === EDbStatus.NOT_FOUND) return
 
-    const { status: serviceCategoryCreationStatus, id: categoryId } = await serviceCategory.create({
-      name: categoryName,
-      description,
-    })
-    expect(serviceCategoryCreationStatus).toBe(EDbStatus.OK)
+    const model = models[0]
+    if (!model) return
 
-    const { status: serviceCreationStatus, id: serviceId } = await provider.service.create({
-      name: serviceName,
-      description,
-      categoryId,
-      attributesIds: [],
-      providersIds: [],
-    })
-    expect(serviceCreationStatus).toBe(EDbStatus.OK)
+    const providedService = await provider.getProvidedService(model.id)
+    if (providedService === EDbStatus.NOT_FOUND) return
 
-    const bindingStatus = await provider.bindServices(model.id, [serviceId])
-    expect(bindingStatus).toBe(EDbStatus.OK)
-
-    const nextModel = await provider.read(model.id)
-
-    expect(nextModel?.servicesIds[0]).toBe(serviceId)
-  })
-
-  test('getProvidedServices', async () => {
-    expect.assertions(2)
-    const provider = new Provider()
-    const model = await provider.getProviderByUserTelegramId(telegramId)
-    if (model === EDbStatus.NOT_FOUND) return
-
-    const service = await getServiceByName(provider.service, serviceName)
-    if (!service) return
-
-    const services = await provider.getProvidedServices(model.id)
-    if (services === EDbStatus.NOT_FOUND) return
-
-    expect(services[service.id]?.providersIds.includes(model.id)).toBeTruthy()
-    expect(Object.values(services).length).toBe(1)
-  })
-
-  test('unmountServices', async () => {
-    expect.assertions(3)
-    const provider = new Provider()
-    const model = await provider.getProviderByUserTelegramId(telegramId)
-    if (model === EDbStatus.NOT_FOUND) return
-
-    const service = await getServiceByName(provider.service, serviceName)
-    if (!service) return
-
-    const unmountingServicesStatus = await provider.unmountServices(model.id, [service.id])
-    expect(unmountingServicesStatus).toBe(EDbStatus.OK)
-
-    const services = await provider.getProvidedServices(model.id)
-    if (services === EDbStatus.NOT_FOUND) return
-
-    expect(services[service.id]).toBeUndefined()
-    expect(Object.values(services).length).toBe(0)
+    expect(providedService.providersIds.includes(model.id)).toBeTruthy()
   })
 
   test('delete', async () => {
-    expect.assertions(1)
+    expect.assertions(3)
     const provider = new Provider()
-    const model = await provider.getProviderByUserTelegramId(telegramId)
-    if (model === EDbStatus.NOT_FOUND) return
+    const models = await provider.getProvidersByUserTelegramId(telegramId)
+    if (models === EDbStatus.NOT_FOUND) return
+
+    const model = models[0]
+    if (!model) return
 
     const status = await provider.delete(model.id)
 
     expect(status).toBe(EDbStatus.OK)
+
+    const user = await provider.user.read(model.userId)
+    const service = await provider.service.read(model.serviceId)
+    if (!(service && user)) return
+
+    expect(user.providersIds?.includes(model.id)).toBeFalsy()
+    expect(service.providersIds?.includes(model.id)).toBeFalsy()
   })
 
   afterAll(() => {

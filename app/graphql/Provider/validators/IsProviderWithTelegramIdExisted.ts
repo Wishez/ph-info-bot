@@ -1,15 +1,16 @@
 import type { ValidationOptions, ValidatorConstraintInterface } from 'class-validator'
 import { registerDecorator, ValidatorConstraint } from 'class-validator'
+import { EDbStatus } from '../../../db/types'
 import { Provider } from '../../../models/Provider/Provider'
 import { IUserModel } from '../../../models/User/types'
 
 @ValidatorConstraint({ async: true })
 export class IsProviderWithTelegramIdExistedValidator implements ValidatorConstraintInterface {
-  async validate(telegramId: IUserModel['id']) {
+  async validate(telegramId: IUserModel['telegramId']) {
     const provider = new Provider()
-    const providerModel = await provider.getProviderByUserTelegramId(telegramId)
+    const providers = await provider.getProvidersByUserTelegramId(telegramId)
 
-    return Boolean(providerModel)
+    return providers !== EDbStatus.NOT_FOUND && Boolean(providers.length)
   }
 }
 

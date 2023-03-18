@@ -3,6 +3,7 @@ import uniqueId from 'lodash/uniqueId'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
 import { EClientRank } from '../../Client/types/EClientRank'
+import { createTestProvider } from '../../Provider/testUtils'
 import { Chat } from '../Chat'
 import { EChatMessageActor } from '../types/EChatMessageActor'
 
@@ -17,8 +18,10 @@ describe('Chat', () => {
     expect(chat.modelNamespace.startsWith('bot.chat')).toBeTruthy()
   })
 
-  const clientTelegramId = uniqueId('userTelegramId')
-  const providerTelegramId = uniqueId('userTelegramId')
+  const clientTelegramId = Math.round(Math.random() * 100000)
+
+  const providerTelegramId = Math.round(Math.random() * 100000)
+
   const name = uniqueId('userName')
   const message = uniqueId('message')
   const updatedMessage = uniqueId('message')
@@ -33,7 +36,7 @@ describe('Chat', () => {
   }
 
   test('create', async () => {
-    expect.assertions(5)
+    expect.assertions(10)
     const chat = new Chat()
     const { status: clientUserCreationStatus, id: clientUserId } = await chat.client.user.create({
       name,
@@ -41,27 +44,29 @@ describe('Chat', () => {
     })
     expect(clientUserCreationStatus).toBe(EDbStatus.OK)
 
-    const { status: providerUserCreationStatus, id: providerUserId } =
-      await chat.provider.user.create({
-        name,
-        telegramId: providerTelegramId,
-      })
-    expect(providerUserCreationStatus).toBe(EDbStatus.OK)
-
     const { status: clientCreationStatus } = await chat.client.create({
       userId: clientUserId,
       rank: EClientRank.NEW,
     })
     expect(clientCreationStatus).toBe(EDbStatus.OK)
 
-    const { status: providerCreationStatus } = await chat.provider.create({
-      userId: providerUserId,
-      servicesIds: [],
+    const providerInfo = await createTestProvider({
+      name,
+      description: '',
+      telegramId: providerTelegramId,
+      serviceName: 'Service',
+      categoryName: 'Category',
+    })
+    if (!providerInfo) return
+
+    const { status: providerCreationStatus, id: providerId } = await chat.provider.create({
+      userId: providerInfo.userId,
+      serviceId: providerInfo.serviceId,
       description: '',
     })
     expect(providerCreationStatus).toBe(EDbStatus.OK)
 
-    const { status } = await chat.create({ clientTelegramId, providerTelegramId })
+    const { status } = await chat.create({ clientTelegramId, providerId })
 
     expect(status).toBe(EDbStatus.OK)
   })
@@ -86,7 +91,7 @@ describe('Chat', () => {
 
     expect(model?.id).toBe(modelFromModels.id)
     expect(model?.clientTelegramId).toBe(clientTelegramId)
-    expect(model?.providerTelegramId).toBe(providerTelegramId)
+    expect(typeof model?.providerId).toBe('string')
   })
 
   test('addMessage', async () => {
@@ -133,7 +138,6 @@ describe('Chat', () => {
     const chat = new Chat()
 
     const chatMessage = await chat.createChatMessage(clientTelegramId, message)
-    if (chatMessage === EDbStatus.NOT_FOUND) return
 
     expect(typeof chatMessage.id).toBe('string')
     expect(typeof chatMessage.createdAt).toBe('string')
@@ -157,6 +161,8 @@ describe('Chat', () => {
     dbClient.deleteNamespace(chat.modelNamespace)
     dbClient.deleteNamespace(chat.client.modelNamespace)
     dbClient.deleteNamespace(chat.provider.modelNamespace)
+    dbClient.deleteNamespace(chat.provider.service.modelNamespace)
+    dbClient.deleteNamespace(chat.provider.service.serviceCategory.modelNamespace)
     dbClient.deleteNamespace(chat.client.user.modelNamespace)
   })
 })

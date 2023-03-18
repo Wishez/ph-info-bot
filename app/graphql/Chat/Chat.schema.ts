@@ -6,7 +6,8 @@ import { IChatMessage } from '../../models/Chat/types/IChatMessage'
 import { ClientSchema } from '../Client/Client.schema'
 import { IsClientWithTelegramIdExisted } from '../Client/validators'
 import { ProviderSchema } from '../Provider/Provider.schema'
-import { IsProviderWithTelegramIdExisted } from '../Provider/validators'
+import { IsProviderExisted } from '../Provider/validators'
+import { IsUserExists } from '../User/validators'
 
 const { Field, InputType, ObjectType, ID } = typeQl
 
@@ -28,7 +29,7 @@ export class ChatMessageSchema implements IChatMessage {
 }
 
 @ObjectType()
-export class ChatSchema implements Omit<IChatModel, 'clientTelegramId' | 'providerTelegramId'> {
+export class ChatSchema implements Omit<IChatModel, 'clientTelegramId' | 'providerId'> {
   @Field(() => ID)
   id!: string
 
@@ -52,11 +53,11 @@ export class ChatSchema implements Omit<IChatModel, 'clientTelegramId' | 'provid
 export class ChatCreation implements Omit<IChatModel, 'id' | 'createdAt' | 'messagesHistory'> {
   @Field()
   @IsClientWithTelegramIdExisted()
-  clientTelegramId!: string
+  clientTelegramId!: number
 
   @Field()
-  @IsProviderWithTelegramIdExisted()
-  providerTelegramId!: string
+  @IsProviderExisted()
+  providerId!: string
 }
 
 @InputType()
@@ -66,6 +67,6 @@ export class ChatAddingMessage {
   message!: string
 
   @Field()
-  @IsString()
-  telegramId!: string
+  @IsUserExists()
+  telegramId!: number
 }

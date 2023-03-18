@@ -31,7 +31,6 @@ export class Chat extends CrudOperations<IChatModel> {
     if (!chat) return EDbStatus.NOT_FOUND
 
     const chatMessage = await this.createChatMessage(telegramId, message)
-    if (chatMessage === EDbStatus.NOT_FOUND) return EDbStatus.NOT_FOUND
 
     chat.messagesHistory.push(chatMessage)
 
@@ -58,14 +57,13 @@ export class Chat extends CrudOperations<IChatModel> {
     telegramId: IUserModel['telegramId'],
     message: IChatMessage['message'],
   ) => {
-    const provider = await this.provider.getProviderByUserTelegramId(telegramId)
+    const providers = await this.provider.getProvidersByUserTelegramId(telegramId)
     const client = await this.client.getClientByUserTelegramId(telegramId)
-    if (!(provider && client)) return EDbStatus.NOT_FOUND
 
     let sender: EChatMessageActor = EChatMessageActor.CLIENT
     // TODO сделать тест на sender
     if (client !== EDbStatus.NOT_FOUND) sender = EChatMessageActor.CLIENT
-    else if (provider !== EDbStatus.NOT_FOUND) sender = EChatMessageActor.PROVIDER
+    else if (providers !== EDbStatus.NOT_FOUND) sender = EChatMessageActor.PROVIDER
     const chatMessage: IChatMessage = {
       id: uuid(),
       sender,
@@ -79,11 +77,11 @@ export class Chat extends CrudOperations<IChatModel> {
   create = async (
     model: Omit<IChatModel, 'id' | 'createdAt' | 'updatedAt' | 'messagesHistory'>,
   ) => {
-    const { clientTelegramId, providerTelegramId } = model
-    const provider = await this.provider.getProviderByUserTelegramId(providerTelegramId)
+    const { clientTelegramId, providerId } = model
+    const provider = await this.provider.read(providerId)
     const client = await this.client.getClientByUserTelegramId(clientTelegramId)
 
-    if (!(provider && client)) {
+    if (!provider || client === EDbStatus.NOT_FOUND) {
       return {
         id: '',
         status: EDbStatus.ERROR,

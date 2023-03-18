@@ -79,18 +79,22 @@ describe('Service', () => {
   })
 
   test('read', async () => {
-    expect.assertions(3)
+    expect.assertions(4)
     const service = new Service()
 
     const modelFromModels = await getServiceByName(service, name)
     if (!modelFromModels?.id) return
 
-    const model = await service.read(modelFromModels.id)
-    if (!model) return
+    const serviceModel = await service.read(modelFromModels.id)
+    if (!serviceModel) return
 
-    expect(model.name).toBe(name)
-    expect(model.description).toBe(description)
-    expect(typeof model.createdAt).toBe('string')
+    const category = await service.serviceCategory.read(serviceModel.categoryId)
+    if (!category) return
+
+    expect(category.servicesIds.includes(serviceModel.id)).toBeTruthy()
+    expect(serviceModel.name).toBe(name)
+    expect(serviceModel.description).toBe(description)
+    expect(typeof serviceModel.createdAt).toBe('string')
   })
 
   test('update', async () => {
@@ -113,7 +117,7 @@ describe('Service', () => {
   })
 
   test('bindServiceCategory', async () => {
-    expect.assertions(3)
+    expect.assertions(5)
     const service = new Service()
     const model = await getServiceByName(service, name)
     if (!model?.id) return
@@ -124,17 +128,25 @@ describe('Service', () => {
     })
 
     expect(categoryCreationStatus).toBe(EDbStatus.OK)
-    const nextCategory = await getServiceCategoryByName(service.serviceCategory, secondCategoryName)
-    if (!nextCategory) return
 
-    const status = await service.bindServiceCategory(model.id, nextCategory.id)
+    const nextBindingCategory = await getServiceCategoryByName(
+      service.serviceCategory,
+      secondCategoryName,
+    )
+    if (!nextBindingCategory) return
+
+    const status = await service.bindServiceCategory(model.id, nextBindingCategory.id)
 
     expect(status).toBe(EDbStatus.OK)
 
+    const previousCategory = await service.serviceCategory.read(model.categoryId)
     const nextModel = await service.read(model.id)
-    if (!nextModel) return
+    const nextCategoryModel = await service.serviceCategory.read(nextBindingCategory.id)
+    if (!(nextModel && previousCategory && nextCategoryModel)) return
 
-    expect(nextModel.categoryId).toBe(nextCategory.id)
+    expect(nextModel.categoryId).toBe(nextBindingCategory.id)
+    expect(nextCategoryModel.servicesIds.includes(nextModel.id)).toBeTruthy()
+    expect(previousCategory.servicesIds.includes(nextModel.id)).toBeFalsy()
   })
 
   test('bindServiceAttributes', async () => {

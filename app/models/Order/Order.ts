@@ -7,6 +7,7 @@ import { Client } from '../Client/Client'
 import { FilledServiceAttribute } from '../FilledServiceAttribute/FilledServiceAttribute'
 import { IFilledServiceAttributeModel } from '../FilledServiceAttribute/types'
 import { Provider } from '../Provider/Provider'
+import { IProviderModel } from '../Provider/types'
 import { Service } from '../Service/Service'
 import { IUserModel } from '../User/types'
 import { EOrderStatus, IOrderModel } from './types'
@@ -111,14 +112,9 @@ export class Order extends CrudOperations<IOrderModel> {
     const client = await this.client.read(clientId)
     const clientUser = await this.client.getUser(clientId)
     const provider = await this.provider.read(providerId)
-    const providerUser = await this.provider.getUser(providerId)
     const service = await this.service.read(serviceId)
 
-    if (
-      !(client && provider && service) ||
-      clientUser === EDbStatus.NOT_FOUND ||
-      providerUser === EDbStatus.NOT_FOUND
-    ) {
+    if (!(client && provider && service) || clientUser === EDbStatus.NOT_FOUND) {
       return {
         id: '',
         status: EDbStatus.ERROR,
@@ -128,7 +124,7 @@ export class Order extends CrudOperations<IOrderModel> {
 
     const chat = await this.chat.create({
       clientTelegramId: clientUser.telegramId,
-      providerTelegramId: providerUser.telegramId,
+      providerId: provider.id,
     })
 
     const orderCreationState = await super.create({
@@ -145,14 +141,20 @@ export class Order extends CrudOperations<IOrderModel> {
       }
     }
 
+    // Если аттрибутов нет, то создаём заказ
+    if (!service.attributesIds.length) {
+      return { ...orderCreationState, message: null }
+    }
+
+    // Далее, создание аттрибутов по шаблону
     const filledAttributesCreationStates = await Promise.all(
-      service.attributesIds.map(serviceAttributeId => {
-        return this.filledServicesAttribute.create({
+      service.attributesIds.map(serviceAttributeId =>
+        this.filledServicesAttribute.create({
           value: '',
           orderId: orderCreationState.id,
           serviceAttributeId,
-        })
-      }),
+        }),
+      ),
     )
 
     const bindingAttributesStatus = await this.bindFilledAttributes(
@@ -194,22 +196,27 @@ export class Order extends CrudOperations<IOrderModel> {
     if (!user) return EDbStatus.NOT_FOUND
 
     const client = await this.client.getClientByUserTelegramId(telegramId)
-    const provider = await this.provider.getProviderByUserTelegramId(telegramId)
-
-    let customerId: null | string = null
-    if (provider !== EDbStatus.NOT_FOUND) customerId = provider.id
-    if (client !== EDbStatus.NOT_FOUND) customerId = client.id
-    if (!customerId) return EDbStatus.NOT_FOUND
-
+    const providers = await this.provider.getProvidersByUserTelegramId(telegramId)
     const orders = await this.readAll()
     if (!orders) return EDbStatus.NOT_FOUND
 
-    const foundOrders = Object.values(orders).filter(
-      ({ clientId, providerId }) => providerId === customerId || clientId === customerId,
-    )
+    if (providers !== EDbStatus.NOT_FOUND) {
+      const providersMap = Object.values(providers).reduce(
+        (result: Record<IProviderModel['id'], true>, provider) => {
+          result[provider.id] = true
 
-    if (!foundOrders) return EDbStatus.NOT_FOUND
+          return result
+        },
+        {},
+      )
 
-    return foundOrders
+      return Object.values(orders).filter(({ providerId }) => providersMap[providerId])
+    }
+
+    if (client !== EDbStatus.NOT_FOUND) {
+      return Object.values(orders).filter(({ clientId }) => clientId === client.id)
+    }
+
+    return EDbStatus.NOT_FOUND
   }
 }

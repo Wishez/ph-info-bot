@@ -3,11 +3,13 @@ import typeQl from 'type-graphql'
 import { EDbStatus } from '../../db/types'
 import { ServiceCategory } from '../../models/ServiceCategory/ServiceCategory'
 import { IServiceCategoryModel } from '../../models/ServiceCategory/types'
+import { ServiceResolver } from '../Service/Service.resolvers'
 import {
   ServiceCategoryBindingSubcategories,
   ServiceCategoryCreation,
   ServiceCategoryListSchema,
   ServiceCategorySchema,
+  ServiceCategoryUnmountingSubcategories,
   ServiceCategoryUpdating,
 } from './ServiceCategory.schema'
 
@@ -33,18 +35,17 @@ export class ServiceCategoryResolver {
       return new GraphQLError(`Service Category with ${id} is not found`)
     }
 
-    const { subcategoriesIds } = serviceCategory
+    const { subcategoriesIds, servicesIds } = serviceCategory
     const serviceCategories = await ServiceCategoryResolver.serviceCategory.readAll()
+    const services = await ServiceResolver.service.readAll()
 
-    if (serviceCategories && subcategoriesIds) {
-      return {
-        ...serviceCategory,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        subcategories: subcategoriesIds.map(categoryId => serviceCategories[categoryId]!),
-      }
+    return {
+      ...serviceCategory,
+      subcategories: serviceCategories
+        ? subcategoriesIds?.map(categoryId => serviceCategories[categoryId]!) || []
+        : [],
+      services: services ? servicesIds.map(serviceId => services[serviceId]!) : [],
     }
-
-    return serviceCategory
   }
 
   @Mutation(() => String || GraphQLError)
@@ -89,6 +90,27 @@ export class ServiceCategoryResolver {
     if (!serviceCategory) return false
 
     const status = await ServiceCategoryResolver.serviceCategory.bindSubCategories(
+      id,
+      serviceCategoryInfo.subcategoriesIds,
+    )
+    const nextServiceCategory = await this.serviceCategory(id)
+
+    if (status !== EDbStatus.OK || nextServiceCategory instanceof GraphQLError) {
+      return false
+    }
+
+    return nextServiceCategory
+  }
+
+  @Mutation(() => ServiceCategorySchema || false)
+  async unmountSubcategoriesFromCategory(
+    @Arg('id') id: string,
+    @Arg('serviceCategoryInfo') serviceCategoryInfo: ServiceCategoryUnmountingSubcategories,
+  ): Promise<ServiceCategorySchema | false> {
+    const serviceCategory = await ServiceCategoryResolver.serviceCategory.read(id)
+    if (!serviceCategory) return false
+
+    const status = await ServiceCategoryResolver.serviceCategory.unmountSubCategories(
       id,
       serviceCategoryInfo.subcategoriesIds,
     )

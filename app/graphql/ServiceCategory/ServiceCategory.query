@@ -1,8 +1,19 @@
 query ServiceCategory {
-  serviceCategory(id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20") {
+  serviceCategory(id: "e767c862-2db8-4fde-9351-25a327d49266") {
     id
     name
     description
+    services {
+      id
+      name
+      categoryId
+    }
+    subcategories {
+      id
+      servicesIds
+      description
+      name
+    }
   }
 }
 
@@ -11,36 +22,73 @@ query ServiceCategories {
     id
     name
     description
+    parentId
+    updatedAt
+    subcategoriesIds
+    servicesIds
   }
 }
 
-mutation CreateServiceCategory {
+mutation CreateCurrencyServiceCategory {
   createServiceCategory(
-    serviceCategoryInfo: {description: "Что-то в этой категории можно делать", name: "Second category"}
+    serviceCategoryInfo: {
+      description: "",
+      name: "Обмен валюты"
+    }
+  )
+}
+
+mutation CreateRentServiceCategory {
+    createServiceCategory(
+    serviceCategoryInfo: {
+      description: "",
+      name: "Аренда"
+    }
   )
 }
 
 mutation UpdateServiceCategory {
   updateServiceCategory(
-    id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20"
-    serviceCategoryInfo: {description: "updated: Что-то в этой категории можно делать"}
+    id: "a8912820-abd6-4996-8d4d-3b36326ab315"
+    serviceCategoryInfo: {
+    }
   ) {
+    name
     description
   }
 }
 
 mutation DeleteServiceCategory {
-  deleteServiceCategory(id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20")
+  deleteServiceCategory(id: "1db37560-82ad-4003-9209-6ade85d79fae")
 }
 
 mutation BindSubcategoriesToCategory {
   bindSubcategoriesToCategory(
-    id: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20"
-    serviceCategoryInfo: {subcategoriesIds: []}
+    id: "65c35a39-ab7a-4dde-a752-6754aa156188"
+    serviceCategoryInfo: {
+      subcategoriesIds: ["370effe7-71a1-4c9c-aa4b-ca80a0bb89e9", "1db37560-82ad-4003-9209-6ade85d79fae"]
+    }
   ) {
     name
     subcategories {
       name
+      parentId
+      updatedAt
+    }
+  }
+}
+
+mutation UnmountSubcategoriesToCategory {
+  unmountSubcategoriesFromCategory(
+    id: "65c35a39-ab7a-4dde-a752-6754aa156188"
+    serviceCategoryInfo: {
+      subcategoriesIds: ["370effe7-71a1-4c9c-aa4b-ca80a0bb89e9", "1db37560-82ad-4003-9209-6ade85d79fae"]
+    }
+  ) {
+    name
+    subcategories {
+      name
+      parentId
     }
   }
 }

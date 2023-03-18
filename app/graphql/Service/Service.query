@@ -9,7 +9,10 @@ query Service {
     attributes {
       id
       name
-      serviceId
+      service {
+        name
+        description
+      }
     }
   }
 }
@@ -21,9 +24,33 @@ query Services {
   }
 }
 
-mutation CreateService {
+mutation CreateRubToBathService {
   createService(
-    serviceInfo: {name: "Service 2", description: "Service description", categoryId: "e6a349d7-dc5d-4a70-818f-e6f3d2e8fc20" }
+    serviceInfo: {
+      name: "Обмен рубли на баты",
+      description: "Курс обмена зависит от провайдера. Можно выбрать вариант обмена — кэш или безнал",
+      categoryId: "e767c862-2db8-4fde-9351-25a327d49266"
+    }
+  )
+}
+
+mutation CreateRentBikesService {
+  createService(
+    serviceInfo: {
+      name: "Аренда байков",
+      description: "Выберите арендодателя и ознакомьтесь с байками через галлерею. Если вам что-то приглянется, вы сможете связаться с арендодателем и обсудить условия аренды",
+      categoryId: "072564e9-00d6-424f-b589-55e337e3e765"
+    }
+  )
+}
+
+mutation CreateRentPropertyService {
+  createService(
+    serviceInfo: {
+      name: "Аренда отелей, аппартаментов и кондо",
+      description: "Выберите арендодателя и ознакомьтесь с вариантами через галлерею. Если вам что-то приглянется, вы сможете связаться с арендодателем и уточнить детали",
+      categoryId: "072564e9-00d6-424f-b589-55e337e3e765"
+    }
   )
 }
 

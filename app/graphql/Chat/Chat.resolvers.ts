@@ -25,7 +25,7 @@ export class ChatResolver {
     return await Promise.all(
       Object.values(chats).map(async chat => {
         const provider = (await ChatResolver.providerResolver.provider(
-          chat.providerTelegramId,
+          chat.providerId,
         )) as ProviderSchema
         const client = (await ChatResolver.clientResolver.client(
           chat.clientTelegramId,
@@ -48,7 +48,7 @@ export class ChatResolver {
       return new GraphQLError(`Chat with id ${id} is not found`)
     }
 
-    const provider = await ChatResolver.providerResolver.provider(chat.providerTelegramId)
+    const provider = await ChatResolver.providerResolver.provider(chat.providerId)
     const client = await ChatResolver.clientResolver.client(chat.clientTelegramId)
 
     if (provider instanceof GraphQLError || client instanceof GraphQLError) {

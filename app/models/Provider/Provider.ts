@@ -3,7 +3,6 @@ import without from 'lodash/without'
 import { CrudOperations } from '../../db/models'
 import { EDbStatus } from '../../db/types'
 import { Service } from '../Service/Service'
-import { IServiceModel } from '../Service/types'
 import { IUserModel } from '../User/types'
 import { User } from '../User/User'
 import { IProviderModel } from './types'
@@ -26,87 +25,78 @@ export class Provider extends CrudOperations<IProviderModel> {
     return userModel
   }
 
-  getProviderByUserTelegramId = async (
+  getProvidersByUserTelegramId = async (
     telegramId: IUserModel['telegramId'],
-  ): Promise<EDbStatus.NOT_FOUND | IProviderModel> => {
+  ): Promise<EDbStatus.NOT_FOUND | IProviderModel[]> => {
     const userModel = await this.user.getUserByTelegramId(telegramId)
     if (!userModel) return EDbStatus.NOT_FOUND
 
     const providers = await this.readAll()
     if (!providers) return EDbStatus.NOT_FOUND
 
-    const provider = Object.values(providers).find(model => model.userId === userModel.id)
-
-    if (!provider) return EDbStatus.NOT_FOUND
-
-    return provider
-  }
-
-  getProvidedServices = async (providerId: IProviderModel['id']) => {
-    const provider = await this.read(providerId)
-
-    if (!provider) return EDbStatus.NOT_FOUND
-
-    const services = await this.service.getServicesByIds(provider.servicesIds)
-
-    if (services === EDbStatus.NOT_FOUND) return EDbStatus.NOT_FOUND
-
-    return services
-  }
-
-  bindServices = async (
-    providerId: IProviderModel['id'],
-    servicesIds: IProviderModel['servicesIds'],
-  ) => {
-    const provider = await this.read(providerId)
-    if (!provider) return EDbStatus.NOT_FOUND
-
-    const services = await this.service.getServicesByIds(servicesIds)
-    if (services === EDbStatus.NOT_FOUND) return EDbStatus.NOT_FOUND
-
-    const updatingStatus = await this.update(providerId, {
-      servicesIds: uniq([...Object.keys(services), ...provider.servicesIds]),
-    })
-    const bindingProviderToServicesStatuses = await Promise.all(
-      Object.values(services).map(service =>
-        this.service.update(service.id, {
-          providersIds: uniq([...(service.providersIds || []), providerId]),
-        }),
-      ),
+    const pickedUpProviders = Object.values(providers).filter(
+      model => model.userId === userModel.id,
     )
 
-    return updatingStatus !== EDbStatus.OK ||
-      bindingProviderToServicesStatuses.some(status => status !== EDbStatus.OK)
-      ? EDbStatus.ERROR
-      : EDbStatus.OK
+    if (!pickedUpProviders.length) return EDbStatus.NOT_FOUND
+
+    return pickedUpProviders
   }
 
-  unmountServices = async (
-    providerId: IProviderModel['id'],
-    servicesIds: IServiceModel['id'][],
-  ) => {
+  create = async (model: Omit<IProviderModel, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const { userId, serviceId } = model
+
+    const user = await this.user.read(userId)
+    const service = await this.service.read(serviceId)
+
+    if (!(service && user)) {
+      return {
+        id: '',
+        status: EDbStatus.NOT_FOUND,
+        message: "Can't find service or user",
+      }
+    }
+
+    const creationState = await super.create(model)
+    if (creationState.status !== EDbStatus.OK) return creationState
+
+    await this.service.update(serviceId, {
+      providersIds: uniq([...(service.providersIds || []), creationState.id]),
+    })
+    await this.user.update(userId, {
+      providersIds: uniq([...(user.providersIds || []), creationState.id]),
+    })
+
+    return creationState
+  }
+
+  delete = async (id: IProviderModel['id']) => {
+    const provider = await this.read(id)
+    if (!provider) return EDbStatus.NOT_FOUND
+    const service = await this.service.read(provider.serviceId)
+    const user = await this.user.read(provider.userId)
+
+    if (!(service && user)) return EDbStatus.ERROR
+
+    await this.service.update(provider.serviceId, {
+      providersIds: without(service.providersIds, id),
+    })
+    await this.user.update(provider.userId, {
+      providersIds: without(service.providersIds, id),
+    })
+
+    return await super.delete(id)
+  }
+
+  getProvidedService = async (providerId: IProviderModel['id']) => {
     const provider = await this.read(providerId)
 
     if (!provider) return EDbStatus.NOT_FOUND
 
-    const services = await this.service.readAll()
-    if (!services) return EDbStatus.ERROR
+    const service = await this.service.read(provider.serviceId)
 
-    const unmountingProviderFromServicesStatuses = await Promise.all(
-      servicesIds.map(serviceId =>
-        this.service.update(serviceId, {
-          providersIds: without(services[serviceId]?.providersIds || [], providerId),
-        }),
-      ),
-    )
+    if (!service) return EDbStatus.NOT_FOUND
 
-    const updatingStatus = await this.update(providerId, {
-      servicesIds: without(provider.servicesIds, ...servicesIds),
-    })
-
-    return updatingStatus !== EDbStatus.OK ||
-      unmountingProviderFromServicesStatuses.some(status => status !== EDbStatus.OK)
-      ? EDbStatus.ERROR
-      : EDbStatus.OK
+    return service
   }
 }

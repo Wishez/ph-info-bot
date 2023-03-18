@@ -1,8 +1,9 @@
 import { GraphQLError } from 'graphql'
 import typeQl from 'type-graphql'
 import { EDbStatus } from '../../db/types'
+import { Provider } from '../../models/Provider/Provider'
 import { Service } from '../../models/Service/Service'
-import { IServiceModel } from '../../models/Service/types'
+import type { IServiceModel } from '../../models/Service/types'
 import { ServiceCategoryResolver } from '../ServiceCategory/ServiceCategory.resolvers'
 import {
   ServiceBindingAttributes,
@@ -19,6 +20,7 @@ const { Query, Resolver, Arg, Mutation } = typeQl
 @Resolver()
 export class ServiceResolver {
   static service = new Service()
+  static provider = new Provider()
 
   @Query(() => [ServiceListSchema])
   async services(): Promise<ServiceListSchema[]> {
@@ -39,15 +41,24 @@ export class ServiceResolver {
     const categoryResolver = new ServiceCategoryResolver()
     const category = await categoryResolver.serviceCategory(service.categoryId)
     const attributes = await ServiceResolver.service.getServiceAttributes(id)
+    const providers = await ServiceResolver.provider.readAll()
+    const users = await ServiceResolver.provider.user.readAll()
 
-    if (category instanceof GraphQLError || attributes === EDbStatus.NOT_FOUND) {
-      return new GraphQLError("Can't get service category or attributes")
+    if (category instanceof GraphQLError) {
+      return new GraphQLError(`Can't get category of service with id ${id}`)
     }
 
     return {
       ...service,
+      providers: !(providers && users)
+        ? []
+        : service.providersIds.map(providerId => {
+            const provider = providers[providerId]!
+
+            return { ...provider, user: users[provider.userId]! }
+          }),
       category,
-      attributes: Object.values(attributes),
+      attributes: attributes === EDbStatus.NOT_FOUND ? [] : Object.values(attributes),
     }
   }
 
@@ -98,7 +109,6 @@ export class ServiceResolver {
 
     const status = await ServiceResolver.service.bindServiceCategory(id, serviceInfo.categoryId)
     const nextService = await this.service(id)
-    console.log('nextService', nextService)
 
     if (status !== EDbStatus.OK || nextService instanceof GraphQLError) {
       return false

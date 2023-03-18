@@ -1,6 +1,7 @@
 import { IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { IServiceCategoryModel } from '../../models/ServiceCategory/types'
+import { ServiceListSchema } from '../Service/Service.schema'
 import { AreCategoriesExisted } from './validators'
 
 const { Field, InputType, ObjectType, ID } = typeQl
@@ -22,12 +23,19 @@ export class ServiceCategoryListSchema implements IServiceCategoryModel {
   @Field()
   name!: string
 
+  @Field({ nullable: true })
+  parentId?: string
+
   @Field(() => [String], { nullable: true })
   subcategoriesIds?: string[]
+
+  @Field(() => [String])
+  servicesIds!: string[]
 }
 
+type TServiceCategorySchema = Omit<IServiceCategoryModel, 'subcategoriesIds' | 'servicesIds'>
 @ObjectType()
-export class ServiceCategorySchema implements Omit<IServiceCategoryModel, 'subcategoriesIds'> {
+export class ServiceCategorySchema implements TServiceCategorySchema {
   @Field(() => ID)
   id!: string
 
@@ -43,12 +51,19 @@ export class ServiceCategorySchema implements Omit<IServiceCategoryModel, 'subca
   @Field()
   name!: string
 
+  @Field({ nullable: true })
+  parentId?: string
+
   @Field(() => [ServiceCategoryListSchema], { nullable: true })
   subcategories?: ServiceCategoryListSchema[]
+
+  @Field(() => [ServiceListSchema])
+  services!: ServiceListSchema[]
 }
 
+type TServiceCategoryCreation = Omit<IServiceCategoryModel, 'id' | 'createdAt' | 'servicesIds'>
 @InputType()
-export class ServiceCategoryCreation implements Omit<IServiceCategoryModel, 'id' | 'createdAt'> {
+export class ServiceCategoryCreation implements TServiceCategoryCreation {
   @Field()
   @IsString()
   name!: string
@@ -71,6 +86,15 @@ export class ServiceCategoryUpdating {
 
 @InputType()
 export class ServiceCategoryBindingSubcategories {
+  @Field(() => [String])
+  @AreCategoriesExisted({
+    message: 'One of category $value is not existed',
+  })
+  subcategoriesIds!: string[]
+}
+
+@InputType()
+export class ServiceCategoryUnmountingSubcategories {
   @Field(() => [String])
   @AreCategoriesExisted({
     message: 'One of category $value is not existed',

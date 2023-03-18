@@ -5,5 +5,5 @@ import { IUserModel } from '../../User/types'
 export interface IProviderModel extends IBaseCrudModel {
   description: string
   userId: IUserModel['id']
-  servicesIds: IServiceModel['id'][]
+  serviceId: IServiceModel['id']
 }

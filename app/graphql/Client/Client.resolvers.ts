@@ -20,11 +20,11 @@ export class ClientResolver {
   }
 
   @Query(() => ClientSchema || GraphQLError)
-  async client(@Arg('telegramId') telegramId: string): Promise<ClientSchema | GraphQLError> {
+  async client(@Arg('telegramId') telegramId: number): Promise<ClientSchema | GraphQLError> {
     const client = await ClientResolver.client.getClientByUserTelegramId(telegramId)
 
     if (client === EDbStatus.NOT_FOUND) {
-      return new GraphQLError(`Client with ${telegramId} is not found`)
+      return Promise.reject(new GraphQLError(`Client with ${telegramId} is not found`))
     }
 
     const user = await ClientResolver.client.getUser(client.id)
@@ -79,7 +79,7 @@ export class ClientResolver {
 
   @Mutation(() => ClientSchema || false)
   async updateClient(
-    @Arg('telegramId') telegramId: string,
+    @Arg('telegramId') telegramId: number,
     @Arg('clientInfo') clientInfo: ClientUpdating,
   ): Promise<ClientSchema | false> {
     const client = await ClientResolver.client.getClientByUserTelegramId(telegramId)

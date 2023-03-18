@@ -1,0 +1,6 @@
+export enum ECommonAction {
+  PRESS_CATEGORY,
+  PRESS_SERVICE,
+  PRESS_PROVIDER,
+  CALL_PROVIDER,
+}

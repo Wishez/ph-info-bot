@@ -18,7 +18,8 @@ describe('Client', () => {
     expect(client.modelNamespace.startsWith('bot.client')).toBeTruthy()
   })
 
-  const telegramId = uniqueId('userTelegramId')
+  const telegramId = Math.round(Math.random() * 100000)
+
   const name = uniqueId('userName')
   test('create', async () => {
     expect.assertions(2)
