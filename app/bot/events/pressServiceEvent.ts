@@ -13,23 +13,26 @@ import { ECommonAction } from '../types/actions'
 import { IPressProviderContext, IPressServiceContext } from '../types/context'
 
 const FETCH_SERVICE = query$.service(
-  serviceSchema$.name.providers(
+  serviceSchema$.name.description.providers(
     providerListSchema$.id.description.user(userSchema$.name.telegramId.avatar),
   ),
 )
 
 export const pressServiceEvent = async (context: IPressServiceContext, query: CallbackQuery) => {
-  const response = await execute(FETCH_SERVICE, { variables: { id: context.id } })
   const receiver = query.from.id
+  await bot.sendChatAction(receiver, 'typing')
+  const response = await execute(FETCH_SERVICE, { variables: { id: context.id } })
+  const { service } = response
+  if (service.description) await bot.sendMessage(receiver, service.description)
 
-  if (!response.service.providers.length) {
+  if (!service.providers.length) {
     bot.sendMessage(receiver, 'Для этой услуги пока нет операторов🫣 Пожалуйста, выберите другую')
 
     return
   }
 
   bot.sendMessage(receiver, 'Выберите оператора')
-  response.service.providers.forEach(async ({ description, user, id }) => {
+  service.providers.forEach(async ({ description, user, id }) => {
     const userAvatarUrl = await getUserPhoto(user.telegramId)
 
     bot.sendPhoto(receiver, userAvatarUrl, {

@@ -12,14 +12,15 @@ const FETCH_SERVICE_CATEGORIES = query$.serviceCategories(
 
 export const useStartCommand = () => {
   bot.onText(/\/start/, async msg => {
-    const chatId = msg.chat.id
+    const receiver = msg.chat.id
+    await bot.sendChatAction(receiver, 'typing')
     const fetchingServiceCategoriesResponse = await execute(FETCH_SERVICE_CATEGORIES)
     const user = msg.from
 
-    await bot.sendChatAction(chatId, 'typing')
-    await bot.sendMessage(chatId, 'Я в разработке, но вы можете меня по-тыкать😅')
+    await bot.sendChatAction(receiver, 'typing')
+    await bot.sendMessage(receiver, 'Я в разработке, но вы можете меня по-тыкать😅')
     if (user) await createUser(user)
-    await bot.sendMessage(chatId, 'Выберите категорию', {
+    await bot.sendMessage(receiver, 'Выберите категорию', {
       reply_markup: {
         inline_keyboard: fetchingServiceCategoriesResponse.serviceCategories
           .filter(({ parentId }) => !parentId)

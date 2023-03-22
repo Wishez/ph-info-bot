@@ -114,11 +114,6 @@ const getCallProviderActionIfUserCan = async (options: ISendCallProviderActionIf
 
 export const pressProviderEvent = async (context: IPressProviderContext, query: CallbackQuery) => {
   const receiver = query.from.id
-  /*
-   * 1. Проверяю, есть ли активный заказ
-   * 2. Если есть, запрашиваю (этот момент можно автоматизировать — проверять заказ и возвращать найденный заказ)
-   * 3.
-   * */
   await bot.sendChatAction(receiver, 'typing')
   const providerResponse = await execute(FETCH_PROVIDER, { variables: { id: context.id } })
   const provider = providerResponse.provider
