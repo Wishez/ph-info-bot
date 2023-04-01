@@ -1,7 +1,10 @@
+import pick from 'lodash/pick'
 import uniq from 'lodash/uniq'
 import without from 'lodash/without'
 import { CrudOperations } from '../../db/models'
 import { EDbStatus } from '../../db/types'
+import { InformationObject } from '../InformationObject/InformationObject'
+import { IInformationObjectModel } from '../InformationObject/types'
 import { Service } from '../Service/Service'
 import { IUserModel } from '../User/types'
 import { User } from '../User/User'
@@ -13,6 +16,10 @@ export class Provider extends CrudOperations<IProviderModel> {
 
   constructor() {
     super({ namespace: 'bot', modelName: 'provider' })
+  }
+
+  get informationObject() {
+    return new InformationObject()
   }
 
   getUser = async (id: IProviderModel['id']) => {
@@ -98,5 +105,17 @@ export class Provider extends CrudOperations<IProviderModel> {
     if (!service) return EDbStatus.NOT_FOUND
 
     return service
+  }
+
+  getProviderInformationObjects = async (
+    id: IProviderModel['id'],
+  ): Promise<EDbStatus.ERROR | EDbStatus.NOT_FOUND | Record<string, IInformationObjectModel>> => {
+    const provider = await this.read(id)
+    if (!provider) return EDbStatus.NOT_FOUND
+
+    const informationObjects = await this.informationObject.readAll()
+    if (!informationObjects) return EDbStatus.ERROR
+
+    return pick(informationObjects, provider.informationObjectsIds || [])
   }
 }

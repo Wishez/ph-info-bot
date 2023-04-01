@@ -1,5 +1,6 @@
 import { EDbStatus } from '../../db/types'
 import { EClientRank } from '../Client/types/EClientRank'
+import { EServiceType } from '../Service/types'
 import { IUserModel } from '../User/types'
 import { Order } from './Order'
 
@@ -59,6 +60,7 @@ export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
     description,
     attributesIds: [attributeId],
     providersIds: [],
+    serviceType: EServiceType.FORM,
   })
   expect(serviceCreationStatus).toBe(EDbStatus.OK)
 

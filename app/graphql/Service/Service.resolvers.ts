@@ -9,7 +9,7 @@ import {
   ServiceBindingAttributes,
   ServiceBindingCategory,
   ServiceCreation,
-  ServiceDeletingAttribute,
+  ServiceDeletingAttributes,
   ServiceListSchema,
   ServiceSchema,
   ServiceUpdating,
@@ -141,7 +141,7 @@ export class ServiceResolver {
   @Mutation(() => ServiceSchema || false)
   async deleteAttributesFromService(
     @Arg('id') id: string,
-    @Arg('serviceInfo') serviceInfo: ServiceDeletingAttribute,
+    @Arg('serviceInfo') serviceInfo: ServiceDeletingAttributes,
   ): Promise<ServiceSchema | false> {
     const service = await ServiceResolver.service.read(id)
     if (!service) return false

@@ -142,7 +142,7 @@ export class Order extends CrudOperations<IOrderModel> {
     }
 
     // Если аттрибутов нет, то создаём заказ
-    if (!service.attributesIds.length) {
+    if (!service.attributesIds?.length) {
       return { ...orderCreationState, message: null }
     }
 

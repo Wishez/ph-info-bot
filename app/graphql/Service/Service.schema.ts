@@ -1,6 +1,7 @@
-import { IsString } from 'class-validator'
+import { IsEnum, IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import type { IServiceModel } from '../../models/Service/types'
+import { EServiceType } from '../../models/Service/types'
 import { ProviderListSchema } from '../Provider/Provider.schema'
 import { ServiceAttributeSchema } from '../ServiceAttribute/ServiceAttribute.schema'
 import { AreAttributesExisted } from '../ServiceAttribute/validators'
@@ -32,11 +33,14 @@ export class ServiceListSchema implements IServiceModel {
   @Field({ nullable: true })
   image?: string
 
-  @Field(() => [String])
-  attributesIds!: string[]
+  @Field(() => [String], { nullable: true })
+  attributesIds?: string[]
 
   @Field(() => [String])
   providersIds!: string[]
+
+  @Field(() => String)
+  serviceType!: EServiceType
 }
 
 export type TServiceSchema = Omit<IServiceModel, 'attributesIds' | 'categoryId' | 'providersIds'>
@@ -54,6 +58,9 @@ export class ServiceSchema implements TServiceSchema {
   @Field()
   name!: string
 
+  @Field(() => String)
+  serviceType!: EServiceType
+
   @Field()
   description!: string
 
@@ -63,8 +70,8 @@ export class ServiceSchema implements TServiceSchema {
   @Field({ nullable: true })
   image?: string
 
-  @Field(() => [ServiceAttributeSchema])
-  attributes!: ServiceAttributeSchema[]
+  @Field(() => [ServiceAttributeSchema], { nullable: true })
+  attributes?: ServiceAttributeSchema[]
 
   @Field(() => [ProviderListSchema])
   providers!: ProviderListSchema[]
@@ -87,6 +94,10 @@ export class ServiceCreation {
   @Field({ nullable: true })
   @IsString()
   image?: string
+
+  @Field(() => String)
+  @IsEnum(EServiceType)
+  serviceType!: EServiceType
 }
 
 @InputType()
@@ -106,6 +117,10 @@ export class ServiceUpdating {
   @Field({ nullable: true })
   @IsString()
   image?: string
+
+  @Field(() => String, { nullable: true })
+  @IsEnum(EServiceType)
+  serviceType?: EServiceType
 }
 
 @InputType()
@@ -116,7 +131,7 @@ export class ServiceBindingAttributes {
 }
 
 @InputType()
-export class ServiceDeletingAttribute {
+export class ServiceDeletingAttributes {
   @Field(() => [String])
   @AreAttributesExisted()
   attributesIds!: string[]

@@ -11,7 +11,7 @@ import { FilledServiceAttribute } from '../FilledServiceAttribute'
 import { IFilledServiceAttributeModel } from '../types'
 import { getFilledServiceAttributeByValue } from '../utils'
 
-describe('filledServiceAttribute', () => {
+describe('FilledServiceAttribute', () => {
   test('init', () => {
     const filledServiceAttribute = new FilledServiceAttribute()
     expect('read' in filledServiceAttribute).toBeTruthy()
@@ -31,8 +31,8 @@ describe('filledServiceAttribute', () => {
   const serviceAttributeName: IUserModel['name'] = uniqueId('serviceAttributeName')
   const categoryName: IServiceCategoryModel['name'] = uniqueId('categoryName')
   const serviceName: IServiceModel['name'] = uniqueId('serviceName')
-  const clientTelegramId: IUserModel['telegramId'] = uniqueId('telegramId')
-  const providerTelegramId: IUserModel['telegramId'] = uniqueId('telegramId')
+  const clientTelegramId: IUserModel['telegramId'] = Math.round(Math.random() * 100000)
+  const providerTelegramId: IUserModel['telegramId'] = Math.round(Math.random() * 100000)
   test('create', async () => {
     expect.assertions(10)
     const filledServiceAttribute = new FilledServiceAttribute()

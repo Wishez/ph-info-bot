@@ -51,10 +51,10 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
     })) as { id: string; status: EDbStatus }
   }
 
-  update = async (
+  async update(
     id: GModel['id'],
     updatedModelProperties: Partial<Omit<GModel, 'id' | 'createdAt' | 'updatedAt'>>,
-  ) => {
+  ) {
     return (await this.queue.add(async () => {
       const models = await this.readAll()
 

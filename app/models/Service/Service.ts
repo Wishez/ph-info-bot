@@ -6,7 +6,7 @@ import { EDbStatus } from '../../db/types'
 import { ServiceAttribute } from '../ServiceAttribute/ServiceAttribute'
 import { IServiceAttributeModel } from '../ServiceAttribute/types'
 import { ServiceCategory } from '../ServiceCategory/ServiceCategory'
-import { IServiceModel } from './types'
+import { EServiceType, IServiceModel } from './types'
 
 export class Service extends CrudOperations<IServiceModel> {
   serviceCategory = new ServiceCategory()
@@ -75,6 +75,20 @@ export class Service extends CrudOperations<IServiceModel> {
     return creationState
   }
 
+  update = async (
+    id: IServiceModel['id'],
+    model: Partial<Omit<IServiceModel, 'id' | 'createdAt' | 'updatedAt' | 'serviceType'>>,
+  ) => {
+    const service = await this.read(id)
+    if (!service) return EDbStatus.ERROR
+
+    if (model.attributesIds && service.serviceType === EServiceType.FORM) {
+      return await super.update(id, model)
+    }
+
+    return await super.update(id, { ...model, attributesIds: [] })
+  }
+
   bindServiceCategory = async (serviceId: IServiceModel['id'], categoryId: IServiceModel['id']) => {
     const category = await this.serviceCategory.read(categoryId)
     const service = await this.read(serviceId)
@@ -100,11 +114,12 @@ export class Service extends CrudOperations<IServiceModel> {
 
   bindServiceAttributes = async (
     id: IServiceModel['id'],
-    serviceAttributesIds: IServiceModel['attributesIds'],
+    serviceAttributesIds: IServiceAttributeModel['id'][],
   ) => {
     const service = await this.read(id)
 
     if (!service) return EDbStatus.NOT_FOUND
+    if (service.serviceType !== EServiceType.FORM) return EDbStatus.ERROR
 
     const serviceAttributes = await this.serviceAttribute.readAll()
     if (!serviceAttributes) return EDbStatus.ERROR
@@ -136,10 +151,11 @@ export class Service extends CrudOperations<IServiceModel> {
   ) => {
     const service = await this.read(serviceId)
 
-    if (!service) return false
+    if (!service) return EDbStatus.NOT_FOUND
+    if (service.serviceType !== EServiceType.FORM) return EDbStatus.ERROR
 
     const allAttributes = await this.serviceAttribute.readAll()
-    if (!allAttributes) return false
+    if (!allAttributes) return EDbStatus.ERROR
 
     const deletingServiceAttributes = Object.values(pick(allAttributes, attributesIds))
 
@@ -154,9 +170,9 @@ export class Service extends CrudOperations<IServiceModel> {
       ),
     )
 
-    return (
-      updatingAttributesStatuses.some(status => status !== EDbStatus.ERROR) &&
+    return updatingAttributesStatuses.some(status => status !== EDbStatus.ERROR) &&
       updatingStatus === EDbStatus.OK
-    )
+      ? EDbStatus.OK
+      : EDbStatus.ERROR
   }
 }

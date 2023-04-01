@@ -1,4 +1,5 @@
 import { EDbStatus } from '../../db/types'
+import { EServiceType } from '../Service/types'
 import { IUserModel } from '../User/types'
 import { Provider } from './Provider'
 
@@ -33,6 +34,7 @@ export const createTestProvider = async ({
     categoryId,
     attributesIds: [],
     providersIds: [],
+    serviceType: EServiceType.FORM,
   })
   expect(serviceCreationStatus).toBe(EDbStatus.OK)
 

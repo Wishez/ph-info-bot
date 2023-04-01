@@ -7,7 +7,7 @@ import { User } from '../../User/User'
 import { Provider } from '../Provider'
 import { createTestProvider } from '../testUtils'
 
-describe('provider', () => {
+describe('Provider', () => {
   test('init', () => {
     const provider = new Provider()
     expect('read' in provider).toBeTruthy()
@@ -113,6 +113,38 @@ describe('provider', () => {
     expect(providedService.providersIds.includes(model.id)).toBeTruthy()
   })
 
+  test('getProviderInformationObjects', async () => {
+    expect.assertions(2)
+    const provider = new Provider()
+    const models = await provider.getProvidersByUserTelegramId(telegramId)
+    if (models === EDbStatus.NOT_FOUND) return
+
+    const model = models[0]
+    if (!model) return
+
+    const { id: informationObjectId, status } = await provider.informationObject.create({
+      providerId: model.id,
+      name: 'Information Object',
+      description: 'Information Object description',
+      gallery: [],
+    })
+    expect(status).toBe(EDbStatus.OK)
+
+    const informationObject = await provider.informationObject.read(informationObjectId)
+    if (!informationObject) return
+
+    const providerInformationObjects = await provider.getProviderInformationObjects(model.id)
+
+    if (
+      providerInformationObjects === EDbStatus.ERROR ||
+      providerInformationObjects === EDbStatus.NOT_FOUND
+    ) {
+      return
+    }
+
+    expect(informationObject.id).toBe(providerInformationObjects[informationObjectId]?.id)
+  })
+
   test('delete', async () => {
     expect.assertions(3)
     const provider = new Provider()
@@ -140,6 +172,7 @@ describe('provider', () => {
     dbClient.deleteNamespace(provider.modelNamespace)
     dbClient.deleteNamespace(provider.user.modelNamespace)
     dbClient.deleteNamespace(provider.service.modelNamespace)
+    dbClient.deleteNamespace(provider.informationObject.modelNamespace)
     dbClient.deleteNamespace(serviceCategory.modelNamespace)
   })
 })
