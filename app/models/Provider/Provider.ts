@@ -114,8 +114,7 @@ export class Provider extends CrudOperations<IProviderModel> {
     if (!provider) return EDbStatus.NOT_FOUND
 
     const informationObjects = await this.informationObject.readAll()
-    if (!informationObjects) return EDbStatus.ERROR
 
-    return pick(informationObjects, provider.informationObjectsIds || [])
+    return pick(informationObjects || {}, provider.informationObjectsIds || [])
   }
 }

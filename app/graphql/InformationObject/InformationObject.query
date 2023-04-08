@@ -1,0 +1,97 @@
+query InformationObjects {
+  informationObjects {
+    id
+    name
+    description
+    gallery {
+      id
+      url
+    }
+    providerId
+  }
+}
+
+query InformationObject {
+   informationObject(id: "") {
+      id
+      name
+      description
+      gallery {
+        id
+        url
+      }
+      provider {
+        id
+        user {
+          name
+          username
+          telegramId
+        }
+      }
+    }
+}
+
+mutation DeleteInformationObject {
+  deleteInformationObject(id: "")
+}
+
+mutation CreateInformationObjectForRealEstateRentProvider {
+  createInformationObject(
+    informationObjectInfo: {
+      providerId: "1ede872f-45d3-47c7-afb3-2381b9b913b3"
+      description: "Куча котиков будет окружать вас, если в переедите в это замечательное кондо. 1 рубль в месяц, можно по переводу с российской карты🫶🏼",
+      name: "Сдаётся кондо с котиками"
+    }
+  )
+}
+
+mutation UpdateInformationObject {
+  updateInformationObject(
+    id: "",
+    informationObjectInfo: {
+      description: "",
+      name: ""
+    }
+  ) {
+    id
+    gallery {
+      id
+      url
+    }
+  }
+}
+
+mutation AddImagesToRealEstateProviderGallery {
+  addImagesToGallery(
+    id: "134272dc-97ee-44df-96f7-482219d34c6e",
+    informationObjectInfo: {
+      urls: [
+        "https://cs11.pikabu.ru/post_img/2018/06/25/5/1529910990181153512.jpg",
+        "https://oir.mobi/uploads/posts/2022-09/1662227747_11-oir-mobi-p-staya-kotyat-oboi-16.jpg",
+        "https://oir.mobi/uploads/posts/2022-09/1662227696_15-oir-mobi-p-staya-kotyat-oboi-21.jpg",
+        "https://oir.mobi/uploads/posts/2022-09/thumbs/1662227700_12-oir-mobi-p-staya-kotyat-oboi-17.jpg"
+      ]
+    }
+  ) {
+    id
+    gallery {
+      id
+      url
+    }
+  }
+}
+
+mutation RemoveImagesFromGallery {
+  removeImagesFromGallery(
+    id: "",
+    informationObjectInfo: {
+      imagesIds: []
+    }
+  ) {
+    id
+    gallery {
+      id
+      url
+    }
+  }
+}

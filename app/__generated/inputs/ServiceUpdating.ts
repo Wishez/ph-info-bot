@@ -7,4 +7,5 @@ export type ServiceUpdating = {
   readonly description?: string
   readonly categoryId?: string
   readonly image?: string
+  readonly serviceType?: string
 }

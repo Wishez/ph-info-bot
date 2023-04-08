@@ -21,9 +21,25 @@ query ServiceAttributes {
   }
 }
 
-mutation CreateServiceAttribute {
+mutation CreateMoneyQuantityAttribute {
   createServiceAttribute(
-    serviceAttributeInfo: {name: "Настрой аттрибут", notice: "Описание аттрибута", isRequired: false, order: 0}
+    serviceAttributeInfo: {
+      name: "Сколько денег вы хотите обменять?",
+      notice: "Количество денег для обмена можно ввести в любом удобном вам формате",
+      isRequired: true,
+      order: 0
+    }
+  )
+}
+
+mutation CreateMoneyExchangeVariantAttribute {
+  createServiceAttribute(
+    serviceAttributeInfo: {
+      name: "Каким способом вы бы хотели обменять валюту?",
+      notice: "Варианты: наличными, через онлайн банк или свой вариант",
+      isRequired: true,
+      order: 0
+    }
   )
 }
 

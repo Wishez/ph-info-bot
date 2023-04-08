@@ -8,16 +8,20 @@ import type {
 import { createFetchableType, createFetcher } from 'graphql-ts-client-api'
 import { ENUM_INPUT_METADATA } from '../EnumInputMetadata'
 import type {
+  AddingImagesToGalleryPayload,
   ChatAddingMessage,
   ChatCreation,
   ClientCreation,
   ClientUpdating,
   FilledServiceAttributeCreation,
   FilledServiceAttributeUpdating,
+  InformationObjectCreation,
+  InformationObjectUpdating,
   OrderAttributeUpdating,
   OrderCreation,
   ProviderCreation,
   ProviderUpdating,
+  RemovingImagesFromGalleryPayload,
   ServiceAttributeCreation,
   ServiceAttributeUpdating,
   ServiceBindingAttributes,
@@ -27,7 +31,7 @@ import type {
   ServiceCategoryUnmountingSubcategories,
   ServiceCategoryUpdating,
   ServiceCreation,
-  ServiceDeletingAttribute,
+  ServiceDeletingAttributes,
   ServiceUpdating,
   UserCreation,
   UserUpdating,
@@ -1298,6 +1302,292 @@ export interface MutationFetcher<T extends object, TVariables extends object>
       XDirectiveVariables
   >
 
+  createInformationObject(): MutationFetcher<
+    T & { readonly createInformationObject: string },
+    TVariables & MutationArgs['createInformationObject']
+  >
+
+  createInformationObject<
+    XArgs extends AcceptableVariables<MutationArgs['createInformationObject']>,
+  >(
+    args: XArgs,
+  ): MutationFetcher<
+    T & { readonly createInformationObject: string },
+    TVariables & UnresolvedVariables<XArgs, MutationArgs['createInformationObject']>
+  >
+
+  createInformationObject<
+    XAlias extends string = 'createInformationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'createInformationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: string }
+        : { readonly [key in XAlias]: string }),
+    TVariables & MutationArgs['createInformationObject'] & XDirectiveVariables
+  >
+
+  createInformationObject<
+    XArgs extends AcceptableVariables<MutationArgs['createInformationObject']>,
+    XAlias extends string = 'createInformationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    optionsConfigurer: (
+      options: FieldOptions<'createInformationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: string }
+        : { readonly [key in XAlias]: string }),
+    TVariables &
+      UnresolvedVariables<XArgs, MutationArgs['createInformationObject']> &
+      XDirectiveVariables
+  >
+
+  updateInformationObject<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly updateInformationObject: X },
+    TVariables & XVariables & MutationArgs['updateInformationObject']
+  >
+
+  updateInformationObject<
+    XArgs extends AcceptableVariables<MutationArgs['updateInformationObject']>,
+    X extends object,
+    XVariables extends object,
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly updateInformationObject: X },
+    TVariables & XVariables & UnresolvedVariables<XArgs, MutationArgs['updateInformationObject']>
+  >
+
+  updateInformationObject<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'updateInformationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'updateInformationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables & XVariables & MutationArgs['updateInformationObject'] & XDirectiveVariables
+  >
+
+  updateInformationObject<
+    XArgs extends AcceptableVariables<MutationArgs['updateInformationObject']>,
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'updateInformationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'updateInformationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables &
+      XVariables &
+      UnresolvedVariables<XArgs, MutationArgs['updateInformationObject']> &
+      XDirectiveVariables
+  >
+
+  deleteInformationObject(): MutationFetcher<
+    T & { readonly deleteInformationObject: boolean },
+    TVariables & MutationArgs['deleteInformationObject']
+  >
+
+  deleteInformationObject<
+    XArgs extends AcceptableVariables<MutationArgs['deleteInformationObject']>,
+  >(
+    args: XArgs,
+  ): MutationFetcher<
+    T & { readonly deleteInformationObject: boolean },
+    TVariables & UnresolvedVariables<XArgs, MutationArgs['deleteInformationObject']>
+  >
+
+  deleteInformationObject<
+    XAlias extends string = 'deleteInformationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'deleteInformationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: boolean }
+        : { readonly [key in XAlias]: boolean }),
+    TVariables & MutationArgs['deleteInformationObject'] & XDirectiveVariables
+  >
+
+  deleteInformationObject<
+    XArgs extends AcceptableVariables<MutationArgs['deleteInformationObject']>,
+    XAlias extends string = 'deleteInformationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    optionsConfigurer: (
+      options: FieldOptions<'deleteInformationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: boolean }
+        : { readonly [key in XAlias]: boolean }),
+    TVariables &
+      UnresolvedVariables<XArgs, MutationArgs['deleteInformationObject']> &
+      XDirectiveVariables
+  >
+
+  addImagesToGallery<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly addImagesToGallery: X },
+    TVariables & XVariables & MutationArgs['addImagesToGallery']
+  >
+
+  addImagesToGallery<
+    XArgs extends AcceptableVariables<MutationArgs['addImagesToGallery']>,
+    X extends object,
+    XVariables extends object,
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly addImagesToGallery: X },
+    TVariables & XVariables & UnresolvedVariables<XArgs, MutationArgs['addImagesToGallery']>
+  >
+
+  addImagesToGallery<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'addImagesToGallery',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'addImagesToGallery', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables & XVariables & MutationArgs['addImagesToGallery'] & XDirectiveVariables
+  >
+
+  addImagesToGallery<
+    XArgs extends AcceptableVariables<MutationArgs['addImagesToGallery']>,
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'addImagesToGallery',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'addImagesToGallery', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables &
+      XVariables &
+      UnresolvedVariables<XArgs, MutationArgs['addImagesToGallery']> &
+      XDirectiveVariables
+  >
+
+  removeImagesFromGallery<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly removeImagesFromGallery: X },
+    TVariables & XVariables & MutationArgs['removeImagesFromGallery']
+  >
+
+  removeImagesFromGallery<
+    XArgs extends AcceptableVariables<MutationArgs['removeImagesFromGallery']>,
+    X extends object,
+    XVariables extends object,
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly removeImagesFromGallery: X },
+    TVariables & XVariables & UnresolvedVariables<XArgs, MutationArgs['removeImagesFromGallery']>
+  >
+
+  removeImagesFromGallery<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'removeImagesFromGallery',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'removeImagesFromGallery', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables & XVariables & MutationArgs['removeImagesFromGallery'] & XDirectiveVariables
+  >
+
+  removeImagesFromGallery<
+    XArgs extends AcceptableVariables<MutationArgs['removeImagesFromGallery']>,
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'removeImagesFromGallery',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'removeImagesFromGallery', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables &
+      XVariables &
+      UnresolvedVariables<XArgs, MutationArgs['removeImagesFromGallery']> &
+      XDirectiveVariables
+  >
+
   createOrder(): MutationFetcher<
     T & { readonly createOrder: string },
     TVariables & MutationArgs['createOrder']
@@ -1992,7 +2282,7 @@ export const mutation$: MutationFetcher<{}, {}> = createFetcher(
         category: 'REFERENCE',
         name: 'deleteAttributesFromService',
         argGraphQLTypeMap: {
-          serviceInfo: 'ServiceDeletingAttribute!',
+          serviceInfo: 'ServiceDeletingAttributes!',
           id: 'String!',
         },
         targetTypeName: 'ServiceSchema',
@@ -2053,6 +2343,43 @@ export const mutation$: MutationFetcher<{}, {}> = createFetcher(
           filledServiceAttributeId: 'String!',
         },
         targetTypeName: 'FilledServiceAttributeSchema',
+      },
+      {
+        category: 'SCALAR',
+        name: 'createInformationObject',
+        argGraphQLTypeMap: { informationObjectInfo: 'InformationObjectCreation!' },
+      },
+      {
+        category: 'REFERENCE',
+        name: 'updateInformationObject',
+        argGraphQLTypeMap: {
+          informationObjectInfo: 'InformationObjectUpdating!',
+          id: 'String!',
+        },
+        targetTypeName: 'InformationObjectSchema',
+      },
+      {
+        category: 'SCALAR',
+        name: 'deleteInformationObject',
+        argGraphQLTypeMap: { id: 'String!' },
+      },
+      {
+        category: 'REFERENCE',
+        name: 'addImagesToGallery',
+        argGraphQLTypeMap: {
+          informationObjectInfo: 'AddingImagesToGalleryPayload!',
+          id: 'String!',
+        },
+        targetTypeName: 'InformationObjectSchema',
+      },
+      {
+        category: 'REFERENCE',
+        name: 'removeImagesFromGallery',
+        argGraphQLTypeMap: {
+          informationObjectInfo: 'RemovingImagesFromGalleryPayload!',
+          id: 'String!',
+        },
+        targetTypeName: 'InformationObjectSchema',
       },
       {
         category: 'SCALAR',
@@ -2190,7 +2517,7 @@ export interface MutationArgs {
   }
 
   readonly deleteAttributesFromService: {
-    readonly serviceInfo: ServiceDeletingAttribute
+    readonly serviceInfo: ServiceDeletingAttributes
     readonly id: string
   }
 
@@ -2231,6 +2558,29 @@ export interface MutationArgs {
   readonly updateFilledServiceAttribute: {
     readonly filledServiceAttributeInfo: FilledServiceAttributeUpdating
     readonly filledServiceAttributeId: string
+  }
+
+  readonly createInformationObject: {
+    readonly informationObjectInfo: InformationObjectCreation
+  }
+
+  readonly updateInformationObject: {
+    readonly informationObjectInfo: InformationObjectUpdating
+    readonly id: string
+  }
+
+  readonly deleteInformationObject: {
+    readonly id: string
+  }
+
+  readonly addImagesToGallery: {
+    readonly informationObjectInfo: AddingImagesToGalleryPayload
+    readonly id: string
+  }
+
+  readonly removeImagesFromGallery: {
+    readonly informationObjectInfo: RemovingImagesFromGalleryPayload
+    readonly id: string
   }
 
   readonly createOrder: {

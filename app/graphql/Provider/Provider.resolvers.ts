@@ -18,7 +18,7 @@ const { Query, Resolver, Arg, Mutation } = typeQl
 export class ProviderResolver {
   static provider = new Provider()
 
-  @Query(() => [ProviderSchema])
+  @Query(() => [ProviderListSchema])
   async providers(): Promise<ProviderListSchema[]> {
     const providers = await ProviderResolver.provider.readAll()
     if (!providers) return []
@@ -26,10 +26,14 @@ export class ProviderResolver {
     return await Promise.all(
       Object.values(providers).map(async provider => {
         const user = (await ProviderResolver.provider.getUser(provider.id)) as UserSchema
+        const informationObjects = await ProviderResolver.provider.getProviderInformationObjects(
+          provider.id,
+        )
 
         return {
           ...provider,
           user,
+          informationObjects,
         }
       }),
     )
@@ -43,9 +47,12 @@ export class ProviderResolver {
       return new GraphQLError(`Provider with id ${id} is not found`)
     }
 
+    const informationObjects = await ProviderResolver.provider.getProviderInformationObjects(id)
     const user = await ProviderResolver.provider.getUser(id)
 
-    if (user === EDbStatus.NOT_FOUND) {
+    if (typeof informationObjects !== 'object') {
+      return new GraphQLError(`Cannot get information objects of a provider with id ${id}`)
+    } else if (user === EDbStatus.NOT_FOUND) {
       return new GraphQLError(`A user of a provider with id ${id} was not found`)
     }
 
@@ -60,6 +67,7 @@ export class ProviderResolver {
       ...provider,
       user,
       service,
+      informationObjects: Object.values(informationObjects),
     }
   }
 

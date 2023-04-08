@@ -23,6 +23,16 @@ export type { ProviderListSchemaFetcher } from './ProviderListSchemaFetcher'
 export { providerListSchema$, providerListSchema$$ } from './ProviderListSchemaFetcher'
 export type { ProviderSchemaFetcher } from './ProviderSchemaFetcher'
 export { providerSchema$, providerSchema$$ } from './ProviderSchemaFetcher'
+export type { InformationObjectListSchemaFetcher } from './InformationObjectListSchemaFetcher'
+export {
+  informationObjectListSchema$,
+  informationObjectListSchema$$,
+} from './InformationObjectListSchemaFetcher'
+export type { InformationObjectImageSchemaFetcher } from './InformationObjectImageSchemaFetcher'
+export {
+  informationObjectImageSchema$,
+  informationObjectImageSchema$$,
+} from './InformationObjectImageSchemaFetcher'
 export type { ChatSchemaFetcher } from './ChatSchemaFetcher'
 export { chatSchema$, chatSchema$$ } from './ChatSchemaFetcher'
 export type { ChatMessageSchemaFetcher } from './ChatMessageSchemaFetcher'
@@ -32,6 +42,11 @@ export {
   filledServiceAttributeSchema$,
   filledServiceAttributeSchema$$,
 } from './FilledServiceAttributeSchemaFetcher'
+export type { InformationObjectSchemaFetcher } from './InformationObjectSchemaFetcher'
+export {
+  informationObjectSchema$,
+  informationObjectSchema$$,
+} from './InformationObjectSchemaFetcher'
 export type { OrderListSchemaFetcher } from './OrderListSchemaFetcher'
 export { orderListSchema$, orderListSchema$$ } from './OrderListSchemaFetcher'
 export type { OrderSchemaFetcher } from './OrderSchemaFetcher'

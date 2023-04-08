@@ -2,6 +2,7 @@ import typeGQ from 'type-graphql'
 import { ChatResolver } from './Chat/Chat.resolvers'
 import { ClientResolver } from './Client/Client.resolvers'
 import { FilledServiceAttributeResolver } from './FilledServiceAttribute/FilledServiceAttribute.resolvers'
+import { InformationObjectResolver } from './InformationObject/InformationObject.resolvers'
 import { OrderResolver } from './Order/Order.resolvers'
 import { ProviderResolver } from './Provider/Provider.resolvers'
 import { ServiceResolver } from './Service/Service.resolvers'
@@ -23,5 +24,6 @@ export const getSchema = async () =>
       FilledServiceAttributeResolver,
       OrderResolver,
       ChatResolver,
+      InformationObjectResolver,
     ],
   })

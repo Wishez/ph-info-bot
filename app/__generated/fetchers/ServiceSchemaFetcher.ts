@@ -112,6 +112,26 @@ export interface ServiceSchemaFetcher<T extends object, TVariables extends objec
 
   readonly '~name': ServiceSchemaFetcher<Omit<T, 'name'>, TVariables>
 
+  readonly serviceType: ServiceSchemaFetcher<T & { readonly serviceType: string }, TVariables>
+
+  'serviceType+'<
+    XAlias extends string = 'serviceType',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'serviceType', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): ServiceSchemaFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: string }
+        : { readonly [key in XAlias]: string }),
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~serviceType': ServiceSchemaFetcher<Omit<T, 'serviceType'>, TVariables>
+
   readonly description: ServiceSchemaFetcher<T & { readonly description: string }, TVariables>
 
   'description+'<
@@ -170,24 +190,20 @@ export interface ServiceSchemaFetcher<T extends object, TVariables extends objec
 
   attributes<X extends object, XVariables extends object>(
     child: ObjectFetcher<'ServiceAttributeSchema', X, XVariables>,
-  ): ServiceSchemaFetcher<T & { readonly attributes: ReadonlyArray<X> }, TVariables & XVariables>
+  ): ServiceSchemaFetcher<T & { readonly attributes?: ReadonlyArray<X> }, TVariables & XVariables>
 
   attributes<
     X extends object,
     XVariables extends object,
     XAlias extends string = 'attributes',
-    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
     XDirectiveVariables extends object = {},
   >(
     child: ObjectFetcher<'ServiceAttributeSchema', X, XVariables>,
     optionsConfigurer: (
       options: FieldOptions<'attributes', {}, {}>,
-    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
   ): ServiceSchemaFetcher<
-    T &
-      (XDirectives extends { readonly include: any } | { readonly skip: any }
-        ? { readonly [key in XAlias]?: ReadonlyArray<X> }
-        : { readonly [key in XAlias]: ReadonlyArray<X> }),
+    T & { readonly [key in XAlias]?: ReadonlyArray<X> },
     TVariables & XVariables & XDirectiveVariables
   >
 
@@ -232,6 +248,7 @@ export const serviceSchema$: ServiceSchemaFetcher<{}, {}> = createFetcher(
       },
       'createdAt',
       'name',
+      'serviceType',
       'description',
       {
         category: 'REFERENCE',
@@ -247,6 +264,7 @@ export const serviceSchema$: ServiceSchemaFetcher<{}, {}> = createFetcher(
         category: 'LIST',
         name: 'attributes',
         targetTypeName: 'ServiceAttributeSchema',
+        undefinable: true,
       },
       {
         category: 'LIST',
@@ -259,4 +277,5 @@ export const serviceSchema$: ServiceSchemaFetcher<{}, {}> = createFetcher(
   undefined,
 )
 
-export const serviceSchema$$ = serviceSchema$.id.updatedAt.createdAt.name.description.image
+export const serviceSchema$$ =
+  serviceSchema$.id.updatedAt.createdAt.name.serviceType.description.image

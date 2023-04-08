@@ -1,11 +1,13 @@
 query Users {
   users {
     id
+    name
+    telegramId
   }
 }
 
 query User {
-  user(telegramId: "it_shiningfinger") {
+  user(telegramId: 462566829) {
     id
     name
     telegramId
@@ -15,16 +17,16 @@ query User {
 }
 
 mutation DeleteUser {
-  deleteUser(userId: "c03dc6b3-c4ed-4f69-bc21-a3f3feaf5e7a")
+  deleteUser(userId: "33d36cde-454f-41f2-b949-26034e96d065")
 }
 
 mutation CreateUser {
-  createUser(userInfo: {name: "Phil", telegramId: "it_shiningfinger"})
+  createUser(userInfo: {name: "Provider", telegramId: 42})
 }
 
 mutation UpdateUser {
   updateUser(
-    telegramId: "it_shiningfinger"
+    telegramId: 42
     userInfo: {email: "shiningfinger1@yandex.ru"}
   ) {
     telegramId

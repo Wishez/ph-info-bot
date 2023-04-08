@@ -2,10 +2,8 @@
  * This input type is not interface, because interfaces
  * do not satisfy the constraint 'SerializableParam' of recoil
  */
-export type ServiceCreation = {
-  readonly name: string
+export type InformationObjectCreation = {
   readonly description: string
-  readonly categoryId: string
-  readonly image?: string
-  readonly serviceType: string
+  readonly name: string
+  readonly providerId: string
 }

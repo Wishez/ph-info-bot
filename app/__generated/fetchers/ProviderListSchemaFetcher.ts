@@ -157,6 +157,28 @@ export interface ProviderListSchemaFetcher<T extends object, TVariables extends 
         : { readonly [key in XAlias]: X }),
     TVariables & XVariables & XDirectiveVariables
   >
+
+  readonly informationObjectsIds: ProviderListSchemaFetcher<
+    T & { readonly informationObjectsIds?: ReadonlyArray<string> },
+    TVariables
+  >
+
+  'informationObjectsIds+'<
+    XAlias extends string = 'informationObjectsIds',
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'informationObjectsIds', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): ProviderListSchemaFetcher<
+    T & { readonly [key in XAlias]?: ReadonlyArray<string> },
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~informationObjectsIds': ProviderListSchemaFetcher<
+    Omit<T, 'informationObjectsIds'>,
+    TVariables
+  >
 }
 
 export const providerListSchema$: ProviderListSchemaFetcher<{}, {}> = createFetcher(
@@ -182,10 +204,16 @@ export const providerListSchema$: ProviderListSchemaFetcher<{}, {}> = createFetc
         name: 'user',
         targetTypeName: 'UserSchema',
       },
+      {
+        category: 'SCALAR',
+        name: 'informationObjectsIds',
+        undefinable: true,
+      },
     ],
   ),
   ENUM_INPUT_METADATA,
   undefined,
 )
 
-export const providerListSchema$$ = providerListSchema$.id.updatedAt.createdAt.description.serviceId
+export const providerListSchema$$ =
+  providerListSchema$.id.updatedAt.createdAt.description.serviceId.informationObjectsIds

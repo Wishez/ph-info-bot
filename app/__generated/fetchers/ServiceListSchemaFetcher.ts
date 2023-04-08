@@ -169,23 +169,19 @@ export interface ServiceListSchemaFetcher<T extends object, TVariables extends o
   readonly '~image': ServiceListSchemaFetcher<Omit<T, 'image'>, TVariables>
 
   readonly attributesIds: ServiceListSchemaFetcher<
-    T & { readonly attributesIds: ReadonlyArray<string> },
+    T & { readonly attributesIds?: ReadonlyArray<string> },
     TVariables
   >
 
   'attributesIds+'<
     XAlias extends string = 'attributesIds',
-    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
     XDirectiveVariables extends object = {},
   >(
     optionsConfigurer: (
       options: FieldOptions<'attributesIds', {}, {}>,
-    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
   ): ServiceListSchemaFetcher<
-    T &
-      (XDirectives extends { readonly include: any } | { readonly skip: any }
-        ? { readonly [key in XAlias]?: ReadonlyArray<string> }
-        : { readonly [key in XAlias]: ReadonlyArray<string> }),
+    T & { readonly [key in XAlias]?: ReadonlyArray<string> },
     TVariables & XDirectiveVariables
   >
 
@@ -213,6 +209,26 @@ export interface ServiceListSchemaFetcher<T extends object, TVariables extends o
   >
 
   readonly '~providersIds': ServiceListSchemaFetcher<Omit<T, 'providersIds'>, TVariables>
+
+  readonly serviceType: ServiceListSchemaFetcher<T & { readonly serviceType: string }, TVariables>
+
+  'serviceType+'<
+    XAlias extends string = 'serviceType',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'serviceType', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): ServiceListSchemaFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: string }
+        : { readonly [key in XAlias]: string }),
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~serviceType': ServiceListSchemaFetcher<Omit<T, 'serviceType'>, TVariables>
 }
 
 export const serviceListSchema$: ServiceListSchemaFetcher<{}, {}> = createFetcher(
@@ -239,8 +255,13 @@ export const serviceListSchema$: ServiceListSchemaFetcher<{}, {}> = createFetche
         name: 'image',
         undefinable: true,
       },
-      'attributesIds',
+      {
+        category: 'SCALAR',
+        name: 'attributesIds',
+        undefinable: true,
+      },
       'providersIds',
+      'serviceType',
     ],
   ),
   ENUM_INPUT_METADATA,
@@ -249,4 +270,4 @@ export const serviceListSchema$: ServiceListSchemaFetcher<{}, {}> = createFetche
 
 export const serviceListSchema$$ =
   serviceListSchema$.id.updatedAt.createdAt.name.description.categoryId.image.attributesIds
-    .providersIds
+    .providersIds.serviceType

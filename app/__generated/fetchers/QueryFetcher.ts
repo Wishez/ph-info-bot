@@ -322,7 +322,7 @@ export interface QueryFetcher<T extends object, TVariables extends object>
   >
 
   providers<X extends object, XVariables extends object>(
-    child: ObjectFetcher<'ProviderSchema', X, XVariables>,
+    child: ObjectFetcher<'ProviderListSchema', X, XVariables>,
   ): QueryFetcher<T & { readonly providers: ReadonlyArray<X> }, TVariables & XVariables>
 
   providers<
@@ -332,7 +332,7 @@ export interface QueryFetcher<T extends object, TVariables extends object>
     XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
     XDirectiveVariables extends object = {},
   >(
-    child: ObjectFetcher<'ProviderSchema', X, XVariables>,
+    child: ObjectFetcher<'ProviderListSchema', X, XVariables>,
     optionsConfigurer: (
       options: FieldOptions<'providers', {}, {}>,
     ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
@@ -567,6 +567,91 @@ export interface QueryFetcher<T extends object, TVariables extends object>
     TVariables &
       XVariables &
       UnresolvedVariables<XArgs, QueryArgs['filledServiceAttribute']> &
+      XDirectiveVariables
+  >
+
+  informationObjects<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'InformationObjectListSchema', X, XVariables>,
+  ): QueryFetcher<T & { readonly informationObjects: ReadonlyArray<X> }, TVariables & XVariables>
+
+  informationObjects<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'informationObjects',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'InformationObjectListSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'informationObjects', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): QueryFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: ReadonlyArray<X> }
+        : { readonly [key in XAlias]: ReadonlyArray<X> }),
+    TVariables & XVariables & XDirectiveVariables
+  >
+
+  informationObject<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): QueryFetcher<
+    T & { readonly informationObject: X },
+    TVariables & XVariables & QueryArgs['informationObject']
+  >
+
+  informationObject<
+    XArgs extends AcceptableVariables<QueryArgs['informationObject']>,
+    X extends object,
+    XVariables extends object,
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+  ): QueryFetcher<
+    T & { readonly informationObject: X },
+    TVariables & XVariables & UnresolvedVariables<XArgs, QueryArgs['informationObject']>
+  >
+
+  informationObject<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'informationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'informationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): QueryFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables & XVariables & QueryArgs['informationObject'] & XDirectiveVariables
+  >
+
+  informationObject<
+    XArgs extends AcceptableVariables<QueryArgs['informationObject']>,
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'informationObject',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'InformationObjectSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'informationObject', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): QueryFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables &
+      XVariables &
+      UnresolvedVariables<XArgs, QueryArgs['informationObject']> &
       XDirectiveVariables
   >
 
@@ -950,7 +1035,7 @@ export const query$: QueryFetcher<{}, {}> = createFetcher(
       {
         category: 'LIST',
         name: 'providers',
-        targetTypeName: 'ProviderSchema',
+        targetTypeName: 'ProviderListSchema',
       },
       {
         category: 'REFERENCE',
@@ -979,6 +1064,17 @@ export const query$: QueryFetcher<{}, {}> = createFetcher(
         name: 'filledServiceAttribute',
         argGraphQLTypeMap: { id: 'String!' },
         targetTypeName: 'FilledServiceAttributeSchema',
+      },
+      {
+        category: 'LIST',
+        name: 'informationObjects',
+        targetTypeName: 'InformationObjectListSchema',
+      },
+      {
+        category: 'REFERENCE',
+        name: 'informationObject',
+        argGraphQLTypeMap: { id: 'String!' },
+        targetTypeName: 'InformationObjectSchema',
       },
       {
         category: 'LIST',
@@ -1059,6 +1155,10 @@ export interface QueryArgs {
   }
 
   readonly filledServiceAttribute: {
+    readonly id: string
+  }
+
+  readonly informationObject: {
     readonly id: string
   }
 

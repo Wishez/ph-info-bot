@@ -1,6 +1,7 @@
 import { IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { IProviderModel } from '../../models/Provider/types'
+import { InformationObjectListSchema } from '../InformationObject/InformationObject.schema'
 import { ServiceSchema } from '../Service/Service.schema'
 import { IsServiceExisted } from '../Service/validators'
 import { UserSchema } from '../User/User.schema'
@@ -27,10 +28,14 @@ export class ProviderListSchema implements Omit<IProviderModel, 'userId'> {
 
   @Field(() => UserSchema)
   user!: UserSchema
+
+  @Field(() => [String], { nullable: true })
+  informationObjectsIds?: string[]
 }
 
+type TProviderSchema = Omit<IProviderModel, 'userId' | 'serviceId' | 'informationObjectsIds'>
 @ObjectType()
-export class ProviderSchema implements Omit<IProviderModel, 'userId' | 'serviceId'> {
+export class ProviderSchema implements TProviderSchema {
   @Field(() => ID)
   id!: string
 
@@ -48,6 +53,9 @@ export class ProviderSchema implements Omit<IProviderModel, 'userId' | 'serviceI
 
   @Field(() => UserSchema)
   user!: UserSchema
+
+  @Field(() => [InformationObjectListSchema], { nullable: true })
+  informationObjects?: InformationObjectListSchema[]
 }
 
 @InputType()

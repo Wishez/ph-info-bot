@@ -10,36 +10,39 @@ import { ENUM_INPUT_METADATA } from '../EnumInputMetadata'
  *
  * So any instance of this interface is reuseable.
  */
-export interface ProviderSchemaFetcher<T extends object, TVariables extends object>
-  extends ObjectFetcher<'ProviderSchema', T, TVariables> {
+export interface InformationObjectSchemaFetcher<T extends object, TVariables extends object>
+  extends ObjectFetcher<'InformationObjectSchema', T, TVariables> {
   on<
-    XName extends ImplementationType<'ProviderSchema'>,
+    XName extends ImplementationType<'InformationObjectSchema'>,
     X extends object,
     XVariables extends object,
   >(
     child: ObjectFetcher<XName, X, XVariables>,
     fragmentName?: string, // undefined: inline fragment; otherwise, otherwise, real fragment
-  ): ProviderSchemaFetcher<
-    XName extends 'ProviderSchema'
+  ): InformationObjectSchemaFetcher<
+    XName extends 'InformationObjectSchema'
       ? T & X
-      : WithTypeName<T, ImplementationType<'ProviderSchema'>> &
+      : WithTypeName<T, ImplementationType<'InformationObjectSchema'>> &
           (
             | WithTypeName<X, ImplementationType<XName>>
             | {
-                __typename: Exclude<ImplementationType<'ProviderSchema'>, ImplementationType<XName>>
+                __typename: Exclude<
+                  ImplementationType<'InformationObjectSchema'>,
+                  ImplementationType<XName>
+                >
               }
           ),
     TVariables & XVariables
   >
 
-  directive(name: string, args?: DirectiveArgs): ProviderSchemaFetcher<T, TVariables>
+  directive(name: string, args?: DirectiveArgs): InformationObjectSchemaFetcher<T, TVariables>
 
-  readonly __typename: ProviderSchemaFetcher<
-    T & { __typename: ImplementationType<'ProviderSchema'> },
+  readonly __typename: InformationObjectSchemaFetcher<
+    T & { __typename: ImplementationType<'InformationObjectSchema'> },
     TVariables
   >
 
-  readonly id: ProviderSchemaFetcher<T & { readonly id: string }, TVariables>
+  readonly id: InformationObjectSchemaFetcher<T & { readonly id: string }, TVariables>
 
   'id+'<
     XAlias extends string = 'id',
@@ -49,7 +52,7 @@ export interface ProviderSchemaFetcher<T extends object, TVariables extends obje
     optionsConfigurer: (
       options: FieldOptions<'id', {}, {}>,
     ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
-  ): ProviderSchemaFetcher<
+  ): InformationObjectSchemaFetcher<
     T &
       (XDirectives extends { readonly include: any } | { readonly skip: any }
         ? { readonly [key in XAlias]?: string }
@@ -57,22 +60,25 @@ export interface ProviderSchemaFetcher<T extends object, TVariables extends obje
     TVariables & XDirectiveVariables
   >
 
-  readonly '~id': ProviderSchemaFetcher<Omit<T, 'id'>, TVariables>
+  readonly '~id': InformationObjectSchemaFetcher<Omit<T, 'id'>, TVariables>
 
-  readonly updatedAt: ProviderSchemaFetcher<T & { readonly updatedAt?: string }, TVariables>
+  readonly updatedAt: InformationObjectSchemaFetcher<
+    T & { readonly updatedAt?: string },
+    TVariables
+  >
 
   'updatedAt+'<XAlias extends string = 'updatedAt', XDirectiveVariables extends object = {}>(
     optionsConfigurer: (
       options: FieldOptions<'updatedAt', {}, {}>,
     ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
-  ): ProviderSchemaFetcher<
+  ): InformationObjectSchemaFetcher<
     T & { readonly [key in XAlias]?: string },
     TVariables & XDirectiveVariables
   >
 
-  readonly '~updatedAt': ProviderSchemaFetcher<Omit<T, 'updatedAt'>, TVariables>
+  readonly '~updatedAt': InformationObjectSchemaFetcher<Omit<T, 'updatedAt'>, TVariables>
 
-  readonly createdAt: ProviderSchemaFetcher<T & { readonly createdAt: string }, TVariables>
+  readonly createdAt: InformationObjectSchemaFetcher<T & { readonly createdAt: string }, TVariables>
 
   'createdAt+'<
     XAlias extends string = 'createdAt',
@@ -82,7 +88,7 @@ export interface ProviderSchemaFetcher<T extends object, TVariables extends obje
     optionsConfigurer: (
       options: FieldOptions<'createdAt', {}, {}>,
     ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
-  ): ProviderSchemaFetcher<
+  ): InformationObjectSchemaFetcher<
     T &
       (XDirectives extends { readonly include: any } | { readonly skip: any }
         ? { readonly [key in XAlias]?: string }
@@ -90,9 +96,12 @@ export interface ProviderSchemaFetcher<T extends object, TVariables extends obje
     TVariables & XDirectiveVariables
   >
 
-  readonly '~createdAt': ProviderSchemaFetcher<Omit<T, 'createdAt'>, TVariables>
+  readonly '~createdAt': InformationObjectSchemaFetcher<Omit<T, 'createdAt'>, TVariables>
 
-  readonly description: ProviderSchemaFetcher<T & { readonly description: string }, TVariables>
+  readonly description: InformationObjectSchemaFetcher<
+    T & { readonly description: string },
+    TVariables
+  >
 
   'description+'<
     XAlias extends string = 'description',
@@ -102,7 +111,7 @@ export interface ProviderSchemaFetcher<T extends object, TVariables extends obje
     optionsConfigurer: (
       options: FieldOptions<'description', {}, {}>,
     ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
-  ): ProviderSchemaFetcher<
+  ): InformationObjectSchemaFetcher<
     T &
       (XDirectives extends { readonly include: any } | { readonly skip: any }
         ? { readonly [key in XAlias]?: string }
@@ -110,80 +119,81 @@ export interface ProviderSchemaFetcher<T extends object, TVariables extends obje
     TVariables & XDirectiveVariables
   >
 
-  readonly '~description': ProviderSchemaFetcher<Omit<T, 'description'>, TVariables>
+  readonly '~description': InformationObjectSchemaFetcher<Omit<T, 'description'>, TVariables>
 
-  service<X extends object, XVariables extends object>(
-    child: ObjectFetcher<'ServiceSchema', X, XVariables>,
-  ): ProviderSchemaFetcher<T & { readonly service: X }, TVariables & XVariables>
+  readonly name: InformationObjectSchemaFetcher<T & { readonly name: string }, TVariables>
 
-  service<
-    X extends object,
-    XVariables extends object,
-    XAlias extends string = 'service',
+  'name+'<
+    XAlias extends string = 'name',
     XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
     XDirectiveVariables extends object = {},
   >(
-    child: ObjectFetcher<'ServiceSchema', X, XVariables>,
     optionsConfigurer: (
-      options: FieldOptions<'service', {}, {}>,
+      options: FieldOptions<'name', {}, {}>,
     ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
-  ): ProviderSchemaFetcher<
+  ): InformationObjectSchemaFetcher<
     T &
       (XDirectives extends { readonly include: any } | { readonly skip: any }
-        ? { readonly [key in XAlias]?: X }
-        : { readonly [key in XAlias]: X }),
-    TVariables & XVariables & XDirectiveVariables
+        ? { readonly [key in XAlias]?: string }
+        : { readonly [key in XAlias]: string }),
+    TVariables & XDirectiveVariables
   >
 
-  user<X extends object, XVariables extends object>(
-    child: ObjectFetcher<'UserSchema', X, XVariables>,
-  ): ProviderSchemaFetcher<T & { readonly user: X }, TVariables & XVariables>
+  readonly '~name': InformationObjectSchemaFetcher<Omit<T, 'name'>, TVariables>
 
-  user<
-    X extends object,
-    XVariables extends object,
-    XAlias extends string = 'user',
-    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
-    XDirectiveVariables extends object = {},
-  >(
-    child: ObjectFetcher<'UserSchema', X, XVariables>,
-    optionsConfigurer: (
-      options: FieldOptions<'user', {}, {}>,
-    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
-  ): ProviderSchemaFetcher<
-    T &
-      (XDirectives extends { readonly include: any } | { readonly skip: any }
-        ? { readonly [key in XAlias]?: X }
-        : { readonly [key in XAlias]: X }),
-    TVariables & XVariables & XDirectiveVariables
-  >
-
-  informationObjects<X extends object, XVariables extends object>(
-    child: ObjectFetcher<'InformationObjectListSchema', X, XVariables>,
-  ): ProviderSchemaFetcher<
-    T & { readonly informationObjects?: ReadonlyArray<X> },
+  gallery<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'InformationObjectImageSchema', X, XVariables>,
+  ): InformationObjectSchemaFetcher<
+    T & { readonly gallery: ReadonlyArray<X> },
     TVariables & XVariables
   >
 
-  informationObjects<
+  gallery<
     X extends object,
     XVariables extends object,
-    XAlias extends string = 'informationObjects',
+    XAlias extends string = 'gallery',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
     XDirectiveVariables extends object = {},
   >(
-    child: ObjectFetcher<'InformationObjectListSchema', X, XVariables>,
+    child: ObjectFetcher<'InformationObjectImageSchema', X, XVariables>,
     optionsConfigurer: (
-      options: FieldOptions<'informationObjects', {}, {}>,
-    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
-  ): ProviderSchemaFetcher<
-    T & { readonly [key in XAlias]?: ReadonlyArray<X> },
+      options: FieldOptions<'gallery', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): InformationObjectSchemaFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: ReadonlyArray<X> }
+        : { readonly [key in XAlias]: ReadonlyArray<X> }),
+    TVariables & XVariables & XDirectiveVariables
+  >
+
+  provider<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'ProviderSchema', X, XVariables>,
+  ): InformationObjectSchemaFetcher<T & { readonly provider: X }, TVariables & XVariables>
+
+  provider<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'provider',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'ProviderSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'provider', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): InformationObjectSchemaFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
     TVariables & XVariables & XDirectiveVariables
   >
 }
 
-export const providerSchema$: ProviderSchemaFetcher<{}, {}> = createFetcher(
+export const informationObjectSchema$: InformationObjectSchemaFetcher<{}, {}> = createFetcher(
   createFetchableType(
-    'ProviderSchema',
+    'InformationObjectSchema',
     'OBJECT',
     [],
     [
@@ -198,21 +208,16 @@ export const providerSchema$: ProviderSchemaFetcher<{}, {}> = createFetcher(
       },
       'createdAt',
       'description',
-      {
-        category: 'REFERENCE',
-        name: 'service',
-        targetTypeName: 'ServiceSchema',
-      },
-      {
-        category: 'REFERENCE',
-        name: 'user',
-        targetTypeName: 'UserSchema',
-      },
+      'name',
       {
         category: 'LIST',
-        name: 'informationObjects',
-        targetTypeName: 'InformationObjectListSchema',
-        undefinable: true,
+        name: 'gallery',
+        targetTypeName: 'InformationObjectImageSchema',
+      },
+      {
+        category: 'REFERENCE',
+        name: 'provider',
+        targetTypeName: 'ProviderSchema',
       },
     ],
   ),
@@ -220,4 +225,5 @@ export const providerSchema$: ProviderSchemaFetcher<{}, {}> = createFetcher(
   undefined,
 )
 
-export const providerSchema$$ = providerSchema$.id.updatedAt.createdAt.description
+export const informationObjectSchema$$ =
+  informationObjectSchema$.id.updatedAt.createdAt.description.name

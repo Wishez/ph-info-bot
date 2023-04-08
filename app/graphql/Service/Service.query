@@ -1,10 +1,18 @@
 query Service {
-  service(id: "77455af4-9076-4ed1-a823-743d61bbeeb4") {
+  service(id: "1cf280fd-0a51-43cd-a21f-03a4afef9923") {
     id
     name
     category {
       id
       name
+    }
+    providers {
+      id
+      user {
+        name
+        telegramId
+    		username
+      }
     }
     attributes {
       id
@@ -70,23 +78,29 @@ mutation DeleteService {
 
 mutation BindAttributesToService {
   bindAttributesToService(
-    id: "77455af4-9076-4ed1-a823-743d61bbeeb4"
-    serviceInfo: {attributesIds: ["c79567f1-8075-4309-aea1-5f4667960929"]}
+    id: "f984f2e1-c180-446c-b841-1a06b3fca218"
+    serviceInfo: {
+      attributesIds: ["1823137d-819f-4f03-a32d-c6036dacc528", "0c2114e9-f432-40b4-a095-b697d7e80c87"]
+    }
   ) {
     name
     attributes {
       name
       notice
       id
-      serviceId
+      service {
+      	name
+      }
     }
   }
 }
 
 mutation DeleteAttributeFromService {
-  deleteAttributeFromService(
+  deleteAttributesFromService(
     id: "77455af4-9076-4ed1-a823-743d61bbeeb4"
-    serviceInfo: {attributeId: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e"}
+    serviceInfo: {
+      attributesIds: ["d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e"]
+    }
   ) {
     name
     attributes {

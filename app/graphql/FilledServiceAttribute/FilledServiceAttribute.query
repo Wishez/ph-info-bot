@@ -34,9 +34,9 @@ mutation CreateFilledServiceAttribute {
 
 mutation UpdateFilledServiceAttribute {
   updateFilledServiceAttribute(
-    filledServiceAttributeId: "c79567f1-8075-4309-aea1-5f4667960929"
+    filledServiceAttributeId: "bdb3bbdf-0874-47a6-88d9-fc13f8af8b24_0c2114e9-f432-40b4-a095-b697d7e80c87"
     filledServiceAttributeInfo: {
-      value: "updated:test"
+      value: ""
     }
   ) {
     id
