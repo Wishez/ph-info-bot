@@ -1,8 +1,8 @@
-import { EDbStatus } from '../../db/types'
-import { EClientRank } from '../Client/types/EClientRank'
-import { EServiceType } from '../Service/types'
-import { IUserModel } from '../User/types'
-import { Order } from './Order'
+import { EDbStatus } from '../../../db/types'
+import { EClientRank } from '../../Client/types/EClientRank'
+import { EServiceType } from '../../Service/types'
+import { IUserModel } from '../../User/types'
+import { Order } from '../Order'
 
 interface ICreatingTestOrderOptions {
   userName: string
@@ -14,7 +14,7 @@ interface ICreatingTestOrderOptions {
   categoryName: string
 }
 
-export const createTestOrder = async (options: ICreatingTestOrderOptions) => {
+export const createTestOrderWithForm = async (options: ICreatingTestOrderOptions) => {
   const {
     userName,
     clientTelegramId,

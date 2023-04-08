@@ -6,9 +6,11 @@ import { Chat } from '../Chat/Chat'
 import { Client } from '../Client/Client'
 import { FilledServiceAttribute } from '../FilledServiceAttribute/FilledServiceAttribute'
 import { IFilledServiceAttributeModel } from '../FilledServiceAttribute/types'
+import { InformationObject } from '../InformationObject/InformationObject'
 import { Provider } from '../Provider/Provider'
 import { IProviderModel } from '../Provider/types'
 import { Service } from '../Service/Service'
+import { EServiceType } from '../Service/types'
 import { IUserModel } from '../User/types'
 import { EOrderStatus, IOrderModel } from './types'
 
@@ -18,6 +20,10 @@ export class Order extends CrudOperations<IOrderModel> {
   service = new Service()
   filledServicesAttribute = new FilledServiceAttribute()
   chat = new Chat()
+
+  get informationObject() {
+    return new InformationObject()
+  }
 
   constructor() {
     super({ namespace: 'bot', modelName: 'order' })
@@ -141,8 +147,7 @@ export class Order extends CrudOperations<IOrderModel> {
       }
     }
 
-    // Если аттрибутов нет, то создаём заказ
-    if (!service.attributesIds?.length) {
+    if (!service.attributesIds?.length || service.serviceType !== EServiceType.FORM) {
       return { ...orderCreationState, message: null }
     }
 
@@ -218,5 +223,15 @@ export class Order extends CrudOperations<IOrderModel> {
     }
 
     return EDbStatus.NOT_FOUND
+  }
+
+  getOrderInformationObject = async (id: IOrderModel['id']) => {
+    const order = await this.read(id)
+    if (!order || !order.informationObjectId) return EDbStatus.NOT_FOUND
+
+    const informationObject = await this.informationObject.read(order.informationObjectId)
+    if (!informationObject) return EDbStatus.NOT_FOUND
+
+    return informationObject
   }
 }

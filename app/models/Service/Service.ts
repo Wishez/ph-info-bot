@@ -82,7 +82,7 @@ export class Service extends CrudOperations<IServiceModel> {
     const service = await this.read(id)
     if (!service) return EDbStatus.ERROR
 
-    if (model.attributesIds && service.serviceType === EServiceType.FORM) {
+    if (service.serviceType === EServiceType.FORM) {
       return await super.update(id, model)
     }
 

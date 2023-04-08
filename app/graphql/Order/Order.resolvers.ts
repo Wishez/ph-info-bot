@@ -67,6 +67,7 @@ export class OrderResolver {
     const provider = await OrderResolver.providerResolver.provider(order.providerId)
     const service = await OrderResolver.serviceResolver.service(order.serviceId)
     const filledServicesAttributes = await OrderResolver.order.getFilledAttributes(order.id)
+    const informationObject = await OrderResolver.order.getOrderInformationObject(order.id)
 
     if (
       client instanceof GraphQLError ||
@@ -81,6 +82,7 @@ export class OrderResolver {
       service,
       client,
       provider,
+      informationObject: informationObject === EDbStatus.NOT_FOUND ? undefined : informationObject,
       filledServicesAttributes:
         filledServicesAttributes === EDbStatus.NOT_FOUND
           ? []

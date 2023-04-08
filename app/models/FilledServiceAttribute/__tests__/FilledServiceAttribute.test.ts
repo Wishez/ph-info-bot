@@ -2,7 +2,7 @@ import isEmpty from 'lodash/isEmpty'
 import uniqueId from 'lodash/uniqueId'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
-import { createTestOrder } from '../../Order/testUtils'
+import { createTestOrderWithForm } from '../../Order/testUtils'
 import { IServiceModel } from '../../Service/types'
 import { getServiceAttributeByName } from '../../ServiceAttribute/utils'
 import { IServiceCategoryModel } from '../../ServiceCategory/types'
@@ -37,7 +37,7 @@ describe('FilledServiceAttribute', () => {
     expect.assertions(10)
     const filledServiceAttribute = new FilledServiceAttribute()
 
-    const { orderId, attributeId } = await createTestOrder({
+    const { orderId, attributeId } = await createTestOrderWithForm({
       userName,
       clientTelegramId,
       providerTelegramId,

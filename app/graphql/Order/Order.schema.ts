@@ -5,6 +5,7 @@ import { ClientSchema } from '../Client/Client.schema'
 import { IsClientExisted } from '../Client/validators'
 import { FilledServiceAttributeListSchema } from '../FilledServiceAttribute/FilledServiceAttribute.schema'
 import { IsFilledServiceAttributeExisted } from '../FilledServiceAttribute/validators'
+import { InformationObjectListSchema } from '../InformationObject/InformationObject.schema'
 import { ProviderSchema } from '../Provider/Provider.schema'
 import { IsProviderExisted } from '../Provider/validators'
 import { ServiceSchema } from '../Service/Service.schema'
@@ -41,11 +42,14 @@ export class OrderListSchema implements Omit<IOrderModel, 'clientId' | 'provider
   // TODO заменить на модель Chat
   @Field()
   chatId!: string
+
+  @Field({ nullable: true })
+  informationObjectId?: string
 }
 
 type TOrderSchema = Omit<
   IOrderModel,
-  'clientId' | 'providerId' | 'serviceId' | 'filledServicesAttributesIds'
+  'clientId' | 'providerId' | 'serviceId' | 'filledServicesAttributesIds' | 'informationObjectId'
 >
 @ObjectType()
 export class OrderSchema implements TOrderSchema {
@@ -76,6 +80,9 @@ export class OrderSchema implements TOrderSchema {
   // TODO заменить на модель Chat
   @Field()
   chatId!: string
+
+  @Field(() => InformationObjectListSchema, { nullable: true })
+  informationObject?: InformationObjectListSchema
 }
 
 @InputType()

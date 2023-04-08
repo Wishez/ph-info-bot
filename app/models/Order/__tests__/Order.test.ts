@@ -3,11 +3,12 @@ import map from 'lodash/map'
 import uniqueId from 'lodash/uniqueId'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
+import { IUserModel } from '../../User/types'
 import { Order } from '../Order'
-import { createTestOrder } from '../testUtils'
+import { createTestOrderWithForm, createTestOrderWithInformationObject } from '../testUtils'
 import { EOrderStatus } from '../types'
 
-describe('order', () => {
+describe('Order', () => {
   test('init', () => {
     const order = new Order()
     expect('read' in order).toBeTruthy()
@@ -18,18 +19,20 @@ describe('order', () => {
     expect(order.modelNamespace.startsWith('bot.order')).toBeTruthy()
   })
 
-  const clientTelegramId = Math.round(Math.random() * 100000)
-
-  const providerTelegramId = Math.round(Math.random() * 100000)
-
-  const name = uniqueId('userName')
+  const clientTelegramIdForServiceWithForm = Math.round(Math.random() * 100000)
+  const providerTelegramIdForServiceWithForm = Math.round(Math.random() * 100000)
+  const clientTelegramIdForServiceWithPortfolio = Math.round(Math.random() * 100000)
+  const providerTelegramIdForServiceWithPortfolio = Math.round(Math.random() * 100000)
+  const userName = uniqueId('userName')
+  const informationObjectName = uniqueId('informationObjectName')
   const description = uniqueId('description')
-  const serviceName = uniqueId('serviceName')
+  const serviceNameWithForm = uniqueId('serviceName')
+  const serviceNameWithPortfolio = uniqueId('serviceName')
   const categoryName = uniqueId('serviceCategoryName')
   const attributeName = uniqueId('serviceAttributeName')
   const filledAttributeValue = uniqueId('filledAttributeValue')
 
-  const getOrderForTest = async () => {
+  const getOrderForTest = async (clientTelegramId: IUserModel['telegramId']) => {
     const order = new Order()
     const model = await order.getOrdersByUserTelegramId(clientTelegramId)
     if (model === EDbStatus.NOT_FOUND) return
@@ -40,15 +43,24 @@ describe('order', () => {
   }
 
   test('create', async () => {
-    expect.assertions(8)
-    await createTestOrder({
-      userName: name,
-      clientTelegramId,
-      providerTelegramId,
+    expect.assertions(16)
+    await createTestOrderWithForm({
+      userName,
+      clientTelegramId: clientTelegramIdForServiceWithForm,
+      providerTelegramId: providerTelegramIdForServiceWithForm,
       description,
       categoryName,
       attributeName,
-      serviceName,
+      serviceName: serviceNameWithForm,
+    })
+    await createTestOrderWithInformationObject({
+      userName,
+      clientTelegramId: clientTelegramIdForServiceWithPortfolio,
+      providerTelegramId: providerTelegramIdForServiceWithPortfolio,
+      description,
+      categoryName,
+      informationObjectName,
+      serviceName: serviceNameWithPortfolio,
     })
   })
 
@@ -65,12 +77,13 @@ describe('order', () => {
     expect.assertions(2)
     const order = new Order()
 
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const orderModel = await order.read(model.id)
     if (!orderModel) return
 
+    console.log('read', model.id)
     expect(orderModel.id).toBe(model.id)
     expect(orderModel.filledServicesAttributesIds.length).toBe(1)
   })
@@ -78,7 +91,7 @@ describe('order', () => {
   test('update', async () => {
     expect.assertions(2)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const status = await order.update(model.id, { status: EOrderStatus.COMPLETED })
@@ -95,7 +108,7 @@ describe('order', () => {
   test('getProvider', async () => {
     expect.assertions(1)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const provider = await order.getProvider(model.id)
@@ -108,7 +121,7 @@ describe('order', () => {
   test('getClient', async () => {
     expect.assertions(1)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const client = await order.getClient(model.id)
@@ -121,7 +134,7 @@ describe('order', () => {
   test('getService', async () => {
     expect.assertions(1)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const service = await order.getService(model.id)
@@ -133,7 +146,7 @@ describe('order', () => {
   test('getFilledAttributes', async () => {
     expect.assertions(6)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const filledAttributes = await order.getFilledAttributes(model.id)
@@ -161,7 +174,7 @@ describe('order', () => {
   test('updateAttribute', async () => {
     expect.assertions(2)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const filledAttributeId = model.filledServicesAttributesIds[0]
@@ -180,7 +193,7 @@ describe('order', () => {
   test('completeOrder', async () => {
     expect.assertions(2)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const status = await order.completeOrder(model.id)
@@ -195,7 +208,7 @@ describe('order', () => {
   test('cancelOrder', async () => {
     expect.assertions(2)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const status = await order.cancelOrder(model.id)
@@ -207,10 +220,32 @@ describe('order', () => {
     expect(nextModel.status).toBe(EOrderStatus.CLOSED)
   })
 
+  test('getOrderInformationObject', async () => {
+    expect.assertions(2)
+    const order = new Order()
+    const modelWithForm = await getOrderForTest(clientTelegramIdForServiceWithForm)
+    const modelWithInformationObject = await getOrderForTest(
+      clientTelegramIdForServiceWithPortfolio,
+    )
+    if (!(modelWithForm && modelWithInformationObject)) return
+
+    const informationObjectOfServiceWithFormType = await order.getOrderInformationObject(
+      modelWithForm.id,
+    )
+    expect(informationObjectOfServiceWithFormType).toBe(EDbStatus.NOT_FOUND)
+
+    const informationObjectOfServiceWithPortfolioType = await order.getOrderInformationObject(
+      modelWithInformationObject.id,
+    )
+    if (informationObjectOfServiceWithPortfolioType === EDbStatus.NOT_FOUND) return
+
+    expect(informationObjectOfServiceWithPortfolioType.name).toBe(informationObjectName)
+  })
+
   test('delete', async () => {
     expect.assertions(1)
     const order = new Order()
-    const model = await getOrderForTest()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
     const status = await order.delete(model.id)
@@ -226,6 +261,7 @@ describe('order', () => {
     dbClient.deleteNamespace(order.client.modelNamespace)
     dbClient.deleteNamespace(order.provider.modelNamespace)
     dbClient.deleteNamespace(order.service.modelNamespace)
+    dbClient.deleteNamespace(order.informationObject.modelNamespace)
     dbClient.deleteNamespace(order.service.serviceCategory.modelNamespace)
     dbClient.deleteNamespace(order.filledServicesAttribute.modelNamespace)
     dbClient.deleteNamespace(order.filledServicesAttribute.serviceAttribute.modelNamespace)

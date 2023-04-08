@@ -215,6 +215,24 @@ describe('Service', () => {
     expect(Object.values(attributes).length).toBe(1)
   })
 
+  test('update after binding attributes', async () => {
+    expect.assertions(2)
+    const service = new Service()
+    const model = await getServiceByName(service, serviceWithFormName)
+    if (!model?.id) return
+
+    const status = await service.update(model.id, {
+      description,
+    })
+
+    expect(status).toBe(EDbStatus.OK)
+
+    const nextModel = await service.read(model.id)
+    if (!nextModel) return
+
+    expect(nextModel.attributesIds?.length).toBe(1)
+  })
+
   test('deleteServiceAttributes', async () => {
     expect.assertions(4)
     const service = new Service()
