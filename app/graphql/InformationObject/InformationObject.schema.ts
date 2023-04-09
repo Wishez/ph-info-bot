@@ -1,4 +1,4 @@
-import { IsArray } from 'class-validator'
+import { IsArray, IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import {
   IInformationObjectImage,
@@ -82,17 +82,15 @@ export class InformationObjectCreation implements TInformationObjectCreation {
   providerId!: string
 }
 
-type TInformationObjectUpdating = Omit<
-  IInformationObjectModel,
-  'id' | 'createdAt' | 'updatedAt' | 'gallery' | 'providerId'
->
 @InputType()
-export class InformationObjectUpdating implements TInformationObjectUpdating {
-  @Field()
-  description!: string
+export class InformationObjectUpdating {
+  @Field({ nullable: true })
+  @IsString()
+  description?: string
 
-  @Field()
-  name!: string
+  @Field({ nullable: true })
+  @IsString()
+  name?: string
 }
 
 @InputType()

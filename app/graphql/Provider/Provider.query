@@ -2,6 +2,7 @@ query Providers {
   providers {
     id
     description
+    serviceId
     user {
       id
       name
@@ -15,8 +16,10 @@ query Provider {
   provider(id: "1ede872f-45d3-47c7-afb3-2381b9b913b3") {
     description
     id
+
     service {
       id
+  		serviceType
       category {
         id
       }

@@ -5,7 +5,12 @@ import { Env } from '../config/Env'
 import { ECommonAction } from './types/actions'
 import { TCallbackContext } from './types/context'
 import { useStartCommand } from './commands'
-import { pressCategoryEvent, pressProviderEvent, pressServiceEvent } from './events'
+import {
+  pressCategoryEvent,
+  pressInformationObjectEvent,
+  pressProviderEvent,
+  pressServiceEvent,
+} from './events'
 
 export const bot = new TelegramBot(Env.botToken, { polling: true })
 
@@ -31,6 +36,9 @@ export const useBot = () => {
           break
         case ECommonAction.PRESS_PROVIDER:
           await pressProviderEvent(context, query)
+          break
+        case ECommonAction.PRESS_INFORMATION_OBJECT:
+          await pressInformationObjectEvent(context, query)
           break
         default:
       }

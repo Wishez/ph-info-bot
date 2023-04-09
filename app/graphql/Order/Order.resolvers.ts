@@ -3,13 +3,20 @@ import typeQl from 'type-graphql'
 import { EDbStatus } from '../../db/types'
 import { Order } from '../../models/Order/Order'
 import { IOrderModel } from '../../models/Order/types'
+import { EServiceType } from '../../models/Service/types'
 import { ClientResolver } from '../Client/Client.resolvers'
 import { ClientSchema } from '../Client/Client.schema'
 import { ProviderResolver } from '../Provider/Provider.resolvers'
 import { ProviderSchema } from '../Provider/Provider.schema'
 import { ServiceResolver } from '../Service/Service.resolvers'
 import { ServiceSchema } from '../Service/Service.schema'
-import { OrderAttributeUpdating, OrderCreation, OrderListSchema, OrderSchema } from './Order.schema'
+import {
+  OrderAttributeUpdating,
+  OrderCreation,
+  OrderListSchema,
+  OrderSchema,
+  UpdatingOrder,
+} from './Order.schema'
 
 const { Query, Resolver, Arg, Mutation } = typeQl
 
@@ -101,6 +108,22 @@ export class OrderResolver {
     return new GraphQLError(`Can't create order: ${message}`)
   }
 
+  @Mutation(() => OrderSchema || Boolean)
+  async updateOrder(
+    @Arg('id') id: string,
+    @Arg('orderInfo') orderInfo: UpdatingOrder,
+  ): Promise<boolean | OrderSchema> {
+    const status = await OrderResolver.order.update(id, orderInfo)
+    const orderResolver = new OrderResolver()
+    const order = await orderResolver.order(id)
+
+    if (status !== EDbStatus.OK || order instanceof GraphQLError) {
+      return false
+    }
+
+    return order
+  }
+
   @Mutation(() => Boolean)
   async deleteOrder(@Arg('id') id: string): Promise<boolean> {
     const status = await OrderResolver.order.delete(id)
@@ -167,15 +190,16 @@ export class OrderResolver {
     const order = await this.order(id)
 
     if (order instanceof GraphQLError) return false
-    console.log(
-      order.filledServicesAttributes,
-      order.filledServicesAttributes.every(({ serviceAttribute, value }) =>
-        serviceAttribute.isRequired ? Boolean(value) : true,
-      ),
-    )
 
-    return order.filledServicesAttributes.every(({ serviceAttribute, value }) =>
-      serviceAttribute.isRequired ? Boolean(value) : true,
-    )
+    switch (order.service.serviceType) {
+      case EServiceType.PORTFOLIO:
+        return Boolean(order.informationObject?.id)
+      case EServiceType.FORM:
+        return order.filledServicesAttributes.every(({ serviceAttribute, value }) =>
+          serviceAttribute.isRequired ? Boolean(value) : true,
+        )
+      default:
+        return false
+    }
   }
 }

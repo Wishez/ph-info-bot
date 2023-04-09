@@ -33,6 +33,7 @@ import type {
   ServiceCreation,
   ServiceDeletingAttributes,
   ServiceUpdating,
+  UpdatingOrder,
   UserCreation,
   UserUpdating,
 } from '../inputs'
@@ -1634,6 +1635,68 @@ export interface MutationFetcher<T extends object, TVariables extends object>
     TVariables & UnresolvedVariables<XArgs, MutationArgs['createOrder']> & XDirectiveVariables
   >
 
+  updateOrder<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly updateOrder: X },
+    TVariables & XVariables & MutationArgs['updateOrder']
+  >
+
+  updateOrder<
+    XArgs extends AcceptableVariables<MutationArgs['updateOrder']>,
+    X extends object,
+    XVariables extends object,
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+  ): MutationFetcher<
+    T & { readonly updateOrder: X },
+    TVariables & XVariables & UnresolvedVariables<XArgs, MutationArgs['updateOrder']>
+  >
+
+  updateOrder<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'updateOrder',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'updateOrder', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables & XVariables & MutationArgs['updateOrder'] & XDirectiveVariables
+  >
+
+  updateOrder<
+    XArgs extends AcceptableVariables<MutationArgs['updateOrder']>,
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'updateOrder',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'updateOrder', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: X }
+        : { readonly [key in XAlias]: X }),
+    TVariables &
+      XVariables &
+      UnresolvedVariables<XArgs, MutationArgs['updateOrder']> &
+      XDirectiveVariables
+  >
+
   deleteOrder(): MutationFetcher<
     T & { readonly deleteOrder: boolean },
     TVariables & MutationArgs['deleteOrder']
@@ -2387,6 +2450,15 @@ export const mutation$: MutationFetcher<{}, {}> = createFetcher(
         argGraphQLTypeMap: { orderInfo: 'OrderCreation!' },
       },
       {
+        category: 'REFERENCE',
+        name: 'updateOrder',
+        argGraphQLTypeMap: {
+          orderInfo: 'UpdatingOrder!',
+          id: 'String!',
+        },
+        targetTypeName: 'OrderSchema',
+      },
+      {
         category: 'SCALAR',
         name: 'deleteOrder',
         argGraphQLTypeMap: { id: 'String!' },
@@ -2585,6 +2657,11 @@ export interface MutationArgs {
 
   readonly createOrder: {
     readonly orderInfo: OrderCreation
+  }
+
+  readonly updateOrder: {
+    readonly orderInfo: UpdatingOrder
+    readonly id: string
   }
 
   readonly deleteOrder: {

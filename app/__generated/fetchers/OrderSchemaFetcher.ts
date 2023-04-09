@@ -217,6 +217,25 @@ export interface OrderSchemaFetcher<T extends object, TVariables extends object>
   >
 
   readonly '~chatId': OrderSchemaFetcher<Omit<T, 'chatId'>, TVariables>
+
+  informationObject<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'InformationObjectListSchema', X, XVariables>,
+  ): OrderSchemaFetcher<T & { readonly informationObject?: X }, TVariables & XVariables>
+
+  informationObject<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'informationObject',
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'InformationObjectListSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'informationObject', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): OrderSchemaFetcher<
+    T & { readonly [key in XAlias]?: X },
+    TVariables & XVariables & XDirectiveVariables
+  >
 }
 
 export const orderSchema$: OrderSchemaFetcher<{}, {}> = createFetcher(
@@ -257,6 +276,12 @@ export const orderSchema$: OrderSchemaFetcher<{}, {}> = createFetcher(
         targetTypeName: 'FilledServiceAttributeListSchema',
       },
       'chatId',
+      {
+        category: 'REFERENCE',
+        name: 'informationObject',
+        targetTypeName: 'InformationObjectListSchema',
+        undefinable: true,
+      },
     ],
   ),
   ENUM_INPUT_METADATA,

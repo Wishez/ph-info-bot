@@ -6,6 +6,7 @@ import { IsClientExisted } from '../Client/validators'
 import { FilledServiceAttributeListSchema } from '../FilledServiceAttribute/FilledServiceAttribute.schema'
 import { IsFilledServiceAttributeExisted } from '../FilledServiceAttribute/validators'
 import { InformationObjectListSchema } from '../InformationObject/InformationObject.schema'
+import { IsInformationObjectExisted } from '../InformationObject/validators'
 import { ProviderSchema } from '../Provider/Provider.schema'
 import { IsProviderExisted } from '../Provider/validators'
 import { ServiceSchema } from '../Service/Service.schema'
@@ -98,6 +99,13 @@ export class OrderCreation {
   @Field()
   @IsServiceExisted()
   serviceId!: string
+}
+
+@InputType()
+export class UpdatingOrder {
+  @Field({ nullable: true })
+  @IsInformationObjectExisted()
+  informationObjectId?: string
 }
 
 @InputType()

@@ -2,6 +2,7 @@ query Service {
   service(id: "1cf280fd-0a51-43cd-a21f-03a4afef9923") {
     id
     name
+    serviceType
     category {
       id
       name
@@ -37,7 +38,8 @@ mutation CreateRubToBathService {
     serviceInfo: {
       name: "Обмен рубли на баты",
       description: "Курс обмена зависит от провайдера. Можно выбрать вариант обмена — кэш или безнал",
-      categoryId: "e767c862-2db8-4fde-9351-25a327d49266"
+      categoryId: "e767c862-2db8-4fde-9351-25a327d49266",
+      serviceType: "form"
     }
   )
 }
@@ -47,7 +49,8 @@ mutation CreateRentBikesService {
     serviceInfo: {
       name: "Аренда байков",
       description: "Выберите арендодателя и ознакомьтесь с байками через галлерею. Если вам что-то приглянется, вы сможете связаться с арендодателем и обсудить условия аренды",
-      categoryId: "072564e9-00d6-424f-b589-55e337e3e765"
+      categoryId: "072564e9-00d6-424f-b589-55e337e3e765",
+      serviceType: "portfolio",
     }
   )
 }
@@ -57,17 +60,21 @@ mutation CreateRentPropertyService {
     serviceInfo: {
       name: "Аренда отелей, аппартаментов и кондо",
       description: "Выберите арендодателя и ознакомьтесь с вариантами через галлерею. Если вам что-то приглянется, вы сможете связаться с арендодателем и уточнить детали",
-      categoryId: "072564e9-00d6-424f-b589-55e337e3e765"
+      categoryId: "072564e9-00d6-424f-b589-55e337e3e765",
+      serviceType: "portfolio",
     }
   )
 }
 
 mutation UpdateService {
   updateService(
-    id: "77455af4-9076-4ed1-a823-743d61bbeeb4"
-    serviceInfo: {name: "updated:Service"}
+    id: "1cf280fd-0a51-43cd-a21f-03a4afef9923"
+    serviceInfo: {
+      serviceType: "portfolio"
+    }
   ) {
     name
+    serviceType
     id
   }
 }
