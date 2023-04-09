@@ -1,9 +1,34 @@
 import isEmpty from 'lodash/isEmpty'
 import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
+import { Chat } from '../../Chat/Chat'
+import { IChatModel } from '../../Chat/types'
+import { IUserModel } from '../types'
 import { User } from '../User'
 
 describe('User', () => {
+  jest.mock('../../Chat/Chat')
+
+  const testChatId = '42'
+  const mockedChat = jest.mocked(Chat).mockImplementation(() => {
+    const ActualChat = jest.requireActual('../../Chat/Chat').Chat
+    const chat = new ActualChat()
+
+    chat.read = jest.fn(
+      (): Promise<IChatModel> =>
+        Promise.resolve({
+          id: testChatId,
+          providerId: '',
+          clientTelegramId: 42,
+          updatedAt: '',
+          messagesHistory: [],
+          createdAt: '',
+        }),
+    )
+
+    return chat
+  })
+
   test('init', () => {
     const user = new User()
     expect('read' in user).toBeTruthy()
@@ -14,7 +39,7 @@ describe('User', () => {
     expect(user.modelNamespace.startsWith('bot.user')).toBeTruthy()
   })
 
-  const telegramId = 'shiningfinger'
+  const telegramId: IUserModel['telegramId'] = Math.round(Math.random() * 10000)
   const name = 'Phil'
   const updatedName = 'Zhuravlev'
   test('create', async () => {
@@ -73,6 +98,32 @@ describe('User', () => {
     expect(nextModel?.name).toBe(updatedName)
   })
 
+  test('connectToChat', async () => {
+    expect.assertions(2)
+    const user = new User()
+    const model = await user.getUserByTelegramId(telegramId)
+    if (!model?.id) return
+
+    const status = await user.connectToChat(model.id, testChatId)
+    expect(status).toBe(EDbStatus.OK)
+
+    const nextModel = await user.read(model.id)
+    expect(nextModel?.currentChatId).toBe(testChatId)
+  })
+
+  test('leaveChat', async () => {
+    expect.assertions(2)
+    const user = new User()
+    const model = await user.getUserByTelegramId(telegramId)
+    if (!model?.id) return
+
+    const status = await user.leaveChat(model.id)
+    expect(status).toBe(EDbStatus.OK)
+
+    const nextModel = await user.read(model.id)
+    expect(nextModel?.currentChatId).toBeUndefined()
+  })
+
   test('delete', async () => {
     expect.assertions(1)
     const user = new User()
@@ -87,5 +138,6 @@ describe('User', () => {
   afterAll(() => {
     const user = new User()
     dbClient.deleteNamespace(user.modelNamespace)
+    mockedChat.mockRestore()
   })
 })

@@ -62,4 +62,21 @@ export class UserResolver {
 
     return (status === EDbStatus.OK && nextModel) || false
   }
+
+  @Mutation(() => Boolean)
+  async connectUserToChat(
+    @Arg('userId') userId: string,
+    @Arg('chatId') chatId: string,
+  ): Promise<boolean> {
+    const status = await UserResolver.user.connectToChat(userId, chatId)
+
+    return status === EDbStatus.OK
+  }
+
+  @Mutation(() => Boolean)
+  async disconnectUserFromChat(@Arg('userId') userId: string): Promise<boolean> {
+    const status = await UserResolver.user.leaveChat(userId)
+
+    return status === EDbStatus.OK
+  }
 }

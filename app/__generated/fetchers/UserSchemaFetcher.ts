@@ -162,6 +162,19 @@ export interface UserSchemaFetcher<T extends object, TVariables extends object>
   ): UserSchemaFetcher<T & { readonly [key in XAlias]?: string }, TVariables & XDirectiveVariables>
 
   readonly '~username': UserSchemaFetcher<Omit<T, 'username'>, TVariables>
+
+  readonly currentChatId: UserSchemaFetcher<T & { readonly currentChatId?: string }, TVariables>
+
+  'currentChatId+'<
+    XAlias extends string = 'currentChatId',
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'currentChatId', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): UserSchemaFetcher<T & { readonly [key in XAlias]?: string }, TVariables & XDirectiveVariables>
+
+  readonly '~currentChatId': UserSchemaFetcher<Omit<T, 'currentChatId'>, TVariables>
 }
 
 export const userSchema$: UserSchemaFetcher<{}, {}> = createFetcher(
@@ -202,6 +215,11 @@ export const userSchema$: UserSchemaFetcher<{}, {}> = createFetcher(
         name: 'username',
         undefinable: true,
       },
+      {
+        category: 'SCALAR',
+        name: 'currentChatId',
+        undefinable: true,
+      },
     ],
   ),
   ENUM_INPUT_METADATA,
@@ -209,4 +227,4 @@ export const userSchema$: UserSchemaFetcher<{}, {}> = createFetcher(
 )
 
 export const userSchema$$ =
-  userSchema$.id.avatar.phone.email.telegramId.name.createdAt.updatedAt.username
+  userSchema$.id.avatar.phone.email.telegramId.name.createdAt.updatedAt.username.currentChatId

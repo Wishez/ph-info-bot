@@ -2240,6 +2240,100 @@ export interface MutationFetcher<T extends object, TVariables extends object>
       UnresolvedVariables<XArgs, MutationArgs['updateUser']> &
       XDirectiveVariables
   >
+
+  connectUserToChat(): MutationFetcher<
+    T & { readonly connectUserToChat: boolean },
+    TVariables & MutationArgs['connectUserToChat']
+  >
+
+  connectUserToChat<XArgs extends AcceptableVariables<MutationArgs['connectUserToChat']>>(
+    args: XArgs,
+  ): MutationFetcher<
+    T & { readonly connectUserToChat: boolean },
+    TVariables & UnresolvedVariables<XArgs, MutationArgs['connectUserToChat']>
+  >
+
+  connectUserToChat<
+    XAlias extends string = 'connectUserToChat',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'connectUserToChat', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: boolean }
+        : { readonly [key in XAlias]: boolean }),
+    TVariables & MutationArgs['connectUserToChat'] & XDirectiveVariables
+  >
+
+  connectUserToChat<
+    XArgs extends AcceptableVariables<MutationArgs['connectUserToChat']>,
+    XAlias extends string = 'connectUserToChat',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    optionsConfigurer: (
+      options: FieldOptions<'connectUserToChat', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: boolean }
+        : { readonly [key in XAlias]: boolean }),
+    TVariables & UnresolvedVariables<XArgs, MutationArgs['connectUserToChat']> & XDirectiveVariables
+  >
+
+  disconnectUserFromChat(): MutationFetcher<
+    T & { readonly disconnectUserFromChat: boolean },
+    TVariables & MutationArgs['disconnectUserFromChat']
+  >
+
+  disconnectUserFromChat<XArgs extends AcceptableVariables<MutationArgs['disconnectUserFromChat']>>(
+    args: XArgs,
+  ): MutationFetcher<
+    T & { readonly disconnectUserFromChat: boolean },
+    TVariables & UnresolvedVariables<XArgs, MutationArgs['disconnectUserFromChat']>
+  >
+
+  disconnectUserFromChat<
+    XAlias extends string = 'disconnectUserFromChat',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'disconnectUserFromChat', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: boolean }
+        : { readonly [key in XAlias]: boolean }),
+    TVariables & MutationArgs['disconnectUserFromChat'] & XDirectiveVariables
+  >
+
+  disconnectUserFromChat<
+    XArgs extends AcceptableVariables<MutationArgs['disconnectUserFromChat']>,
+    XAlias extends string = 'disconnectUserFromChat',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    optionsConfigurer: (
+      options: FieldOptions<'disconnectUserFromChat', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): MutationFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: boolean }
+        : { readonly [key in XAlias]: boolean }),
+    TVariables &
+      UnresolvedVariables<XArgs, MutationArgs['disconnectUserFromChat']> &
+      XDirectiveVariables
+  >
 }
 
 export const mutation$: MutationFetcher<{}, {}> = createFetcher(
@@ -2522,6 +2616,19 @@ export const mutation$: MutationFetcher<{}, {}> = createFetcher(
         },
         targetTypeName: 'UserSchema',
       },
+      {
+        category: 'SCALAR',
+        name: 'connectUserToChat',
+        argGraphQLTypeMap: {
+          chatId: 'String!',
+          userId: 'String!',
+        },
+      },
+      {
+        category: 'SCALAR',
+        name: 'disconnectUserFromChat',
+        argGraphQLTypeMap: { userId: 'String!' },
+      },
     ],
   ),
   ENUM_INPUT_METADATA,
@@ -2705,5 +2812,14 @@ export interface MutationArgs {
   readonly updateUser: {
     readonly userInfo: UserUpdating
     readonly telegramId: number
+  }
+
+  readonly connectUserToChat: {
+    readonly chatId: string
+    readonly userId: string
+  }
+
+  readonly disconnectUserFromChat: {
+    readonly userId: string
   }
 }

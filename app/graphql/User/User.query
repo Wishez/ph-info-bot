@@ -3,6 +3,7 @@ query Users {
     id
     name
     telegramId
+    currentChatId
   }
 }
 
@@ -23,6 +24,17 @@ mutation DeleteUser {
 mutation CreateUser {
   createUser(userInfo: {name: "Provider", telegramId: 42})
 }
+
+mutation ConnectToChat {
+  connectUserToChat(
+    userId: "b0732003-d983-4757-95cc-8b60fbec9b44"
+    chatId: "9cded070-2130-436b-83da-45c4b9821518"
+  )
+  disconnectUserFromChat(
+    userId: "b0732003-d983-4757-95cc-8b60fbec9b44"
+  )
+}
+
 
 mutation UpdateUser {
   updateUser(

@@ -30,6 +30,7 @@ query Services {
   services {
     id
     name
+    attributesIds
   }
 }
 
@@ -83,7 +84,7 @@ mutation DeleteService {
   deleteService(id: "77455af4-9076-4ed1-a823-743d61bbeeb4")
 }
 
-mutation BindAttributesToService {
+mutation BindAttributesToServiceThatExchangeRublesToBaths {
   bindAttributesToService(
     id: "f984f2e1-c180-446c-b841-1a06b3fca218"
     serviceInfo: {

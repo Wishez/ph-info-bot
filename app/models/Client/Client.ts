@@ -5,11 +5,10 @@ import { User } from '../User/User'
 import { IClientModel } from './types'
 
 export class Client extends CrudOperations<IClientModel> {
-  user: User
+  user = new User()
 
   constructor() {
     super({ namespace: 'bot', modelName: 'client' })
-    this.user = new User()
   }
 
   getUser = async (id: IClientModel['id']) => {

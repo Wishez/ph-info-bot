@@ -33,6 +33,9 @@ export class UserSchema implements IUserModel {
 
   @Field({ nullable: true })
   username?: string
+
+  @Field({ nullable: true })
+  currentChatId?: string
 }
 
 @InputType()
