@@ -1,7 +1,7 @@
 import { IOrderModel } from '../../../models/Order/types'
 import { ECommonAction } from '../actions'
 
-export interface ICallProviderContext {
-  action: ECommonAction.CONNECT_WITH_PROVIDER
+export interface IConnectUserToOrderChatContext {
+  action: ECommonAction.CONNECT_USER_TO_ORDER_CHAT
   id: IOrderModel['id']
 }

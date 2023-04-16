@@ -1,11 +1,11 @@
-import type { CallbackQuery } from 'node-telegram-bot-api'
 import { execute } from '../../../__generated'
 import { bot } from '../../index'
 import type { IPressProviderContext } from '../../types/context'
+import { TEvent } from '../types'
 import { FETCH_CLIENT, FETCH_PROVIDER } from './fetchers'
 import { createOrderAndSendNextStepsToUser, sendOrderIfItIsExisted } from './helpers'
 
-export const pressProviderEvent = async (context: IPressProviderContext, query: CallbackQuery) => {
+export const pressProviderEvent: TEvent<IPressProviderContext> = async (context, query) => {
   const receiver = query.from.id
   await bot.sendChatAction(receiver, 'typing')
   const providerResponse = await execute(FETCH_PROVIDER, { variables: { id: context.id } })

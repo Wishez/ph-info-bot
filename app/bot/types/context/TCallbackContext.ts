@@ -1,4 +1,5 @@
 import { ICallProviderContext } from './ICallProviderContext'
+import { IConnectUserToOrderChatContext } from './IConnectUserToOrderChatContext'
 import { IPressCategoryContext } from './IPressCategoryContext'
 import { IPressInformationObjectContext } from './IPressInformationObjectContext'
 import { IPressProviderContext } from './IPressProviderContext'
@@ -10,3 +11,4 @@ export type TCallbackContext =
   | IPressProviderContext
   | IPressInformationObjectContext
   | ICallProviderContext
+  | IConnectUserToOrderChatContext

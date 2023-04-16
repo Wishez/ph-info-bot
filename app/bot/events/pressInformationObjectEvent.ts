@@ -1,4 +1,3 @@
-import { CallbackQuery } from 'node-telegram-bot-api'
 import { execute } from '../../__generated'
 import {
   clientSchema$,
@@ -11,6 +10,7 @@ import {
 import { bot } from '../index'
 import { IPressInformationObjectContext } from '../types/context'
 import { getCallProviderActionIfOrderFilled } from './helpers'
+import { TEvent } from './types'
 
 const FETCH_CLIENT = query$.client(clientSchema$.id)
 const FETCH_INFORMATION_OBJECT = query$.informationObject(
@@ -19,9 +19,9 @@ const FETCH_INFORMATION_OBJECT = query$.informationObject(
 const CHECK_ORDER_EXISTENCE = query$.checkOrderExistence()
 const UPDATE_ORDER = mutation$.updateOrder(orderSchema$.id)
 
-export const pressInformationObjectEvent = async (
-  context: IPressInformationObjectContext,
-  query: CallbackQuery,
+export const pressInformationObjectEvent: TEvent<IPressInformationObjectContext> = async (
+  context,
+  query,
 ) => {
   const receiver = query.from.id
   await bot.sendChatAction(receiver, 'typing')

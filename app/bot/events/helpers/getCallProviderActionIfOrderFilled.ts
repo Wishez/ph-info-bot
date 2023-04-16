@@ -22,7 +22,7 @@ export const getCallProviderActionIfOrderFilled = async (
   if (response.isAllRequiredAttributesFilled) {
     return CallbackButton<ICallProviderContext>('Связаться с оператором', {
       id: orderId,
-      action: ECommonAction.CALL_PROVIDER,
+      action: ECommonAction.CONNECT_WITH_PROVIDER,
     })
   }
 }

@@ -1,4 +1,3 @@
-import type { CallbackQuery } from 'node-telegram-bot-api'
 import { execute } from '../../__generated'
 import {
   providerListSchema$,
@@ -11,6 +10,7 @@ import { CallbackButton } from '../components'
 import { bot } from '../index'
 import { ECommonAction } from '../types/actions'
 import { IPressProviderContext, IPressServiceContext } from '../types/context'
+import { TEvent } from './types'
 
 const FETCH_SERVICE = query$.service(
   serviceSchema$.name.description.providers(
@@ -18,7 +18,7 @@ const FETCH_SERVICE = query$.service(
   ),
 )
 
-export const pressServiceEvent = async (context: IPressServiceContext, query: CallbackQuery) => {
+export const pressServiceEvent: TEvent<IPressServiceContext> = async (context, query) => {
   const receiver = query.from.id
   await bot.sendChatAction(receiver, 'typing')
   const response = await execute(FETCH_SERVICE, { variables: { id: context.id } })

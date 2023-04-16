@@ -6,6 +6,8 @@ import { ECommonAction } from './types/actions'
 import { TCallbackContext } from './types/context'
 import { useStartCommand } from './commands'
 import {
+  connectUserToOrderChatEvent,
+  connectWithProviderEvent,
   pressCategoryEvent,
   pressInformationObjectEvent,
   pressProviderEvent,
@@ -39,6 +41,12 @@ export const useBot = () => {
           break
         case ECommonAction.PRESS_INFORMATION_OBJECT:
           await pressInformationObjectEvent(context, query)
+          break
+        case ECommonAction.CONNECT_WITH_PROVIDER:
+          await connectWithProviderEvent(context, query)
+          break
+        case ECommonAction.CONNECT_USER_TO_ORDER_CHAT:
+          await connectUserToOrderChatEvent(context, query)
           break
         default:
       }

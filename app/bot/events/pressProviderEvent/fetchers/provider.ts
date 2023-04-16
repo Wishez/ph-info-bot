@@ -1,5 +1,5 @@
 import {
-  informationObjectImageSchema$,
+  informationObjectImageSchema$$,
   informationObjectListSchema$,
   providerSchema$,
   query$,
@@ -13,6 +13,6 @@ export const FETCH_PROVIDER = query$.provider(
       serviceSchema$.id.name.serviceType.attributes(serviceAttributeSchema$.name.isRequired.notice),
     )
     .informationObjects(
-      informationObjectListSchema$.id.name.description.gallery(informationObjectImageSchema$.url),
+      informationObjectListSchema$.id.name.description.gallery(informationObjectImageSchema$$),
     ),
 )

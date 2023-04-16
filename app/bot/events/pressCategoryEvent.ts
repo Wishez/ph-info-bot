@@ -1,4 +1,3 @@
-import type { CallbackQuery } from 'node-telegram-bot-api'
 import { execute } from '../../__generated'
 import {
   query$,
@@ -10,6 +9,7 @@ import { CallbackButton } from '../components'
 import { ECommonAction } from '../types/actions'
 import { IPressCategoryContext, IPressServiceContext } from '../types/context'
 import { bot } from '../'
+import { TEvent } from './types'
 
 const FETCH_CATEGORY = query$.serviceCategory(
   serviceCategorySchema$.name.description
@@ -17,7 +17,7 @@ const FETCH_CATEGORY = query$.serviceCategory(
     .subcategories(serviceCategoryListSchema$.id.name),
 )
 
-export const pressCategoryEvent = async (context: IPressCategoryContext, query: CallbackQuery) => {
+export const pressCategoryEvent: TEvent<IPressCategoryContext> = async (context, query) => {
   const receiver = query.from.id
   await bot.sendChatAction(receiver, 'typing')
   const category = await execute(FETCH_CATEGORY, { variables: { id: context.id } })
