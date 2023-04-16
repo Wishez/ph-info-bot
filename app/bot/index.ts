@@ -4,7 +4,7 @@ import './executor'
 import { Env } from '../config/Env'
 import { ECommonAction } from './types/actions'
 import { TCallbackContext } from './types/context'
-import { useStartCommand } from './commands'
+import { useLeaveChatCommand, useStartCommand } from './commands'
 import {
   connectUserToOrderChatEvent,
   connectWithProviderEvent,
@@ -20,6 +20,7 @@ const eventLogger = log4js.getLogger()
 
 export const useBot = () => {
   useStartCommand()
+  useLeaveChatCommand()
 
   bot.on('callback_query', async query => {
     const action = query.data
