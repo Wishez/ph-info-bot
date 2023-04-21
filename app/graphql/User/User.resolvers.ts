@@ -3,6 +3,8 @@ import typeQl from 'type-graphql'
 import { EDbStatus } from '../../db/types'
 import { IUserModel } from '../../models/User/types'
 import { User } from '../../models/User/User'
+import { OrderResolver } from '../Order/Order.resolvers'
+import { OrderSchema } from '../Order/Order.schema'
 import { UserCreation, UserSchema, UserUpdating } from './User.schema'
 
 const { Query, Resolver, Arg, Mutation } = typeQl
@@ -22,13 +24,34 @@ export class UserResolver {
 
   @Query(() => UserSchema || GraphQLError)
   async user(@Arg('telegramId') telegramId: number): Promise<UserSchema | GraphQLError> {
-    const client = await UserResolver.user.getUserByTelegramId(telegramId)
+    const user = await UserResolver.user.getUserByTelegramId(telegramId)
 
-    if (!client) {
+    if (!user) {
       return new GraphQLError(`User with ${telegramId} is not found`)
     }
 
-    return client
+    const orderResolver = new OrderResolver()
+
+    try {
+      const orders = await Promise.all(
+        (user.ordersIds || []).map(orderId => orderResolver.order(orderId)),
+      )
+      const providers = await UserResolver.user.getUserProviders(user.id)
+
+      return {
+        ...user,
+        providers: providers === EDbStatus.NOT_FOUND ? [] : Object.values(providers),
+        orders: orders.reduce((result: OrderSchema[], order) => {
+          if (!(order instanceof GraphQLError)) {
+            result.push(order)
+          }
+
+          return result
+        }, []),
+      }
+    } catch {}
+
+    return user
   }
 
   @Mutation(() => String || GraphQLError)

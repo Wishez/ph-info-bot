@@ -175,6 +175,44 @@ export interface UserSchemaFetcher<T extends object, TVariables extends object>
   ): UserSchemaFetcher<T & { readonly [key in XAlias]?: string }, TVariables & XDirectiveVariables>
 
   readonly '~currentChatId': UserSchemaFetcher<Omit<T, 'currentChatId'>, TVariables>
+
+  providers<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'ProviderModelSchema', X, XVariables>,
+  ): UserSchemaFetcher<T & { readonly providers?: ReadonlyArray<X> }, TVariables & XVariables>
+
+  providers<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'providers',
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'ProviderModelSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'providers', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): UserSchemaFetcher<
+    T & { readonly [key in XAlias]?: ReadonlyArray<X> },
+    TVariables & XVariables & XDirectiveVariables
+  >
+
+  orders<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+  ): UserSchemaFetcher<T & { readonly orders?: ReadonlyArray<X> }, TVariables & XVariables>
+
+  orders<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'orders',
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'orders', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): UserSchemaFetcher<
+    T & { readonly [key in XAlias]?: ReadonlyArray<X> },
+    TVariables & XVariables & XDirectiveVariables
+  >
 }
 
 export const userSchema$: UserSchemaFetcher<{}, {}> = createFetcher(
@@ -218,6 +256,18 @@ export const userSchema$: UserSchemaFetcher<{}, {}> = createFetcher(
       {
         category: 'SCALAR',
         name: 'currentChatId',
+        undefinable: true,
+      },
+      {
+        category: 'LIST',
+        name: 'providers',
+        targetTypeName: 'ProviderModelSchema',
+        undefinable: true,
+      },
+      {
+        category: 'LIST',
+        name: 'orders',
+        targetTypeName: 'OrderSchema',
         undefinable: true,
       },
     ],

@@ -118,9 +118,14 @@ export class Order extends CrudOperations<IOrderModel> {
     const client = await this.client.read(clientId)
     const clientUser = await this.client.getUser(clientId)
     const provider = await this.provider.read(providerId)
+    const providerUser = await this.provider.getUser(providerId)
     const service = await this.service.read(serviceId)
 
-    if (!(client && provider && service) || clientUser === EDbStatus.NOT_FOUND) {
+    if (
+      !(client && provider && service) ||
+      clientUser === EDbStatus.NOT_FOUND ||
+      providerUser === EDbStatus.NOT_FOUND
+    ) {
       return {
         id: '',
         status: EDbStatus.ERROR,
@@ -147,6 +152,8 @@ export class Order extends CrudOperations<IOrderModel> {
       }
     }
 
+    await this.client.user.addOrder(clientUser.id, orderCreationState.id)
+    await this.provider.user.addOrder(providerUser.id, orderCreationState.id)
     if (!service.attributesIds?.length || service.serviceType !== EServiceType.FORM) {
       return { ...orderCreationState, message: null }
     }

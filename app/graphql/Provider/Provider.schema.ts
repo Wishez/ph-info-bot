@@ -10,6 +10,30 @@ import { IsUserExists } from '../User/validators'
 const { Field, InputType, ObjectType, ID } = typeQl
 
 @ObjectType()
+export class ProviderModelSchema implements IProviderModel {
+  @Field(() => ID)
+  id!: string
+
+  @Field({ nullable: true })
+  updatedAt?: string
+
+  @Field()
+  createdAt!: string
+
+  @Field()
+  description!: string
+
+  @Field()
+  serviceId!: string
+
+  @Field()
+  userId!: string
+
+  @Field(() => [String], { nullable: true })
+  informationObjectsIds?: string[]
+}
+
+@ObjectType()
 export class ProviderListSchema implements Omit<IProviderModel, 'userId'> {
   @Field(() => ID)
   id!: string

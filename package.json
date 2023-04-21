@@ -11,7 +11,7 @@
     "lint": "eslint --ext ts,js ./app",
     "lint:fix": "yarn lint --fix",
     "test": "jest --env=node -i --forceExit",
-    "codegen": "node scripts/GraphQLCodeGenerator.js"
+    "codegen": "node scripts/GraphQLCodeGenerator.js && yarn lint:fix"
   },
   "type": "module",
   "dependencies": {

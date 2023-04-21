@@ -1,12 +1,14 @@
 import { IsEmail, IsMobilePhone, IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { IUserModel } from '../../models/User/types'
+import { OrderSchema } from '../Order/Order.schema'
+import { ProviderModelSchema } from '../Provider/Provider.schema'
 import { IsUserNotExistedWithTelegramId } from './validators'
 
 const { Field, InputType, ObjectType, ID } = typeQl
 
 @ObjectType()
-export class UserSchema implements IUserModel {
+export class UserSchema implements Omit<IUserModel, 'providersIds' | 'ordersIds'> {
   @Field(() => ID)
   id!: string
 
@@ -36,6 +38,12 @@ export class UserSchema implements IUserModel {
 
   @Field({ nullable: true })
   currentChatId?: string
+
+  @Field(() => [ProviderModelSchema], { nullable: true })
+  providers?: ProviderModelSchema[]
+
+  @Field(() => [OrderSchema], { nullable: true })
+  orders?: OrderSchema[]
 }
 
 @InputType()

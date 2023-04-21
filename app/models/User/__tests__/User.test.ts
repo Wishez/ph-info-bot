@@ -3,15 +3,21 @@ import { dbClient } from '../../../db'
 import { EDbStatus } from '../../../db/types'
 import { Chat } from '../../Chat/Chat'
 import { IChatModel } from '../../Chat/types'
+import { Order } from '../../Order/Order'
+import { EOrderStatus, IOrderModel } from '../../Order/types'
+import { Provider } from '../../Provider/Provider'
+import { IProviderModel } from '../../Provider/types'
 import { IUserModel } from '../types'
 import { User } from '../User'
 
-describe('User', () => {
-  jest.mock('../../Chat/Chat')
+jest.mock('../../Chat/Chat')
+jest.mock('../../Order/Order')
+jest.mock('../../Provider/Provider')
 
+describe('User', () => {
   const testChatId = '42'
   const mockedChat = jest.mocked(Chat).mockImplementation(() => {
-    const ActualChat = jest.requireActual('../../Chat/Chat').Chat
+    const ActualChat = jest.requireActual<{ Chat: typeof Chat }>('../../Chat/Chat').Chat
     const chat = new ActualChat()
 
     chat.read = jest.fn(
@@ -27,6 +33,47 @@ describe('User', () => {
     )
 
     return chat
+  })
+
+  const testOrderId = '42'
+  const mockedOrder = jest.mocked(Order).mockImplementation(() => {
+    const ActualOrder = jest.requireActual<{ Order: typeof Order }>('../../Order/Order').Order
+    const order = new ActualOrder()
+    const testOrder: IOrderModel = {
+      id: testOrderId,
+      chatId: testChatId,
+      providerId: '',
+      clientId: '',
+      serviceId: '',
+      status: EOrderStatus.IN_PROCESS,
+      filledServicesAttributesIds: [],
+      createdAt: '',
+    }
+
+    order.read = jest.fn(() => Promise.resolve(testOrder))
+    order.readAll = jest.fn(() => Promise.resolve({ [testOrderId]: testOrder }))
+
+    return order
+  })
+
+  const testProviderId = '42'
+  const mockedProvider = jest.mocked(Provider).mockImplementation(() => {
+    const ActualProvider = jest.requireActual<{ Provider: typeof Provider }>(
+      '../../Provider/Provider',
+    ).Provider
+    const provider = new ActualProvider()
+    const testProvider: IProviderModel = {
+      id: testProviderId,
+      userId: '',
+      serviceId: '',
+      description: '',
+      createdAt: '',
+    }
+
+    provider.read = jest.fn(() => Promise.resolve(testProvider))
+    provider.readAll = jest.fn(() => Promise.resolve({ [testProviderId]: testProvider }))
+
+    return provider
   })
 
   test('init', () => {
@@ -45,7 +92,7 @@ describe('User', () => {
   test('create', async () => {
     expect.assertions(1)
     const user = new User()
-    const { status } = await user.create({ name, telegramId })
+    const { status } = await user.create({ name, telegramId, providersIds: [testProviderId] })
 
     expect(status).toBe(EDbStatus.OK)
   })
@@ -124,6 +171,43 @@ describe('User', () => {
     expect(nextModel?.currentChatId).toBeUndefined()
   })
 
+  test('addOrder', async () => {
+    expect.assertions(2)
+    const user = new User()
+    const model = await user.getUserByTelegramId(telegramId)
+    if (!model?.id) return
+
+    const status = await user.addOrder(model.id, testOrderId)
+    expect(status).toBe(EDbStatus.OK)
+
+    const nextModel = await user.read(model.id)
+    expect(nextModel?.ordersIds?.[0]).toBe(testOrderId)
+  })
+
+  test('getUserOrders', async () => {
+    expect.assertions(1)
+    const user = new User()
+    const model = await user.getUserByTelegramId(telegramId)
+    if (!model?.id) return
+
+    const orders = await user.getUserOrders(model.id)
+    if (orders === EDbStatus.NOT_FOUND) return
+
+    expect(testOrderId in orders).toBeTruthy()
+  })
+
+  test('getUserProviders', async () => {
+    expect.assertions(1)
+    const user = new User()
+    const model = await user.getUserByTelegramId(telegramId)
+    if (!model?.id) return
+
+    const providers = await user.getUserProviders(model.id)
+    if (providers === EDbStatus.NOT_FOUND) return
+
+    expect(testProviderId in providers).toBeTruthy()
+  })
+
   test('delete', async () => {
     expect.assertions(1)
     const user = new User()
@@ -139,5 +223,7 @@ describe('User', () => {
     const user = new User()
     dbClient.deleteNamespace(user.modelNamespace)
     mockedChat.mockRestore()
+    mockedOrder.mockRestore()
+    mockedProvider.mockRestore()
   })
 })
