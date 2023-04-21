@@ -2,6 +2,7 @@ import log4js from 'log4js'
 import TelegramBot from 'node-telegram-bot-api'
 import './executor'
 import { Env } from '../config/Env'
+import { useChooseChatCommand } from './commands/chooseChat'
 import { ECommonAction } from './types/actions'
 import { TCallbackContext } from './types/context'
 import { useLeaveChatCommand, useStartCommand } from './commands'
@@ -21,6 +22,7 @@ const eventLogger = log4js.getLogger()
 export const useBot = () => {
   useStartCommand()
   useLeaveChatCommand()
+  useChooseChatCommand()
 
   bot.on('callback_query', async query => {
     const action = query.data
