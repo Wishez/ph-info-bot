@@ -1,1 +1,1 @@
-export { useForwardingMessages } from './useForwardingMessages'
+export { useMessagesForwarding } from './useMessagesForwarding'

@@ -14,7 +14,7 @@ import { TEvent } from './types'
 const FETCH_CATEGORY = query$.serviceCategory(
   serviceCategorySchema$.name.description
     .services(serviceListSchema$.id.name)
-    .subcategories(serviceCategoryListSchema$.id.name),
+    .subcategories(serviceCategoryListSchema$.id.name.servicesIds.subcategoriesIds),
 )
 
 export const pressCategoryEvent: TEvent<IPressCategoryContext> = async (context, query) => {
@@ -44,12 +44,16 @@ export const pressCategoryEvent: TEvent<IPressCategoryContext> = async (context,
     if (serviceCategory.subcategories?.length) {
       await bot.sendMessage(receiver, 'Выберите под-категорию', {
         reply_markup: {
-          inline_keyboard: serviceCategory.subcategories.map(({ name, id }) => [
-            CallbackButton<IPressCategoryContext>(name, {
-              id,
-              action: ECommonAction.PRESS_CATEGORY,
-            }),
-          ]),
+          inline_keyboard: serviceCategory.subcategories
+            .filter(({ subcategoriesIds, servicesIds }) =>
+              Boolean(servicesIds?.length || subcategoriesIds?.length),
+            )
+            .map(({ name, id }) => [
+              CallbackButton<IPressCategoryContext>(name, {
+                id,
+                action: ECommonAction.PRESS_CATEGORY,
+              }),
+            ]),
         },
       })
     }

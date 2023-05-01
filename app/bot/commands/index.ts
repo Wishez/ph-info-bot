@@ -1,3 +1,3 @@
-export { useStartCommand } from './start'
-export { useLeaveChatCommand } from './leaveChat'
-export { useChooseChatCommand } from './chooseChat'
+export { onChooseCategoriesCommand } from './chooseCategories'
+export { onLeaveChatCommand } from './leaveChat'
+export { onChooseChatCommand } from './chooseChat'

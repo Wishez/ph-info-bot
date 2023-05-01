@@ -27,7 +27,19 @@ export class UserResolver {
     const user = await UserResolver.user.getUserByTelegramId(telegramId)
 
     if (!user) {
-      return new GraphQLError(`User with ${telegramId} is not found`)
+      return new GraphQLError(
+        `User with ${telegramId} is not found`,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          http: {
+            status: 404,
+          },
+        },
+      )
     }
 
     const orderResolver = new OrderResolver()

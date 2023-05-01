@@ -10,7 +10,6 @@ export const startServer = async () => {
     req: FastifyRequest
     reply: FastifyReply
   }>({
-    // Integrate Fastify logger
     schema,
     logging: {
       debug: (...args) => args.forEach(arg => fastify.log.debug(arg)),
