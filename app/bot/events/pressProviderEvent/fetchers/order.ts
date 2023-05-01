@@ -3,7 +3,7 @@ import {
   informationObjectListSchema$,
   orderSchema$,
   query$,
-  serviceAttributeListSchema$,
+  serviceAttributeSchema$,
   serviceSchema$,
 } from '../../../../__generated/fetchers'
 
@@ -13,7 +13,7 @@ export const FETCH_ORDER = query$.order(
     .informationObject(informationObjectListSchema$.name)
     .filledServicesAttributes(
       filledServiceAttributeListSchema$.id.value.serviceAttribute(
-        serviceAttributeListSchema$.id.isRequired.notice.name,
+        serviceAttributeSchema$.id.isRequired.notice.name,
       ),
     ),
 )

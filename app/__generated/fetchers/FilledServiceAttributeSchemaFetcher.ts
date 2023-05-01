@@ -169,6 +169,28 @@ export interface FilledServiceAttributeSchemaFetcher<T extends object, TVariable
         : { readonly [key in XAlias]: X }),
     TVariables & XVariables & XDirectiveVariables
   >
+
+  readonly replyMessageIds: FilledServiceAttributeSchemaFetcher<
+    T & { readonly replyMessageIds?: ReadonlyArray<number> },
+    TVariables
+  >
+
+  'replyMessageIds+'<
+    XAlias extends string = 'replyMessageIds',
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'replyMessageIds', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): FilledServiceAttributeSchemaFetcher<
+    T & { readonly [key in XAlias]?: ReadonlyArray<number> },
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~replyMessageIds': FilledServiceAttributeSchemaFetcher<
+    Omit<T, 'replyMessageIds'>,
+    TVariables
+  >
 }
 
 export const filledServiceAttributeSchema$: FilledServiceAttributeSchemaFetcher<{}, {}> =
@@ -195,6 +217,11 @@ export const filledServiceAttributeSchema$: FilledServiceAttributeSchemaFetcher<
           name: 'serviceAttribute',
           targetTypeName: 'ServiceAttributeSchema',
         },
+        {
+          category: 'SCALAR',
+          name: 'replyMessageIds',
+          undefinable: true,
+        },
       ],
     ),
     ENUM_INPUT_METADATA,
@@ -202,4 +229,4 @@ export const filledServiceAttributeSchema$: FilledServiceAttributeSchemaFetcher<
   )
 
 export const filledServiceAttributeSchema$$ =
-  filledServiceAttributeSchema$.id.updatedAt.createdAt.value.orderId
+  filledServiceAttributeSchema$.id.updatedAt.createdAt.value.orderId.replyMessageIds

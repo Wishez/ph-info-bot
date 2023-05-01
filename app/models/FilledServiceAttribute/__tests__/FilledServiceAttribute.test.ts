@@ -165,6 +165,24 @@ describe('FilledServiceAttribute', () => {
     expect(user.telegramId).toBe(clientTelegramId)
   })
 
+  test('addReplyMessageId', async () => {
+    expect.assertions(4)
+    const filledServiceAttribute = new FilledServiceAttribute()
+    const model = await getFilledServiceAttributeByValue(filledServiceAttribute, updatedValue)
+    if (!model) return
+
+    expect(model.replyMessageIds).toBeUndefined()
+    const testReplyMessageId = Math.round(Math.random() * 19999999)
+    const status = await filledServiceAttribute.addReplyMessageId(model.id, testReplyMessageId)
+    expect(status).toBe(EDbStatus.OK)
+
+    const nextModel = await filledServiceAttribute.read(model.id)
+    if (!nextModel) return
+
+    expect(nextModel.replyMessageIds?.length).toBe(1)
+    expect(nextModel.replyMessageIds?.[0]).toBe(testReplyMessageId)
+  })
+
   test('delete', async () => {
     expect.assertions(1)
     const filledServiceAttribute = new FilledServiceAttribute()

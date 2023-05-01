@@ -7,7 +7,7 @@ import {
   orderSchema$,
   providerSchema$,
   query$,
-  serviceAttributeListSchema$,
+  serviceAttributeSchema$,
   serviceSchema$,
   userSchema$,
 } from '../../__generated/fetchers'
@@ -33,7 +33,7 @@ const FETCH_ORDER = query$.order(
     )
     .filledServicesAttributes(
       filledServiceAttributeListSchema$.id.value.serviceAttribute(
-        serviceAttributeListSchema$.id.isRequired.notice.name,
+        serviceAttributeSchema$.id.isRequired.notice.name,
       ),
     ),
 )

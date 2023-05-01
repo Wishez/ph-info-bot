@@ -1,4 +1,5 @@
 import pick from 'lodash/pick'
+import uniq from 'lodash/uniq'
 import { CrudOperations } from '../../db/models'
 import { EDbStatus } from '../../db/types'
 import { Order } from '../Order/Order'
@@ -112,5 +113,14 @@ export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttribu
     if (!filledAttribute) return EDbStatus.NOT_FOUND
 
     return await FilledServiceAttribute.order.read(filledAttribute.orderId)
+  }
+
+  addReplyMessageId = async (id: IFilledServiceAttributeModel['id'], replyMessageId: number) => {
+    const filledAttribute = await this.read(id)
+    if (!filledAttribute) return EDbStatus.NOT_FOUND
+
+    return await this.update(id, {
+      replyMessageIds: uniq([replyMessageId, ...(filledAttribute.replyMessageIds || [])]),
+    })
   }
 }

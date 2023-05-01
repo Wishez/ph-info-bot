@@ -42,11 +42,6 @@ export {
   filledServiceAttributeListSchema$,
   filledServiceAttributeListSchema$$,
 } from './FilledServiceAttributeListSchemaFetcher'
-export type { ServiceAttributeListSchemaFetcher } from './ServiceAttributeListSchemaFetcher'
-export {
-  serviceAttributeListSchema$,
-  serviceAttributeListSchema$$,
-} from './ServiceAttributeListSchemaFetcher'
 export type { ChatSchemaFetcher } from './ChatSchemaFetcher'
 export { chatSchema$, chatSchema$$ } from './ChatSchemaFetcher'
 export type { ChatMessageSchemaFetcher } from './ChatMessageSchemaFetcher'
@@ -63,5 +58,10 @@ export {
 } from './InformationObjectSchemaFetcher'
 export type { OrderListSchemaFetcher } from './OrderListSchemaFetcher'
 export { orderListSchema$, orderListSchema$$ } from './OrderListSchemaFetcher'
+export type { ServiceAttributeListSchemaFetcher } from './ServiceAttributeListSchemaFetcher'
+export {
+  serviceAttributeListSchema$,
+  serviceAttributeListSchema$$,
+} from './ServiceAttributeListSchemaFetcher'
 export type { MutationFetcher, MutationArgs } from './MutationFetcher'
 export { mutation$ } from './MutationFetcher'

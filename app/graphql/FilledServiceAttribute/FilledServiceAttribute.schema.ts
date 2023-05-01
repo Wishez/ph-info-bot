@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator'
+import { IsNumber, IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { IFilledServiceAttributeModel } from '../../models/FilledServiceAttribute/types'
 import { IsServiceExisted } from '../Service/validators'
@@ -28,8 +28,11 @@ export class FilledServiceAttributeListSchema implements TFilledServiceAttribute
   @Field()
   orderId!: string
 
-  @Field()
+  @Field(() => ServiceAttributeSchema)
   serviceAttribute!: ServiceAttributeListSchema
+
+  @Field(() => [Number], { nullable: true })
+  replyMessageIds?: number[]
 }
 
 type TFilledServiceAttributeSchema = Omit<IFilledServiceAttributeModel, 'serviceAttributeId'>
@@ -53,6 +56,9 @@ export class FilledServiceAttributeSchema implements TFilledServiceAttributeSche
 
   @Field(() => ServiceAttributeSchema)
   serviceAttribute!: ServiceAttributeSchema
+
+  @Field(() => [Number], { nullable: true })
+  replyMessageIds?: number[]
 }
 
 type TFilledServiceAttributeCreation = Omit<
@@ -77,7 +83,11 @@ export class FilledServiceAttributeCreation implements TFilledServiceAttributeCr
 
 @InputType()
 export class FilledServiceAttributeUpdating {
-  @Field()
+  @Field({ nullable: true })
   @IsString()
-  value!: string
+  value?: string
+
+  @Field({ nullable: true })
+  @IsNumber()
+  replyMessageId?: number
 }

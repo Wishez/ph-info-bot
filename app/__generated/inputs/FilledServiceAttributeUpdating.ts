@@ -3,5 +3,6 @@
  * do not satisfy the constraint 'SerializableParam' of recoil
  */
 export type FilledServiceAttributeUpdating = {
-  readonly value: string
+  readonly value?: string
+  readonly replyMessageId?: number
 }

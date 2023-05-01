@@ -2,10 +2,10 @@ import log4js from 'log4js'
 import TelegramBot from 'node-telegram-bot-api'
 import './executor'
 import { Env } from '../config/Env'
-import { useChooseChatCommand } from './commands/chooseChat'
+import { onReplyFilledAttribute } from './events/replyToFormAttribute'
 import { ECommonAction } from './types/actions'
 import { TCallbackContext } from './types/context'
-import { useLeaveChatCommand, useStartCommand } from './commands'
+import { useChooseChatCommand, useLeaveChatCommand, useStartCommand } from './commands'
 import {
   connectUserToOrderChatEvent,
   connectWithProviderEvent,
@@ -14,6 +14,7 @@ import {
   pressProviderEvent,
   pressServiceEvent,
 } from './events'
+import { useForwardingMessages } from './usersChat'
 
 export const bot = new TelegramBot(Env.botToken, { polling: true })
 
@@ -23,6 +24,8 @@ export const useBot = () => {
   useStartCommand()
   useLeaveChatCommand()
   useChooseChatCommand()
+  useForwardingMessages()
+  bot.on('message', onReplyFilledAttribute)
 
   bot.on('callback_query', async query => {
     const action = query.data

@@ -10,7 +10,7 @@ const CREATE_USER = mutation$.createUser()
 const CREATE_CLIENT = mutation$.createClient()
 const FETCH_USER = query$.user(userSchema$.name.id.telegramId)
 
-export const createUser = async (user: TelegramBot.User) => {
+export const tryToCreateUser = async (user: TelegramBot.User) => {
   try {
     const fetchingUserResponse = await execute(FETCH_USER, {
       variables: { telegramId: user.id },

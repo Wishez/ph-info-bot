@@ -90,21 +90,31 @@ export class FilledServiceAttributeResolver {
 
   @Mutation(() => FilledServiceAttributeSchema || false)
   async updateFilledServiceAttribute(
-    @Arg('filledServiceAttributeId') filledServiceAttributeId: string,
+    @Arg('id') id: string,
     @Arg('filledServiceAttributeInfo') filledServiceAttributeInfo: FilledServiceAttributeUpdating,
   ): Promise<FilledServiceAttributeSchema | false> {
-    const status = await FilledServiceAttributeResolver.filledServiceAttribute.update(
-      filledServiceAttributeId,
-      filledServiceAttributeInfo,
-    )
+    if (typeof filledServiceAttributeInfo.value === 'string') {
+      const status = await FilledServiceAttributeResolver.filledServiceAttribute.update(id, {
+        value: filledServiceAttributeInfo.value,
+      })
+
+      if (status !== EDbStatus.OK) return false
+    }
+
+    if (filledServiceAttributeInfo.replyMessageId) {
+      const status = await FilledServiceAttributeResolver.filledServiceAttribute.addReplyMessageId(
+        id,
+        filledServiceAttributeInfo.replyMessageId,
+      )
+      if (status !== EDbStatus.OK) return false
+    }
+
     const filledServiceAttributeResolver = new FilledServiceAttributeResolver()
     const nextFilledServiceAttribute = await filledServiceAttributeResolver.filledServiceAttribute(
-      filledServiceAttributeId,
+      id,
     )
 
-    if (status !== EDbStatus.OK || nextFilledServiceAttribute instanceof GraphQLError) {
-      return false
-    }
+    if (nextFilledServiceAttribute instanceof GraphQLError) return false
 
     return nextFilledServiceAttribute
   }

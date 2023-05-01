@@ -153,7 +153,7 @@ export interface FilledServiceAttributeListSchemaFetcher<
   readonly '~orderId': FilledServiceAttributeListSchemaFetcher<Omit<T, 'orderId'>, TVariables>
 
   serviceAttribute<X extends object, XVariables extends object>(
-    child: ObjectFetcher<'ServiceAttributeListSchema', X, XVariables>,
+    child: ObjectFetcher<'ServiceAttributeSchema', X, XVariables>,
   ): FilledServiceAttributeListSchemaFetcher<
     T & { readonly serviceAttribute: X },
     TVariables & XVariables
@@ -166,7 +166,7 @@ export interface FilledServiceAttributeListSchemaFetcher<
     XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
     XDirectiveVariables extends object = {},
   >(
-    child: ObjectFetcher<'ServiceAttributeListSchema', X, XVariables>,
+    child: ObjectFetcher<'ServiceAttributeSchema', X, XVariables>,
     optionsConfigurer: (
       options: FieldOptions<'serviceAttribute', {}, {}>,
     ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
@@ -176,6 +176,28 @@ export interface FilledServiceAttributeListSchemaFetcher<
         ? { readonly [key in XAlias]?: X }
         : { readonly [key in XAlias]: X }),
     TVariables & XVariables & XDirectiveVariables
+  >
+
+  readonly replyMessageIds: FilledServiceAttributeListSchemaFetcher<
+    T & { readonly replyMessageIds?: ReadonlyArray<number> },
+    TVariables
+  >
+
+  'replyMessageIds+'<
+    XAlias extends string = 'replyMessageIds',
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'replyMessageIds', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): FilledServiceAttributeListSchemaFetcher<
+    T & { readonly [key in XAlias]?: ReadonlyArray<number> },
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~replyMessageIds': FilledServiceAttributeListSchemaFetcher<
+    Omit<T, 'replyMessageIds'>,
+    TVariables
   >
 }
 
@@ -201,7 +223,12 @@ export const filledServiceAttributeListSchema$: FilledServiceAttributeListSchema
         {
           category: 'REFERENCE',
           name: 'serviceAttribute',
-          targetTypeName: 'ServiceAttributeListSchema',
+          targetTypeName: 'ServiceAttributeSchema',
+        },
+        {
+          category: 'SCALAR',
+          name: 'replyMessageIds',
+          undefinable: true,
         },
       ],
     ),
@@ -210,4 +237,4 @@ export const filledServiceAttributeListSchema$: FilledServiceAttributeListSchema
   )
 
 export const filledServiceAttributeListSchema$$ =
-  filledServiceAttributeListSchema$.id.updatedAt.createdAt.value.orderId
+  filledServiceAttributeListSchema$.id.updatedAt.createdAt.value.orderId.replyMessageIds

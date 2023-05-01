@@ -2,11 +2,10 @@ import { execute } from '../../../../__generated'
 import { filledServiceAttributeSchema$, mutation$ } from '../../../../__generated/fetchers'
 import { IUserModel } from '../../../../models/User/types'
 import { bot } from '../../../index'
-import { getCallProviderActionIfOrderFilled } from '../../helpers'
 import { TOrderFetcherModel } from '../fetchers/types'
 
-const UPDATE_ATTRIBUTE = mutation$.updateFilledServiceAttribute(
-  filledServiceAttributeSchema$.value.id,
+const UPDATE_FILLED_ATTRIBUTE = mutation$.updateFilledServiceAttribute(
+  filledServiceAttributeSchema$.id,
 )
 
 interface ISendOrderFormOptions {
@@ -35,31 +34,11 @@ ${serviceAttribute.name} — ${!value && serviceAttribute.isRequired ? 'Обяз
 ${value ? '' : serviceAttribute.notice}
     `,
     )
-    bot.onReplyToMessage(receiver, message.message_id, async replyedMessage => {
-      const filledAttributeResponse = await execute(UPDATE_ATTRIBUTE, {
-        variables: {
-          filledServiceAttributeId: id,
-          filledServiceAttributeInfo: { value: replyedMessage.text },
-        },
-      })
-      const filledAttribute = filledAttributeResponse.updateFilledServiceAttribute
-
-      await bot.editMessageText(`${serviceAttribute.name} — ${filledAttribute.value}`, {
-        message_id: message.message_id,
-        chat_id: message.chat.id,
-      })
-
-      const connectWithProviderButton = await getCallProviderActionIfOrderFilled({
-        orderId: order.id,
-      })
-
-      if (connectWithProviderButton) {
-        await bot.sendMessage(receiver, 'Вы заполнили все необходимые поля', {
-          reply_markup: {
-            inline_keyboard: [[connectWithProviderButton]],
-          },
-        })
-      }
+    await execute(UPDATE_FILLED_ATTRIBUTE, {
+      variables: {
+        id,
+        filledServiceAttributeInfo: { replyMessageId: message.message_id },
+      },
     })
   })
 }

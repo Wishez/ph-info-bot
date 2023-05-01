@@ -83,7 +83,6 @@ describe('Order', () => {
     const orderModel = await order.read(model.id)
     if (!orderModel) return
 
-    console.log('read', model.id)
     expect(orderModel.id).toBe(model.id)
     expect(orderModel.filledServicesAttributesIds.length).toBe(1)
   })

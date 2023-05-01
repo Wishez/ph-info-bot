@@ -1,6 +1,7 @@
 import { execute } from '../../../__generated'
 import { mutation$, query$, userSchema$ } from '../../../__generated/fetchers'
 import { bot } from '../../index'
+import { tryToCreateUser } from '../start/actions'
 
 const DISCONNECT_FROM_CHAT = mutation$.disconnectUserFromChat()
 const FETCH_USER = query$.user(userSchema$.id)
@@ -8,6 +9,8 @@ const FETCH_USER = query$.user(userSchema$.id)
 export const useLeaveChatCommand = () => {
   bot.onText(/\/leave_chat/, async msg => {
     const userTelegramId = msg.chat.id
+    const userFromChat = msg.from
+    if (userFromChat) await tryToCreateUser(userFromChat)
     await bot.sendChatAction(userTelegramId, 'typing')
     const userResponse = await execute(FETCH_USER, { variables: { telegramId: userTelegramId } })
     const { user } = userResponse

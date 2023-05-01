@@ -2497,7 +2497,7 @@ export const mutation$: MutationFetcher<{}, {}> = createFetcher(
         name: 'updateFilledServiceAttribute',
         argGraphQLTypeMap: {
           filledServiceAttributeInfo: 'FilledServiceAttributeUpdating!',
-          filledServiceAttributeId: 'String!',
+          id: 'String!',
         },
         targetTypeName: 'FilledServiceAttributeSchema',
       },
@@ -2736,7 +2736,7 @@ export interface MutationArgs {
 
   readonly updateFilledServiceAttribute: {
     readonly filledServiceAttributeInfo: FilledServiceAttributeUpdating
-    readonly filledServiceAttributeId: string
+    readonly id: string
   }
 
   readonly createInformationObject: {

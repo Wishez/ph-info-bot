@@ -3,7 +3,7 @@ version: '3.9'
 services:
   bot:
     image: node:18-buster
-    restart: on-failure
+    restart: always
     build:
       context: ./
     depends_on:

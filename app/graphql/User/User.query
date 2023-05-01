@@ -8,12 +8,21 @@ query Users {
 }
 
 query User {
-  user(telegramId: 462566829) {
+  user(telegramId: 1876176018) {
     id
     name
     telegramId
     email
     phone
+    orders {
+      service {
+        serviceType
+      }
+      filledServicesAttributes {
+        id
+        replyMessageIds
+      }
+    }
   }
 }
 

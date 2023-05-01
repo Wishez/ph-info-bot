@@ -5,4 +5,5 @@ export interface IFilledServiceAttributeModel extends IBaseCrudModel {
   serviceAttributeId: IServiceAttributeModel['id']
   value: string
   orderId: string
+  replyMessageIds?: number[]
 }

@@ -1,1 +1,1 @@
-export { createUser } from './createUser'
+export { tryToCreateUser } from './tryToCreateUser'
