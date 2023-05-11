@@ -136,8 +136,10 @@ describe('Chat', () => {
   test('createChatMessage', async () => {
     expect.assertions(4)
     const chat = new Chat()
+    const chatModel = await getChatForTest()
+    if (!chatModel) return
 
-    const chatMessage = await chat.createChatMessage(clientTelegramId, message)
+    const chatMessage = await chat.createChatMessage(clientTelegramId, message, chatModel)
 
     expect(typeof chatMessage.id).toBe('string')
     expect(typeof chatMessage.createdAt).toBe('string')

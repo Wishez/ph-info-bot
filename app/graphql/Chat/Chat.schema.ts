@@ -7,7 +7,7 @@ import { ClientSchema } from '../Client/Client.schema'
 import { IsClientWithTelegramIdExisted } from '../Client/validators'
 import { ProviderSchema } from '../Provider/Provider.schema'
 import { IsProviderExisted } from '../Provider/validators'
-import { IsUserExists } from '../User/validators'
+import { IsUserWithTelegramIdExisted } from '../User/validators'
 
 const { Field, InputType, ObjectType, ID } = typeQl
 
@@ -67,6 +67,6 @@ export class ChatAddingMessage {
   message!: string
 
   @Field()
-  @IsUserExists()
+  @IsUserWithTelegramIdExisted()
   telegramId!: number
 }

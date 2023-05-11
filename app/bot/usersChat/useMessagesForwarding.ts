@@ -2,6 +2,7 @@ import { execute } from '../../__generated'
 import {
   chatSchema$,
   clientSchema$,
+  mutation$,
   providerSchema$,
   query$,
   userSchema$$,
@@ -13,6 +14,7 @@ const FETCH_CHAT = query$.chat(
   chatSchema$.provider(providerSchema$.user(userSchema$$)).client(clientSchema$.user(userSchema$$)),
 )
 const FETCH_USER = query$.user(userSchema$$)
+const ADD_CHAT_MESSAGE = mutation$.addChatMessage(chatSchema$.id)
 
 export const useMessagesForwarding = withMessageErrorLogger('useMessagesForwarding', async msg => {
   // ID пользователя, которому нужно переслать сообщение
@@ -22,7 +24,7 @@ export const useMessagesForwarding = withMessageErrorLogger('useMessagesForwardi
   const userResponse = await execute(FETCH_USER, { variables: { telegramId: userTelegramId } })
   const { user } = userResponse
   const { currentChatId } = user
-  if (!currentChatId) return
+  if (!currentChatId || msg.text?.startsWith('/')) return
 
   const chatResponse = await execute(FETCH_CHAT, { variables: { id: currentChatId } })
   const { chat } = chatResponse
@@ -31,6 +33,13 @@ export const useMessagesForwarding = withMessageErrorLogger('useMessagesForwardi
   if (chat.client.user.telegramId === userTelegramId) {
     opponentTelegramId = chat.provider.user.telegramId
   }
+
+  await execute(ADD_CHAT_MESSAGE, {
+    variables: {
+      chatId: currentChatId,
+      chatInfo: { telegramId: userTelegramId, message: msg.text || msg.caption },
+    },
+  })
 
   if (msg.photo) {
     await bot.copyMessage(opponentTelegramId, userTelegramId, msg.message_id, {
