@@ -4,4 +4,6 @@
  */
 export type UpdatingOrder = {
   readonly informationObjectId?: string
+  readonly netProfit?: number
+  readonly cancelingReason?: string
 }

@@ -2,7 +2,7 @@ import { execute } from '../../../__generated'
 import { mutation$, query$, userSchema$ } from '../../../__generated/fetchers'
 import { withMessageErrorLogger } from '../../helpers/errors'
 import { bot } from '../../index'
-import { tryToCreateUser } from '../chooseCategories/actions'
+import { tryToCreateUser } from '../actions'
 
 const DISCONNECT_FROM_CHAT = mutation$.disconnectUserFromChat()
 const FETCH_USER = query$.user(userSchema$.id)

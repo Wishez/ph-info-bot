@@ -7,6 +7,7 @@ import type {
 } from 'graphql-ts-client-api'
 import { createFetchableType, createFetcher } from 'graphql-ts-client-api'
 import { ENUM_INPUT_METADATA } from '../EnumInputMetadata'
+import type { OrdersByUserInput } from '../inputs'
 
 /*
  * Any instance of this interface is immutable,
@@ -734,6 +735,68 @@ export interface QueryFetcher<T extends object, TVariables extends object>
     TVariables & XVariables & UnresolvedVariables<XArgs, QueryArgs['order']> & XDirectiveVariables
   >
 
+  ordersByUser<X extends object, XVariables extends object>(
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+  ): QueryFetcher<
+    T & { readonly ordersByUser: ReadonlyArray<X> },
+    TVariables & XVariables & QueryArgs['ordersByUser']
+  >
+
+  ordersByUser<
+    XArgs extends AcceptableVariables<QueryArgs['ordersByUser']>,
+    X extends object,
+    XVariables extends object,
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+  ): QueryFetcher<
+    T & { readonly ordersByUser: ReadonlyArray<X> },
+    TVariables & XVariables & UnresolvedVariables<XArgs, QueryArgs['ordersByUser']>
+  >
+
+  ordersByUser<
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'ordersByUser',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'ordersByUser', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): QueryFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: ReadonlyArray<X> }
+        : { readonly [key in XAlias]: ReadonlyArray<X> }),
+    TVariables & XVariables & QueryArgs['ordersByUser'] & XDirectiveVariables
+  >
+
+  ordersByUser<
+    XArgs extends AcceptableVariables<QueryArgs['ordersByUser']>,
+    X extends object,
+    XVariables extends object,
+    XAlias extends string = 'ordersByUser',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    args: XArgs,
+    child: ObjectFetcher<'OrderSchema', X, XVariables>,
+    optionsConfigurer: (
+      options: FieldOptions<'ordersByUser', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): QueryFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: ReadonlyArray<X> }
+        : { readonly [key in XAlias]: ReadonlyArray<X> }),
+    TVariables &
+      XVariables &
+      UnresolvedVariables<XArgs, QueryArgs['ordersByUser']> &
+      XDirectiveVariables
+  >
+
   checkOrderExistence(): QueryFetcher<
     T & { readonly checkOrderExistence?: string },
     TVariables & QueryArgs['checkOrderExistence']
@@ -1088,6 +1151,12 @@ export const query$: QueryFetcher<{}, {}> = createFetcher(
         targetTypeName: 'OrderSchema',
       },
       {
+        category: 'LIST',
+        name: 'ordersByUser',
+        argGraphQLTypeMap: { payload: 'OrdersByUserInput!' },
+        targetTypeName: 'OrderSchema',
+      },
+      {
         category: 'SCALAR',
         name: 'checkOrderExistence',
         argGraphQLTypeMap: {
@@ -1164,6 +1233,10 @@ export interface QueryArgs {
 
   readonly order: {
     readonly id: string
+  }
+
+  readonly ordersByUser: {
+    readonly payload: OrdersByUserInput
   }
 
   readonly checkOrderExistence: {

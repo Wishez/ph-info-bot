@@ -1,8 +1,9 @@
 import { ActionContext } from '../../models/ActionContext/ActionContext'
 import { withCallbackQueryErrorLogger } from '../helpers/errors'
-import { ECommonAction } from '../types/actions'
+import { ECommonAction, EOrderAction } from '../types/actions'
 import { TCallbackContext } from '../types/context'
 import { pressProviderEvent } from './pressProviderEvent/pressProviderEvent'
+import { cancelOrderEvent } from './cancelOrderEvent'
 import { chooseAttributeValueEvent } from './chooseAttributeValueEvent'
 import { connectUserToOrderChatEvent } from './connectUserToOrderChatEvent'
 import { connectWithProviderEvent } from './connectWithProviderEvent'
@@ -17,7 +18,6 @@ export const onCallbackQueryEvent = withCallbackQueryErrorLogger('All Events', a
   if (!msg || !action) return
 
   const actionContext = await actionContextInstance.read<TCallbackContext>(action)
-  console.log(actionContext, action)
   if (!actionContext) return
 
   const { context } = actionContext
@@ -43,6 +43,9 @@ export const onCallbackQueryEvent = withCallbackQueryErrorLogger('All Events', a
       break
     case ECommonAction.CHOOSE_ATTRIBUTE_VALUE:
       await chooseAttributeValueEvent(context, query)
+      break
+    case EOrderAction.CANCEL_ORDER:
+      await cancelOrderEvent(context, query)
       break
     default:
   }

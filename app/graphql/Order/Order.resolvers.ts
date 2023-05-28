@@ -11,9 +11,9 @@ import { ProviderSchema } from '../Provider/Provider.schema'
 import { ServiceResolver } from '../Service/Service.resolvers'
 import { ServiceSchema } from '../Service/Service.schema'
 import {
-  OrderAttributeUpdating,
   OrderCreation,
   OrderListSchema,
+  OrdersByUserInput,
   OrderSchema,
   UpdatingOrder,
 } from './Order.schema'
@@ -97,6 +97,24 @@ export class OrderResolver {
     }
   }
 
+  @Query(() => [OrderSchema] || GraphQLError)
+  async ordersByUser(
+    @Arg('payload') payload: OrdersByUserInput,
+  ): Promise<GraphQLError | OrderSchema[]> {
+    const user = await OrderResolver.order.provider.user.getUserByTelegramId(payload.userTelegramId)
+    if (!user) return new GraphQLError(`Can't find user with telegram id ${payload.userTelegramId}`)
+
+    const orders = await OrderResolver.order.provider.user.getUserOrders(user.id)
+    if (EDbStatus.NOT_FOUND === orders) return []
+
+    const orderResolver = new OrderResolver()
+    const ordersByListSchema = await Promise.all(
+      Object.values(orders).map(({ id }) => orderResolver.order(id)),
+    )
+
+    return ordersByListSchema as OrderSchema[]
+  }
+
   @Mutation(() => String || GraphQLError)
   async createOrder(
     @Arg('orderInfo') orderInfo: OrderCreation,
@@ -132,27 +150,11 @@ export class OrderResolver {
   }
 
   @Mutation(() => OrderSchema || false)
-  async updateOrderAttribute(
+  async cancelOrder(
     @Arg('id') id: string,
-    @Arg('orderInfo') orderInfo: OrderAttributeUpdating,
+    @Arg('cancelingReason') cancelingReason: string,
   ): Promise<OrderSchema | false> {
-    const status = await OrderResolver.order.updateAttribute(
-      id,
-      orderInfo.attributeId,
-      orderInfo.value,
-    )
-    const nextOrder = await this.order(id)
-
-    if (status !== EDbStatus.OK || nextOrder instanceof GraphQLError) {
-      return false
-    }
-
-    return nextOrder
-  }
-
-  @Mutation(() => OrderSchema || false)
-  async cancelOrder(@Arg('id') id: string): Promise<OrderSchema | false> {
-    const status = await OrderResolver.order.cancelOrder(id)
+    const status = await OrderResolver.order.cancelOrder(id, cancelingReason)
     const nextOrder = await this.order(id)
 
     if (status !== EDbStatus.OK || nextOrder instanceof GraphQLError) {

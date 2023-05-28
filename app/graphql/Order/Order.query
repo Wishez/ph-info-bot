@@ -1,54 +1,123 @@
 query Order {
-  order(id: "c79567f1-8075-4309-aea1-5f4667960929") {
+  order(id: "bdb3bbdf-0874-47a6-88d9-fc13f8af8b24") {
     id
-    value
-    serviceAttribute {
+ 		status
+
+    client {
+      id
+      user {
+        name
+        telegramId
+      }
+    }
+  	provider {
+      id
+      user {
+        name
+        telegramId
+      }
+    }
+    service {
+      id
+      providers {
+        id
+        serviceId
+        user {
+          name
+        }
+      }
+      attributes {
+        name
+        id
+      }
+    }
+    chatId
+    filledServicesAttributes {
+      id
+      orderId
+      value
+      serviceAttribute {
+        name
+        id
+      }
+    }
+    informationObject {
       name
-      order
-      isRequired
+      gallery {
+        url
+      }
     }
   }
 }
 
 query Orders {
   orders {
-    id
-    value
-    serviceAttribute {
-      name
-      order
-      isRequired
+    number
+		id
+ 		status
+    client {
+      id
+      user {
+        name
+        telegramId
+      }
     }
+  	provider {
+      id
+      user {
+        name
+        telegramId
+      }
+    }
+    service {
+      id
+      providers {
+        id
+        serviceId
+        user {
+          name
+        }
+      }
+      attributes {
+        name
+        id
+      }
+    }
+    chatId
+    filledServicesAttributesIds
+    informationObjectId
   }
 }
 
 mutation CreateOrder {
   createOrder(
-    orderInfo: { 
-      orderId: "",
-      serviceAttributeId: "c79567f1-8075-4309-aea1-5f4667960929",
-      value: "test" 
+    orderInfo: {
+			providerId: "d22b16ca-f948-4b4f-b775-72da1fb85e6f",
+      clientId: "317cd6f7-58e2-4359-9af7-6ec5343aa587",
+      serviceId: "77455af4-9076-4ed1-a823-743d61bbeeb4"
     }
   )
 }
 
 mutation UpdateOrder {
   updateOrder(
-    orderId: "c79567f1-8075-4309-aea1-5f4667960929"
-    orderInfo: {
-      value: "updated:test"
-    }
+    id: "3ecb319b-7e1a-41e7-93d8-2fc1763ebd81"
+    orderInfo: {}
   ) {
     id
-    value
-    serviceAttribute {
-      name
-      order
-      isRequired
+    number
+    filledServicesAttributes {
+      id
+      orderId
+      value
+      serviceAttribute {
+        name
+        id
+      }
     }
   }
 }
 
 mutation DeleteOrder {
-  deleteOrder(orderId: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e")
+  deleteOrder(id: "56dea0d7-ec4b-4e10-a443-89001869c286")
 }

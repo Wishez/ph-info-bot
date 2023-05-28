@@ -1,3 +1,4 @@
+export type { OrdersByUserInput } from './OrdersByUserInput'
 export type { ClientCreation } from './ClientCreation'
 export type { ClientUpdating } from './ClientUpdating'
 export type { ServiceCategoryCreation } from './ServiceCategoryCreation'
@@ -21,7 +22,6 @@ export type { AddingImagesToGalleryPayload } from './AddingImagesToGalleryPayloa
 export type { RemovingImagesFromGalleryPayload } from './RemovingImagesFromGalleryPayload'
 export type { OrderCreation } from './OrderCreation'
 export type { UpdatingOrder } from './UpdatingOrder'
-export type { OrderAttributeUpdating } from './OrderAttributeUpdating'
 export type { ServiceAttributeCreation } from './ServiceAttributeCreation'
 export type { ServiceAttributeUpdating } from './ServiceAttributeUpdating'
 export type { UserCreation } from './UserCreation'

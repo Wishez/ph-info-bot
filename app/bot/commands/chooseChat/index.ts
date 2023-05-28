@@ -12,7 +12,7 @@ import { withMessageErrorLogger } from '../../helpers/errors'
 import { bot } from '../../index'
 import { ECommonAction } from '../../types/actions'
 import { IConnectUserToOrderChatContext } from '../../types/context'
-import { tryToCreateUser } from '../chooseCategories/actions'
+import { tryToCreateUser } from '../actions'
 
 // const DISCONNECT_FROM_CHAT = mutation$.disconnectUserFromChat()
 const FETCH_USER = query$.user(

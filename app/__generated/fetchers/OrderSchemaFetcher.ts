@@ -53,6 +53,26 @@ export interface OrderSchemaFetcher<T extends object, TVariables extends object>
 
   readonly '~id': OrderSchemaFetcher<Omit<T, 'id'>, TVariables>
 
+  readonly number: OrderSchemaFetcher<T & { readonly number: number }, TVariables>
+
+  'number+'<
+    XAlias extends string = 'number',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'number', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): OrderSchemaFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: number }
+        : { readonly [key in XAlias]: number }),
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~number': OrderSchemaFetcher<Omit<T, 'number'>, TVariables>
+
   readonly updatedAt: OrderSchemaFetcher<T & { readonly updatedAt?: string }, TVariables>
 
   'updatedAt+'<XAlias extends string = 'updatedAt', XDirectiveVariables extends object = {}>(
@@ -236,6 +256,32 @@ export interface OrderSchemaFetcher<T extends object, TVariables extends object>
     T & { readonly [key in XAlias]?: X },
     TVariables & XVariables & XDirectiveVariables
   >
+
+  readonly netProfit: OrderSchemaFetcher<T & { readonly netProfit?: number }, TVariables>
+
+  'netProfit+'<XAlias extends string = 'netProfit', XDirectiveVariables extends object = {}>(
+    optionsConfigurer: (
+      options: FieldOptions<'netProfit', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): OrderSchemaFetcher<T & { readonly [key in XAlias]?: number }, TVariables & XDirectiveVariables>
+
+  readonly '~netProfit': OrderSchemaFetcher<Omit<T, 'netProfit'>, TVariables>
+
+  readonly cancelingReason: OrderSchemaFetcher<
+    T & { readonly cancelingReason?: string },
+    TVariables
+  >
+
+  'cancelingReason+'<
+    XAlias extends string = 'cancelingReason',
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'cancelingReason', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): OrderSchemaFetcher<T & { readonly [key in XAlias]?: string }, TVariables & XDirectiveVariables>
+
+  readonly '~cancelingReason': OrderSchemaFetcher<Omit<T, 'cancelingReason'>, TVariables>
 }
 
 export const orderSchema$: OrderSchemaFetcher<{}, {}> = createFetcher(
@@ -248,6 +294,7 @@ export const orderSchema$: OrderSchemaFetcher<{}, {}> = createFetcher(
         category: 'ID',
         name: 'id',
       },
+      'number',
       {
         category: 'SCALAR',
         name: 'updatedAt',
@@ -282,10 +329,21 @@ export const orderSchema$: OrderSchemaFetcher<{}, {}> = createFetcher(
         targetTypeName: 'InformationObjectListSchema',
         undefinable: true,
       },
+      {
+        category: 'SCALAR',
+        name: 'netProfit',
+        undefinable: true,
+      },
+      {
+        category: 'SCALAR',
+        name: 'cancelingReason',
+        undefinable: true,
+      },
     ],
   ),
   ENUM_INPUT_METADATA,
   undefined,
 )
 
-export const orderSchema$$ = orderSchema$.id.updatedAt.createdAt.status.chatId
+export const orderSchema$$ =
+  orderSchema$.id.number.updatedAt.createdAt.status.chatId.netProfit.cancelingReason

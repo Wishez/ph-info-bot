@@ -1,10 +1,10 @@
 import type TelegramBot from 'node-telegram-bot-api'
-import { execute } from '../../../../__generated'
-import { mutation$, query$, userSchema$ } from '../../../../__generated/fetchers'
-import { isGarphqlErrorResponse } from '../../../../graphql/typeguards'
-import { EClientRank } from '../../../../models/Client/types/EClientRank'
-import { getUserPhoto } from '../../../api/user'
-import { bot } from '../../../index'
+import { execute } from '../../../__generated'
+import { mutation$, query$, userSchema$ } from '../../../__generated/fetchers'
+import { isGarphqlErrorResponse } from '../../../graphql/typeguards'
+import { EClientRank } from '../../../models/Client/types/EClientRank'
+import { getUserPhoto } from '../../api/user'
+import { bot } from '../../index'
 
 const CREATE_USER = mutation$.createUser()
 const CREATE_CLIENT = mutation$.createClient()

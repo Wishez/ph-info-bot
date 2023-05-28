@@ -62,6 +62,26 @@ export interface OrderListSchemaFetcher<T extends object, TVariables extends obj
 
   readonly '~id': OrderListSchemaFetcher<Omit<T, 'id'>, TVariables>
 
+  readonly number: OrderListSchemaFetcher<T & { readonly number: number }, TVariables>
+
+  'number+'<
+    XAlias extends string = 'number',
+    XDirectives extends { readonly [key: string]: DirectiveArgs } = {},
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'number', {}, {}>,
+    ) => FieldOptions<XAlias, XDirectives, XDirectiveVariables>,
+  ): OrderListSchemaFetcher<
+    T &
+      (XDirectives extends { readonly include: any } | { readonly skip: any }
+        ? { readonly [key in XAlias]?: number }
+        : { readonly [key in XAlias]: number }),
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~number': OrderListSchemaFetcher<Omit<T, 'number'>, TVariables>
+
   readonly updatedAt: OrderListSchemaFetcher<T & { readonly updatedAt?: string }, TVariables>
 
   'updatedAt+'<XAlias extends string = 'updatedAt', XDirectiveVariables extends object = {}>(
@@ -251,6 +271,38 @@ export interface OrderListSchemaFetcher<T extends object, TVariables extends obj
     Omit<T, 'informationObjectId'>,
     TVariables
   >
+
+  readonly netProfit: OrderListSchemaFetcher<T & { readonly netProfit?: number }, TVariables>
+
+  'netProfit+'<XAlias extends string = 'netProfit', XDirectiveVariables extends object = {}>(
+    optionsConfigurer: (
+      options: FieldOptions<'netProfit', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): OrderListSchemaFetcher<
+    T & { readonly [key in XAlias]?: number },
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~netProfit': OrderListSchemaFetcher<Omit<T, 'netProfit'>, TVariables>
+
+  readonly cancelingReason: OrderListSchemaFetcher<
+    T & { readonly cancelingReason?: string },
+    TVariables
+  >
+
+  'cancelingReason+'<
+    XAlias extends string = 'cancelingReason',
+    XDirectiveVariables extends object = {},
+  >(
+    optionsConfigurer: (
+      options: FieldOptions<'cancelingReason', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): OrderListSchemaFetcher<
+    T & { readonly [key in XAlias]?: string },
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~cancelingReason': OrderListSchemaFetcher<Omit<T, 'cancelingReason'>, TVariables>
 }
 
 export const orderListSchema$: OrderListSchemaFetcher<{}, {}> = createFetcher(
@@ -263,6 +315,7 @@ export const orderListSchema$: OrderListSchemaFetcher<{}, {}> = createFetcher(
         category: 'ID',
         name: 'id',
       },
+      'number',
       {
         category: 'SCALAR',
         name: 'updatedAt',
@@ -292,6 +345,16 @@ export const orderListSchema$: OrderListSchemaFetcher<{}, {}> = createFetcher(
         name: 'informationObjectId',
         undefinable: true,
       },
+      {
+        category: 'SCALAR',
+        name: 'netProfit',
+        undefinable: true,
+      },
+      {
+        category: 'SCALAR',
+        name: 'cancelingReason',
+        undefinable: true,
+      },
     ],
   ),
   ENUM_INPUT_METADATA,
@@ -299,5 +362,5 @@ export const orderListSchema$: OrderListSchemaFetcher<{}, {}> = createFetcher(
 )
 
 export const orderListSchema$$ =
-  orderListSchema$.id.updatedAt.createdAt.status.filledServicesAttributesIds.chatId
-    .informationObjectId
+  orderListSchema$.id.number.updatedAt.createdAt.status.filledServicesAttributesIds.chatId
+    .informationObjectId.netProfit.cancelingReason

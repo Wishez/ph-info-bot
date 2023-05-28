@@ -95,23 +95,16 @@ export class Order extends CrudOperations<IOrderModel> {
     })
   }
 
-  updateAttribute = async (
-    orderId: IOrderModel['id'],
-    attributeId: IFilledServiceAttributeModel['id'],
-    attributeValue: IFilledServiceAttributeModel['value'],
-  ) => {
-    const order = await this.read(orderId)
-    if (!order) return EDbStatus.NOT_FOUND
-
-    if (!order.filledServicesAttributesIds.includes(attributeId)) return EDbStatus.ERROR
-
-    return await this.filledServicesAttribute.update(attributeId, { value: attributeValue })
-  }
-
   create = async (
     model: Omit<
       IOrderModel,
-      'id' | 'createdAt' | 'updatedAt' | 'status' | 'filledServicesAttributesIds' | 'chatId'
+      | 'id'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'status'
+      | 'filledServicesAttributesIds'
+      | 'chatId'
+      | 'number'
     >,
   ) => {
     const { clientId, providerId, serviceId } = model
@@ -138,11 +131,13 @@ export class Order extends CrudOperations<IOrderModel> {
       providerId: provider.id,
     })
 
+    const orders = await this.readAll()
     const orderCreationState = await super.create({
       ...model,
       chatId: chat.id,
       filledServicesAttributesIds: [],
       status: EOrderStatus.IN_PROCESS,
+      number: Object.values(orders || {}).length,
     })
 
     if (orderCreationState.status !== EDbStatus.OK) {
@@ -197,8 +192,15 @@ export class Order extends CrudOperations<IOrderModel> {
     return await this.update(id, { status: EOrderStatus.COMPLETED })
   }
 
-  cancelOrder = async (id: IOrderModel['id']) => {
-    return await this.update(id, { status: EOrderStatus.CLOSED })
+  cancelOrder = async (
+    id: IOrderModel['id'],
+    cancelingReason: NonNullable<IOrderModel['cancelingReason']>,
+  ) => {
+    return await this.update(id, { status: EOrderStatus.CLOSED, cancelingReason })
+  }
+
+  markAsPaidOfProvider = async (id: IOrderModel['id']) => {
+    return await this.update(id, { status: EOrderStatus.PAID })
   }
 
   getOrdersByUserTelegramId = async (

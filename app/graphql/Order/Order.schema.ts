@@ -1,16 +1,16 @@
-import { IsString } from 'class-validator'
+import { IsNumber, IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { EOrderStatus, IOrderModel } from '../../models/Order/types'
 import { ClientSchema } from '../Client/Client.schema'
 import { IsClientExisted } from '../Client/validators'
 import { FilledServiceAttributeListSchema } from '../FilledServiceAttribute/FilledServiceAttribute.schema'
-import { IsFilledServiceAttributeExisted } from '../FilledServiceAttribute/validators'
 import { InformationObjectListSchema } from '../InformationObject/InformationObject.schema'
 import { IsInformationObjectExisted } from '../InformationObject/validators'
 import { ProviderSchema } from '../Provider/Provider.schema'
 import { IsProviderExisted } from '../Provider/validators'
 import { ServiceSchema } from '../Service/Service.schema'
 import { IsServiceExisted } from '../Service/validators'
+import { IsUserWithTelegramIdExisted } from '../User/validators'
 
 const { Field, InputType, ObjectType, ID } = typeQl
 
@@ -18,6 +18,9 @@ const { Field, InputType, ObjectType, ID } = typeQl
 export class OrderListSchema implements Omit<IOrderModel, 'clientId' | 'providerId' | 'serviceId'> {
   @Field(() => ID)
   id!: string
+
+  @Field()
+  number!: number
 
   @Field({ nullable: true })
   updatedAt?: string
@@ -46,6 +49,12 @@ export class OrderListSchema implements Omit<IOrderModel, 'clientId' | 'provider
 
   @Field({ nullable: true })
   informationObjectId?: string
+
+  @Field({ nullable: true })
+  netProfit?: number
+
+  @Field({ nullable: true })
+  cancelingReason?: string
 }
 
 type TOrderSchema = Omit<
@@ -56,6 +65,9 @@ type TOrderSchema = Omit<
 export class OrderSchema implements TOrderSchema {
   @Field(() => ID)
   id!: string
+
+  @Field()
+  number!: number
 
   @Field({ nullable: true })
   updatedAt?: string
@@ -84,6 +96,12 @@ export class OrderSchema implements TOrderSchema {
 
   @Field(() => InformationObjectListSchema, { nullable: true })
   informationObject?: InformationObjectListSchema
+
+  @Field({ nullable: true })
+  netProfit?: number
+
+  @Field({ nullable: true })
+  cancelingReason?: string
 }
 
 @InputType()
@@ -106,15 +124,19 @@ export class UpdatingOrder {
   @Field({ nullable: true })
   @IsInformationObjectExisted()
   informationObjectId?: string
+
+  @Field({ nullable: true })
+  @IsNumber()
+  netProfit?: number
+
+  @Field({ nullable: true })
+  @IsString()
+  cancelingReason?: string
 }
 
 @InputType()
-export class OrderAttributeUpdating {
+export class OrdersByUserInput {
   @Field()
-  @IsFilledServiceAttributeExisted()
-  attributeId!: string
-
-  @Field()
-  @IsString()
-  value!: string
+  @IsUserWithTelegramIdExisted()
+  userTelegramId!: number
 }

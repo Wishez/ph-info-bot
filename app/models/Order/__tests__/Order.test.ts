@@ -30,7 +30,6 @@ describe('Order', () => {
   const serviceNameWithPortfolio = uniqueId('serviceName')
   const categoryName = uniqueId('serviceCategoryName')
   const attributeName = uniqueId('serviceAttributeName')
-  const filledAttributeValue = uniqueId('filledAttributeValue')
 
   const getOrderForTest = async (clientTelegramId: IUserModel['telegramId']) => {
     const order = new Order()
@@ -74,7 +73,7 @@ describe('Order', () => {
   })
 
   test('read', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
     const order = new Order()
 
     const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
@@ -84,22 +83,39 @@ describe('Order', () => {
     if (!orderModel) return
 
     expect(orderModel.id).toBe(model.id)
+    expect(orderModel.number).toBe(0)
     expect(orderModel.filledServicesAttributesIds.length).toBe(1)
   })
 
   test('update', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
     const order = new Order()
     const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
-    const status = await order.update(model.id, { status: EOrderStatus.COMPLETED })
+    const netProfit = 1000
+    const status = await order.update(model.id, { status: EOrderStatus.COMPLETED, netProfit })
 
     expect(status).toBe(EDbStatus.OK)
 
     const nextModel = await order.read(model.id)
 
     expect(nextModel?.status).toBe(EOrderStatus.COMPLETED)
+    expect(nextModel?.netProfit).toBe(netProfit)
+
+    await order.update(model.id, { status: EOrderStatus.IN_PROCESS })
+  })
+
+  test('markAsPaidOfProvider', async () => {
+    expect.assertions(2)
+    const order = new Order()
+    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
+    if (!model) return
+
+    const status = await order.markAsPaidOfProvider(model.id)
+    const nextModel = await order.read(model.id)
+    expect(status).toBe(EDbStatus.OK)
+    expect(nextModel?.status).toBe(EOrderStatus.PAID)
 
     await order.update(model.id, { status: EOrderStatus.IN_PROCESS })
   })
@@ -170,25 +186,6 @@ describe('Order', () => {
     expect(filledAttribute.id).toBe(model.filledServicesAttributesIds[0])
   })
 
-  test('updateAttribute', async () => {
-    expect.assertions(2)
-    const order = new Order()
-    const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
-    if (!model) return
-
-    const filledAttributeId = model.filledServicesAttributesIds[0]
-    if (!filledAttributeId) return
-
-    const status = await order.updateAttribute(model.id, filledAttributeId, filledAttributeValue)
-
-    expect(status).toBe(EDbStatus.OK)
-
-    const filledAttribute = await order.filledServicesAttribute.read(filledAttributeId)
-    if (!filledAttribute) return
-
-    expect(filledAttribute.value).toBe(filledAttributeValue)
-  })
-
   test('completeOrder', async () => {
     expect.assertions(2)
     const order = new Order()
@@ -205,18 +202,20 @@ describe('Order', () => {
   })
 
   test('cancelOrder', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
     const order = new Order()
     const model = await getOrderForTest(clientTelegramIdForServiceWithForm)
     if (!model) return
 
-    const status = await order.cancelOrder(model.id)
+    const cancelingReason = uniqueId('cancelingReason')
+    const status = await order.cancelOrder(model.id, cancelingReason)
     expect(status).toBe(EDbStatus.OK)
 
     const nextModel = await order.read(model.id)
     if (!nextModel) return
 
     expect(nextModel.status).toBe(EOrderStatus.CLOSED)
+    expect(nextModel.cancelingReason).toBe(cancelingReason)
   })
 
   test('getOrderInformationObject', async () => {

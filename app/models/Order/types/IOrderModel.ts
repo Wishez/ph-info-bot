@@ -8,6 +8,7 @@ import { IServiceModel } from '../../Service/types'
 import { EOrderStatus } from './EOrderStatus'
 
 export interface IOrderModel extends IBaseCrudModel {
+  number: number
   status: EOrderStatus
   providerId: IProviderModel['id']
   clientId: IClientModel['id']
@@ -15,4 +16,6 @@ export interface IOrderModel extends IBaseCrudModel {
   filledServicesAttributesIds: IFilledServiceAttributeModel['id'][]
   informationObjectId?: IInformationObjectModel['id']
   chatId: IChatModel['id']
+  netProfit?: number
+  cancelingReason?: string
 }

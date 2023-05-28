@@ -5,6 +5,7 @@ import { IPressCategoryContext } from './IPressCategoryContext'
 import { IPressInformationObjectContext } from './IPressInformationObjectContext'
 import { IPressProviderContext } from './IPressProviderContext'
 import { IPressServiceContext } from './IPressServiceContext'
+import { ICancelOrderContext } from './order'
 
 export type TCallbackContext =
   | IPressCategoryContext
@@ -14,3 +15,4 @@ export type TCallbackContext =
   | ICallProviderContext
   | IConnectUserToOrderChatContext
   | IChooseAttributeValueContext
+  | ICancelOrderContext

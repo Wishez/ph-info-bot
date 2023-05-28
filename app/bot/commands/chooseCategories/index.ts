@@ -5,7 +5,7 @@ import { withMessageErrorLogger } from '../../helpers/errors'
 import { bot } from '../../index'
 import { ECommonAction } from '../../types/actions'
 import type { IPressCategoryContext } from '../../types/context'
-import { tryToCreateUser } from './actions'
+import { tryToCreateUser } from '../actions'
 
 const FETCH_SERVICE_CATEGORIES = query$.serviceCategories(
   serviceCategoryListSchema$.id.name.parentId.servicesIds.subcategoriesIds,
