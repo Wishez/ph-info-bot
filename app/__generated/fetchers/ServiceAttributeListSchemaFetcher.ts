@@ -199,6 +199,22 @@ export interface ServiceAttributeListSchemaFetcher<T extends object, TVariables 
   >
 
   readonly '~serviceId': ServiceAttributeListSchemaFetcher<Omit<T, 'serviceId'>, TVariables>
+
+  readonly options: ServiceAttributeListSchemaFetcher<
+    T & { readonly options?: ReadonlyArray<string> },
+    TVariables
+  >
+
+  'options+'<XAlias extends string = 'options', XDirectiveVariables extends object = {}>(
+    optionsConfigurer: (
+      options: FieldOptions<'options', {}, {}>,
+    ) => FieldOptions<XAlias, { readonly [key: string]: DirectiveArgs }, XDirectiveVariables>,
+  ): ServiceAttributeListSchemaFetcher<
+    T & { readonly [key in XAlias]?: ReadonlyArray<string> },
+    TVariables & XDirectiveVariables
+  >
+
+  readonly '~options': ServiceAttributeListSchemaFetcher<Omit<T, 'options'>, TVariables>
 }
 
 export const serviceAttributeListSchema$: ServiceAttributeListSchemaFetcher<{}, {}> = createFetcher(
@@ -226,6 +242,11 @@ export const serviceAttributeListSchema$: ServiceAttributeListSchemaFetcher<{}, 
         name: 'serviceId',
         undefinable: true,
       },
+      {
+        category: 'SCALAR',
+        name: 'options',
+        undefinable: true,
+      },
     ],
   ),
   ENUM_INPUT_METADATA,
@@ -233,4 +254,4 @@ export const serviceAttributeListSchema$: ServiceAttributeListSchemaFetcher<{}, 
 )
 
 export const serviceAttributeListSchema$$ =
-  serviceAttributeListSchema$.id.updatedAt.createdAt.notice.isRequired.name.order.serviceId
+  serviceAttributeListSchema$.id.updatedAt.createdAt.notice.isRequired.name.order.serviceId.options

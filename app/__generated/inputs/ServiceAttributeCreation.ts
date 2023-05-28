@@ -7,4 +7,5 @@ export type ServiceAttributeCreation = {
   readonly isRequired: boolean
   readonly name: string
   readonly order: number
+  readonly options?: ReadonlyArray<string>
 }

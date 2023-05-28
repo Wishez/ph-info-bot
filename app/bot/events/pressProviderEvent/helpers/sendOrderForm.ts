@@ -1,7 +1,10 @@
 import { execute } from '../../../../__generated'
 import { filledServiceAttributeSchema$, mutation$ } from '../../../../__generated/fetchers'
 import { IUserModel } from '../../../../models/User/types'
+import { CallbackButton } from '../../../components'
 import { bot } from '../../../index'
+import { ECommonAction } from '../../../types/actions'
+import { IChooseAttributeValueContext } from '../../../types/context'
 import { TOrderFetcherModel } from '../fetchers/types'
 
 const UPDATE_FILLED_ATTRIBUTE = mutation$.updateFilledServiceAttribute(
@@ -20,9 +23,9 @@ export const sendOrderForm = async (options: ISendOrderFormOptions) => {
     `
 Некоторая информация мне обязательна, а какая-то по желанию🙂
 
-Чтобы заполнить информацию, просто ответьте на сообщение
+Чтобы заполнить информацию, выберите вариант ответа либо ответьте на сообщение
 
-Повторным ответом, вы сможете отредактировать информацию
+Повторным ответом или выбором варианта, вы сможете отредактировать информацию
   `,
   )
   order.filledServicesAttributes.forEach(async ({ id, serviceAttribute, value }) => {
@@ -31,8 +34,20 @@ export const sendOrderForm = async (options: ISendOrderFormOptions) => {
       `
 ${serviceAttribute.name} — ${!value && serviceAttribute.isRequired ? 'Обязательно' : value}
 
-${value ? '' : serviceAttribute.notice}
+${serviceAttribute.notice}
     `,
+      {
+        reply_markup: {
+          inline_keyboard:
+            serviceAttribute.options?.map(option => [
+              CallbackButton<IChooseAttributeValueContext>(option, {
+                action: ECommonAction.CHOOSE_ATTRIBUTE_VALUE,
+                value: option,
+                filledAttributeId: id,
+              }),
+            ]) ?? [],
+        },
+      },
     )
     await execute(UPDATE_FILLED_ATTRIBUTE, {
       variables: {

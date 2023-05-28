@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator'
+import { IsArray, IsBoolean, IsNumber, IsString } from 'class-validator'
 import typeQl from 'type-graphql'
 import { IServiceAttributeModel } from '../../models/ServiceAttribute/types'
 import { ServiceSchema } from '../Service/Service.schema'
@@ -30,6 +30,9 @@ export class ServiceAttributeListSchema implements IServiceAttributeModel {
 
   @Field({ nullable: true })
   serviceId?: string
+
+  @Field(() => [String], { nullable: true })
+  options?: string[]
 }
 
 @ObjectType()
@@ -57,6 +60,9 @@ export class ServiceAttributeSchema implements IServiceAttributeModel {
 
   @Field(() => ServiceSchema, { nullable: true })
   service?: ServiceSchema
+
+  @Field(() => [String], { nullable: true })
+  options?: string[]
 }
 
 @InputType()
@@ -76,6 +82,10 @@ export class ServiceAttributeCreation implements Omit<IServiceAttributeModel, 'i
   @Field()
   @IsNumber()
   order!: number
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  options?: string[]
 }
 
 @InputType()
@@ -95,4 +105,8 @@ export class ServiceAttributeUpdating {
   @Field({ nullable: true })
   @IsNumber()
   order?: number
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  options?: string[]
 }

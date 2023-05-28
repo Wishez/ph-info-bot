@@ -7,4 +7,5 @@ export type ServiceAttributeUpdating = {
   readonly isRequired?: boolean
   readonly name?: string
   readonly order?: number
+  readonly options?: ReadonlyArray<string>
 }

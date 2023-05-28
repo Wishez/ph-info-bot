@@ -19,11 +19,11 @@ export class CrudOperations<GModel extends IBaseCrudModel> {
     this.modelNamespace = `${namespace}.${modelName}${isTest ? '.test' : ''}`
   }
 
-  readAll = async () => {
+  async readAll() {
     return await dbClient.get<Record<string, GModel>>(this.modelNamespace)
   }
 
-  read = async (id: GModel['id']) => {
+  async read(id: GModel['id']) {
     const models = await this.readAll()
 
     return models && models[id]

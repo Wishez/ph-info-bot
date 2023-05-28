@@ -14,7 +14,7 @@ import { EOrderStatus, IOrderModel } from '../../../models/Order/types'
 import { EServiceType } from '../../../models/Service/types'
 import { withMessageErrorLogger } from '../../helpers/errors'
 import { bot } from '../../index'
-import { getCallProviderActionIfOrderFilled } from '../helpers'
+import { editAttributeValueInChat, getCallProviderActionIfOrderFilled } from '../helpers'
 
 const FETCH_USER = query$.user(
   userSchema$.orders(
@@ -58,18 +58,13 @@ export const onReplyFilledAttribute = withMessageErrorLogger(
     }
 
     if (filledAttributeId && orderId) {
-      const filledAttributeResponse = await execute(UPDATE_FILLED_ATTRIBUTE, {
+      await execute(UPDATE_FILLED_ATTRIBUTE, {
         variables: { id: filledAttributeId, filledServiceAttributeInfo: { value: message.text } },
       })
-      const filledAttribute = filledAttributeResponse.updateFilledServiceAttribute
-
-      await bot.editMessageText(
-        `${filledAttribute.serviceAttribute.name} — ${filledAttribute.value}`,
-        {
-          message_id: replyMessageId,
-          chat_id: userTelegramId,
-        },
-      )
+      await editAttributeValueInChat({
+        userChatId: userTelegramId,
+        filledAttributeId,
+      })
 
       const connectWithProviderButton = await getCallProviderActionIfOrderFilled({ orderId })
 

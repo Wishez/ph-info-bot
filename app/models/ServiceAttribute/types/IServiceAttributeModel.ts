@@ -7,4 +7,5 @@ export interface IServiceAttributeModel extends IBaseCrudModel {
   name: string
   order: number // from 0 to 10000 step by 100
   serviceId?: IServiceModel['id']
+  options?: string[]
 }

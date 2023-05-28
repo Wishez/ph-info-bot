@@ -9,6 +9,7 @@ query ServiceAttribute {
       }
       name
     }
+    options
   }
 }
 
@@ -18,6 +19,7 @@ query ServiceAttributes {
     name
     order
     isRequired
+    options
   }
 }
 
@@ -27,7 +29,8 @@ mutation CreateMoneyQuantityAttribute {
       name: "Сколько денег вы хотите обменять?",
       notice: "Количество денег для обмена можно ввести в любом удобном вам формате",
       isRequired: true,
-      order: 0
+      order: 0,
+      options: ["от 5к до 100к", "от 100к до 500к", "от 500к"]
     }
   )
 }
@@ -38,15 +41,18 @@ mutation CreateMoneyExchangeVariantAttribute {
       name: "Каким способом вы бы хотели обменять валюту?",
       notice: "Варианты: наличными, через онлайн банк или свой вариант",
       isRequired: true,
-      order: 0
+      order: 0,
+      options: ["Онлайн через банк", "Наличкой", "Криптовалютой"]
     }
   )
 }
 
 mutation UpdateServiceAttribute {
   updateServiceAttribute(
-    id: "d2e44e5d-f938-4595-a4fb-bbd5dd74ef5e"
-    serviceAttributeInfo: {name: "updated: Настрой аттрибут", isRequired: true}
+    id: "0c2114e9-f432-40b4-a095-b697d7e80c87"
+    serviceAttributeInfo: {
+      options: ["Онлайн через банк", "Наличкой", "Криптовалютой"]
+    }
   ) {
     name
     id

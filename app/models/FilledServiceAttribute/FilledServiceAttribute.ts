@@ -90,23 +90,16 @@ export class FilledServiceAttribute extends CrudOperations<IFilledServiceAttribu
   create = async (model: Omit<IFilledServiceAttributeModel, 'id' | 'createdAt' | 'updatedAt'>) => {
     const order = await FilledServiceAttribute.order.read(model.orderId)
     const serviceAttribute = await this.serviceAttribute.read(model.serviceAttributeId)
-    const id = this.getFilledAttributeId(model)
 
     if (!order || !serviceAttribute) {
       return {
-        id,
+        id: '',
         status: EDbStatus.ERROR,
       }
     }
 
-    return await super.create(model, id)
+    return await super.create(model)
   }
-
-  private getFilledAttributeId = ({
-    orderId,
-    serviceAttributeId,
-  }: Pick<IFilledServiceAttributeModel, 'orderId' | 'serviceAttributeId'>) =>
-    `${orderId}_${serviceAttributeId}`
 
   getOrder = async (id: IFilledServiceAttributeModel['id']) => {
     const filledAttribute = await this.read(id)
