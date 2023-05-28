@@ -20,6 +20,7 @@
     "@types/graphql": "14.5.0",
     "class-validator": "0.14.0",
     "core-js": "3.27.2",
+    "crypto-js": "4.1.1",
     "dotenv": "16.0.3",
     "fastify": "4.10.2",
     "graphql": "15.8.0",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@graphql-eslint/eslint-plugin": "^3.14.3",
     "@types/core-js": "2.5.5",
+    "@types/crypto-js": "4.1.1",
     "@types/ioredis": "5.0.0",
     "@types/jest": "29.2.4",
     "@types/lodash": "4.14.191",
